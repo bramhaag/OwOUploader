@@ -22,5 +22,24 @@ package me.bramhaag.owouploader.api.model;
  * Stores the result of a call to the {@code upload} endpoint.
  */
 public class UploadModel {
+    private String hash;
+    private String name;
+    private String url;
+    private long size;
 
+    public String getHash() {
+        return hash;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public long getSize() {
+        return size;
+    }
 }
