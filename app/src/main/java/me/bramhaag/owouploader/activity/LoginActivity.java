@@ -18,21 +18,19 @@
 
 package me.bramhaag.owouploader.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.bramhaag.owouploader.R;
 
 /**
- * Main activity.
+ * Login Activity.
  */
-public class MainActivity extends AppCompatActivity {
-
+public class LoginActivity extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        startActivity(new Intent(this, LoginActivity.class));
+        setContentView(R.layout.activity_login);
     }
 }
