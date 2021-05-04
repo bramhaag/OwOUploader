@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'de.mannodermaus.android-junit5'
+    id 'checkstyle'
 }
 
 ext {
@@ -58,4 +59,16 @@ dependencies {
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:$junitTestVersion"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:$junitTestVersion"
+}
+
+checkstyle {
+    toolVersion "8.42"
+    ignoreFailures false
+    maxWarnings 0
+}
+
+task checkstyle(type: Checkstyle) {
+    source 'src'
+    include '**/*.java'
+    classpath = files()
 }

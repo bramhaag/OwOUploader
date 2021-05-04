@@ -20,5 +20,9 @@ package me.bramhaag.owouploader;
 
 import android.app.Application;
 
+/**
+ * Application.
+ */
 public class OwOApplication extends Application {
+
 }

@@ -18,13 +18,12 @@
 
 package me.bramhaag.owouploader;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import de.mannodermaus.junit5.ActivityScenarioExtension;
 import me.bramhaag.owouploader.activity.MainActivity;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -32,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleInstrumentedTest {
+
     @RegisterExtension
     ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
 
