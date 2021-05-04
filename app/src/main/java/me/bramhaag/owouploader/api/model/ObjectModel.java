@@ -18,9 +18,78 @@
 
 package me.bramhaag.owouploader.api.model;
 
+import java.util.Date;
+
 /**
  * Stores result of a call to the {@code objects} endpoint.
  */
 public class ObjectModel {
 
+    private String bucket;
+    private String key;
+    private String dir;
+    private ObjectType type;
+    private String destUrl;
+    private String contentType;
+    private String contentLength;
+    private Date createdAt;
+    private Date deletedAt;
+    private String deleteReason;
+    private String md5Hash;
+    private String associatedWithCurrentUser;
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public ObjectType getType() {
+        return type;
+    }
+
+    public String getDestUrl() {
+        return destUrl;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getContentLength() {
+        return contentLength;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public String getDeleteReason() {
+        return deleteReason;
+    }
+
+    public String getMd5Hash() {
+        return md5Hash;
+    }
+
+    public String getAssociatedWithCurrentUser() {
+        return associatedWithCurrentUser;
+    }
+
+    /**
+     * Enum that represents object types.
+     */
+    public enum ObjectType {
+        FILE, REDIRECT, TOMBSTONE
+    }
 }
