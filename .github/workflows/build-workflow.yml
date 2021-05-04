@@ -1,0 +1,43 @@
+name: Build
+
+# Trigger workflow on pull request and merge
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build project
+        run: ./gradlew build
+  test-unit:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: run unit tests
+        run: ./gradlew test
+  test-instrumented:
+    runs-on: macos-latest
+    needs: build
+    strategy:
+      matrix:
+        api-level: [23, 30]
+        target: [default]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedCheck
