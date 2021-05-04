@@ -33,9 +33,8 @@ public interface PolrService {
      *
      * @param endpoint the endpoint
      * @param url URL to shorten
-     * @param resultUrl shorten url used
      * @return {@link Call} of type {@link String}
      */
-    @GET("shorten/polr?action=shorten")
-    Call<String> shorten(@Url String endpoint, @Query("url") String url, @Query("resultUrl") String resultUrl);
+    @GET
+    Call<String> shorten(@Url String endpoint, @Query("url") String url);
 }

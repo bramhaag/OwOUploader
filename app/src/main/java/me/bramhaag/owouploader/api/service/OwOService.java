@@ -31,6 +31,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * Service that implement the OwO API.
@@ -104,13 +105,23 @@ public interface OwOService extends PolrService, PomfService {
     }
 
     /**
-     * Shorten link using the shorten endpoint.
+     * Shorten link using a specified endpoint.
      *
+     * @param endpoint  the endpoint
      * @param url       URL to shorten
      * @param resultUrl shorten url used
      * @return {@link Call} of type {@link String}
      */
-    default Call<String> shorten(@Query("url") String url, @Query("resultUrl") String resultUrl) {
-        return shorten("shorten/polr?action=shorten", url, resultUrl);
+    @GET("shorten/polr?action=shorten")
+    Call<String> shorten(@Url String endpoint, @Query("url") String url, @Query("resultUrl") String resultUrl);
+
+    /**
+     * Shorten link using the shorten endpoint.
+     *
+     * @param url URL to shorten
+     * @return {@link Call} of type {@link String}
+     */
+    default Call<String> shorten(@Query("url") String url) {
+        return shorten("shorten/polr?action=shorten", url);
     }
 }

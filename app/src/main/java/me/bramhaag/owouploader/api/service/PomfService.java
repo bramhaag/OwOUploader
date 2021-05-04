@@ -38,7 +38,7 @@ public interface PomfService {
      * @param file file to upload
      * @return {@link Call} of type {@link UploadModel}
      */
+    @POST
     @Multipart
-    @POST("upload/pomf")
     Call<UploadModel> upload(@Url String endpoint, @Part MultipartBody.Part file);
 }
