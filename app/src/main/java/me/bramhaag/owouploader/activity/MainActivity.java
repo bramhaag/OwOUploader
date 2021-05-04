@@ -18,12 +18,13 @@
 
 package me.bramhaag.owouploader.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
+import androidx.appcompat.app.AppCompatActivity;
 import me.bramhaag.owouploader.R;
 
+/**
+ * Main activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
