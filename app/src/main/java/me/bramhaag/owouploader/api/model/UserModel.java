@@ -22,5 +22,29 @@ package me.bramhaag.owouploader.api.model;
  * Stores result of a call to the {@code users} endpoint.
  */
 public class UserModel {
+    private String userId;
+    private String username;
+    private String email;
+    private boolean isAdmin;
+    private boolean isBlocked;
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
 }
