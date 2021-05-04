@@ -28,7 +28,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        api-level: [23, 30]
+        api-level: [26, 30]
         target: [google_apis]
     steps:
       - name: checkout
