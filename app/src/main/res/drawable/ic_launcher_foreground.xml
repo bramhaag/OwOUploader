@@ -1,0 +1,39 @@
+<!--
+  ~ OwO Uploader
+  ~ Copyright (C) 2021
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <path
+      android:pathData="m41.388,55.654q0,3.528 -1.113,6.244 -1.113,2.716 -3.17,4.19 -2.043,1.457 -4.664,1.457 -2.621,0 -4.65,-1.408 -2.029,-1.424 -3.17,-4.058 -1.127,-2.633 -1.184,-6.045l0,-1.358q0,-3.544 1.099,-6.244 1.113,-2.716 3.17,-4.19 2.071,-1.474 4.706,-1.474 2.607,0 4.65,1.457 2.043,1.457 3.17,4.157 1.141,2.683 1.155,6.161zM36.358,54.644q0,-3.594 -1.029,-5.449 -1.015,-1.871 -2.917,-1.871 -3.72,0 -3.931,6.558l-0.014,1.772q0,3.544 1,5.449 1,1.905 2.973,1.905 1.874,0 2.889,-1.871 1.015,-1.871 1.029,-5.382z"
+      android:strokeWidth="0.195534"
+      android:fillColor="#ffffff"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="m59.833,58.221 l2.353,-15.121l4.904,0L62.735,67.214L57.606,67.214L54.859,53.468 52.167,67.214L47.053,67.214L42.685,43.101l4.918,0l2.353,15.121 2.818,-15.121l4.199,0z"
+      android:strokeWidth="0.195534"
+      android:fillColor="#ffffff"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="m86.393,55.654q0,3.528 -1.113,6.244 -1.113,2.716 -3.17,4.19 -2.043,1.457 -4.664,1.457 -2.621,0 -4.65,-1.408 -2.029,-1.424 -3.17,-4.058 -1.127,-2.633 -1.184,-6.045l0,-1.358q0,-3.544 1.099,-6.244 1.113,-2.716 3.17,-4.19 2.071,-1.474 4.706,-1.474 2.607,0 4.65,1.457 2.043,1.457 3.17,4.157 1.141,2.683 1.155,6.161zM81.363,54.644q0,-3.594 -1.029,-5.449 -1.015,-1.871 -2.917,-1.871 -3.72,0 -3.931,6.558l-0.014,1.772q0,3.544 1,5.449 1,1.905 2.973,1.905 1.874,0 2.889,-1.871 1.015,-1.871 1.029,-5.382z"
+      android:strokeWidth="0.195534"
+      android:fillColor="#ffffff"
+      android:strokeColor="#00000000"/>
+</vector>
