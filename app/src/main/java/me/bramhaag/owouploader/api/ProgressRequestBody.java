@@ -31,7 +31,7 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 /**
- * {@link RequestBody} implementation that publishes progress using a {@link Observable}.
+ * {@link RequestBody} implementation that publishes progress using a {@link ProgressResultCallback}.
  */
 public class ProgressRequestBody extends RequestBody {
 
