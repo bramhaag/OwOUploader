@@ -21,7 +21,6 @@ package me.bramhaag.owouploader.api;
 import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.reactivex.Observable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
