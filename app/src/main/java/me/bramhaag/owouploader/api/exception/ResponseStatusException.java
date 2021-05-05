@@ -18,6 +18,9 @@
 
 package me.bramhaag.owouploader.api.exception;
 
+/**
+ * Exception associated with HTTP response status codes and messages.
+ */
 public class ResponseStatusException extends RuntimeException {
 
     public ResponseStatusException(int code, String message) {

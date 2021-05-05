@@ -18,11 +18,12 @@
 
 package me.bramhaag.owouploader.api;
 
+import android.webkit.MimeTypeMap;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -33,20 +34,51 @@ import okio.BufferedSink;
  */
 public class ProgressRequestBody extends RequestBody {
 
+    private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
     private static final int DEFAULT_BUFFER_SIZE = 2048;
 
+    @NonNull
     private final File file;
+    @NonNull
     private final ProgressResult<?> progressResult;
 
-    public ProgressRequestBody(File file, ProgressResult<?> progressResult) {
+    @NonNull
+    private final MediaType contentType;
+
+    /**
+     * Create a new {@link ProgressRequestBody} with an automatically determined content type.
+     *
+     * @param file           the file
+     * @param progressResult the callbacks
+     */
+    public ProgressRequestBody(@NonNull File file, @NonNull ProgressResult<?> progressResult) {
+        this(file, null, progressResult);
+    }
+
+    /**
+     * Create a new {@link ProgressRequestBody} with the provided content type.
+     *
+     * @param file           the file
+     * @param contentType    the content type
+     * @param progressResult the callbacks
+     */
+    public ProgressRequestBody(@NonNull File file, @Nullable String contentType,
+            @NonNull ProgressResult<?> progressResult) {
         this.file = file;
         this.progressResult = progressResult;
+
+        if (contentType == null) {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName());
+            contentType = extension == null
+                    ? DEFAULT_CONTENT_TYPE : MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+
+        this.contentType = MediaType.get(contentType);
     }
 
     @Override
     public MediaType contentType() {
-        //FIXME
-        return MediaType.get("application/octet-stream");
+        return this.contentType;
     }
 
     @Override
@@ -55,33 +87,53 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     @Override
-    public void writeTo(BufferedSink sink) throws IOException {
-        double uploadedCount = 0.0;
-        double uploadedPercentage = 0.0;
+    public void writeTo(@NonNull BufferedSink sink) throws IOException {
+        double uploaded = 0.0;
+        double progress = 0.0;
 
         var buffer = new byte[DEFAULT_BUFFER_SIZE];
 
         try (var in = new FileInputStream(file)) {
             int read;
             while ((read = in.read(buffer)) != -1) {
-                uploadedCount += read;
+                uploaded += read;
                 sink.write(buffer, 0, read);
 
-                double currentProgress = uploadedCount / contentLength();
-                if (currentProgress - uploadedPercentage > 0.01 || currentProgress == 1.0) {
-                    uploadedPercentage = currentProgress;
-                    this.progressResult.onProgress(uploadedPercentage);
+                double currentProgress = uploaded / contentLength();
+                if (currentProgress - progress > 0.01 || currentProgress == 1.0) {
+                    progress = currentProgress;
+                    this.progressResult.onProgress(progress);
                 }
             }
         }
     }
 
+    /**
+     * Callbacks for a call.
+     *
+     * @param <T> the type of the result
+     */
     public interface ProgressResult<T> {
 
+        /**
+         * Called on progress update. A call to this method does not guarantee that the progress has changed.
+         *
+         * @param progress the progress
+         */
         void onProgress(double progress);
 
-        void onError(Throwable throwable);
+        /**
+         * Called when an error occurred during or after uploading.
+         *
+         * @param throwable the error
+         */
+        void onError(@NonNull Throwable throwable);
 
-        void onComplete(T result);
+        /**
+         * Called when the upload is successfully completed.
+         *
+         * @param result the result of the upload
+         */
+        void onComplete(@NonNull T result);
     }
 }

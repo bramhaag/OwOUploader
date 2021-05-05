@@ -18,6 +18,8 @@
 
 package me.bramhaag.owouploader.api;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import java.io.File;
 import me.bramhaag.owouploader.BuildConfig;
@@ -41,64 +43,81 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 public class OwOAPI {
 
-    private OwOService service;
+    private final OwOService service;
 
     private static final String USER_AGENT = String.format("WhatsThisClient (%s, %s)",
             "https://github.com/bramhaag/OwOUploader", BuildConfig.VERSION_CODE);
 
     private static final String DEFAULT_ENDPOINT = "https://api.awau.moe/";
 
-    public OwOAPI(final String key) {
+    /**
+     * Initialize a new instance of OwO API with an API key.
+     *
+     * @param key the API key
+     */
+    public OwOAPI(String key) {
         this.service = createService(key);
     }
 
-    public void uploadFile(File file, ProgressResult<UploadModel> progressResult, boolean associated) {
+    /**
+     * Upload a file asynchronously.
+     *
+     * @param file           the file
+     * @param progressResult the callbacks
+     * @param associated     uses associated endpoint when set to true
+     */
+    public void uploadFile(@NonNull File file, @NonNull ProgressResult<UploadModel> progressResult,
+            boolean associated) {
         var filePart = new ProgressRequestBody(file, progressResult);
         var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
 
         var call = associated ? service.uploadAssociated(requestBody) : service.upload(requestBody);
+        enqueueCall(call, progressResult);
+    }
+
+    /**
+     * Shorten a URL asynchronously.
+     *
+     * @param url            the url to shorten
+     * @param resultUrl      the resulting base url, or default if null
+     * @param progressResult the callbacks
+     * @param associated     uses associated endpoint when set to true
+     */
+    public void shortenUrl(@NonNull String url, @Nullable String resultUrl,
+            @NonNull ProgressResult<String> progressResult, boolean associated) {
+        var call = associated ? service.shortenAssociated(url, resultUrl) : service.shorten(url, resultUrl);
+        enqueueCall(call, progressResult);
+    }
+
+    /**
+     * Enqueue a call with callbacks.
+     *
+     * @param call           the call
+     * @param progressResult the callbacks
+     * @param <T>            the type of the result
+     */
+    public <T> void enqueueCall(@NonNull Call<T> call, @NonNull ProgressResult<T> progressResult) {
         call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<UploadModel> call, Response<UploadModel> response) {
+            public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    //FIXME dumb
                     progressResult.onError(new ResponseStatusException(response.code(), response.message()));
                     return;
                 }
 
+                progressResult.onProgress(1.0);
                 progressResult.onComplete(response.body());
             }
 
             @Override
-            public void onFailure(Call<UploadModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
                 progressResult.onError(t);
             }
         });
     }
 
-
-    public void shortenUrl(String url, ProgressResult<String> progressResult, boolean associated) {
-        var call = associated ? service.shortenAssociated(url, null) : service.shorten(url);
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (!response.isSuccessful() || response.body() == null) {
-                    //FIXME dumb
-                    progressResult.onError(new ResponseStatusException(response.code(), response.message()));
-                    return;
-                }
-
-                progressResult.onComplete(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                progressResult.onError(t);
-            }
-        });
-    }
-
-    private static OwOService createService(final String key) {
+    @NonNull
+    private static OwOService createService(@NonNull final String key) {
         var client = new OkHttpClient.Builder().addInterceptor(chain -> {
             var request = chain.request();
             var url = request.url().newBuilder().addQueryParameter("key", key).build();
