@@ -22,6 +22,8 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
@@ -34,15 +36,11 @@ public class ProgressRequestBody extends RequestBody {
     private static final int DEFAULT_BUFFER_SIZE = 2048;
 
     private final File file;
-    private final PublishSubject<Double> progress;
+    private final ProgressResult<?> progressResult;
 
-    public ProgressRequestBody(File file) {
+    public ProgressRequestBody(File file, ProgressResult<?> progressResult) {
         this.file = file;
-        this.progress = PublishSubject.create();
-    }
-
-    public Observable<Double> getProgress() {
-        return progress;
+        this.progressResult = progressResult;
     }
 
     @Override
@@ -57,7 +55,7 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     @Override
-    public void writeTo(BufferedSink sink) {
+    public void writeTo(BufferedSink sink) throws IOException {
         double uploadedCount = 0.0;
         double uploadedPercentage = 0.0;
 
@@ -72,13 +70,18 @@ public class ProgressRequestBody extends RequestBody {
                 double currentProgress = uploadedCount / contentLength();
                 if (currentProgress - uploadedPercentage > 0.01 || currentProgress == 1.0) {
                     uploadedPercentage = currentProgress;
-                    this.progress.onNext(uploadedPercentage);
+                    this.progressResult.onProgress(uploadedPercentage);
                 }
             }
-        } catch (Exception ex) {
-            this.progress.onError(ex);
         }
+    }
 
-        this.progress.onComplete();
+    public interface ProgressResult<T> {
+
+        void onProgress(double progress);
+
+        void onError(Throwable throwable);
+
+        void onComplete(T result);
     }
 }

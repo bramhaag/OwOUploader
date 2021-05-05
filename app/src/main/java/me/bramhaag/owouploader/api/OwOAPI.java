@@ -19,11 +19,18 @@
 package me.bramhaag.owouploader.api;
 
 import com.google.gson.GsonBuilder;
+import java.io.File;
 import me.bramhaag.owouploader.BuildConfig;
+import me.bramhaag.owouploader.api.ProgressRequestBody.ProgressResult;
 import me.bramhaag.owouploader.api.deserializer.UploadModelDeserializer;
+import me.bramhaag.owouploader.api.exception.ResponseStatusException;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.service.OwOService;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -43,6 +50,34 @@ public class OwOAPI {
 
     public OwOAPI(final String key) {
         this.service = createService(key);
+    }
+
+    public void uploadFile(File file, ProgressResult<UploadModel> progressResult, boolean associated) {
+        var filePart = new ProgressRequestBody(file, progressResult);
+        var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
+
+        var call = associated ? service.uploadAssociated(requestBody) : service.upload(requestBody);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<UploadModel> call, Response<UploadModel> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    //TODO test this
+                    throw new ResponseStatusException(response.code(), response.message());
+                }
+
+                progressResult.onComplete(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<UploadModel> call, Throwable t) {
+                progressResult.onError(t);
+            }
+        });
+    }
+
+
+    public void shortenUrl() {
+
     }
 
     private static OwOService createService(final String key) {

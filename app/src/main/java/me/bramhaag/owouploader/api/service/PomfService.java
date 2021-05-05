@@ -18,7 +18,7 @@
 
 package me.bramhaag.owouploader.api.service;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -41,5 +41,5 @@ public interface PomfService {
      */
     @POST
     @Multipart
-    Observable<UploadModel> upload(@Url String endpoint, @Part MultipartBody.Part file);
+    Call<UploadModel> upload(@Url String endpoint, @Part MultipartBody.Part file);
 }

@@ -16,27 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.service;
+package me.bramhaag.owouploader.api.exception;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.http.Url;
+public class ResponseStatusException extends RuntimeException {
 
-/**
- * Service that implement the Polr API.
- */
-public interface PolrService {
+    public ResponseStatusException(int code, String message) {
+        super("Error " + code + ": " + message);
+    }
 
-    /**
-     * Shorten link using a specified endpoint.
-     *
-     * @param endpoint the endpoint
-     * @param url URL to shorten
-     * @return {@link Call} of type {@link String}
-     */
-    @GET
-    Call<String> shorten(@Url String endpoint, @Query("url") String url);
 }
