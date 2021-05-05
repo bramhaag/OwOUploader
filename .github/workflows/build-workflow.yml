@@ -51,6 +51,7 @@ jobs:
   test-unit:
     runs-on: ubuntu-latest
     needs: build
+    environment: testing_env
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -72,6 +73,7 @@ jobs:
   test-instrumented:
     runs-on: macos-latest
     needs: build
+    environment: testing_env
     strategy:
       matrix:
         api-level: [26, 30]
