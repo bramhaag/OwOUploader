@@ -27,7 +27,7 @@ jobs:
           distribution: "adopt"
           java-version: "11"
       - name: build project
-        run: ./gradlew build
+        run: ./gradlew assemble
   checkstyle:
     runs-on: ubuntu-latest
     steps:
