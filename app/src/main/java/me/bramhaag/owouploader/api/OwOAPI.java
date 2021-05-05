@@ -61,8 +61,9 @@ public class OwOAPI {
             @Override
             public void onResponse(Call<UploadModel> call, Response<UploadModel> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    //TODO test this
-                    throw new ResponseStatusException(response.code(), response.message());
+                    //FIXME dumb
+                    progressResult.onError(new ResponseStatusException(response.code(), response.message()));
+                    return;
                 }
 
                 progressResult.onComplete(response.body());
@@ -76,8 +77,25 @@ public class OwOAPI {
     }
 
 
-    public void shortenUrl() {
+    public void shortenUrl(String url, ProgressResult<String> progressResult, boolean associated) {
+        var call = associated ? service.shortenAssociated(url, null) : service.shorten(url);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    //FIXME dumb
+                    progressResult.onError(new ResponseStatusException(response.code(), response.message()));
+                    return;
+                }
 
+                progressResult.onComplete(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressResult.onError(t);
+            }
+        });
     }
 
     private static OwOService createService(final String key) {

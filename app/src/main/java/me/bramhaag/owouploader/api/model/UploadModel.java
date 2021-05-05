@@ -42,4 +42,14 @@ public class UploadModel {
     public long getSize() {
         return size;
     }
+
+    @Override
+    public String toString() {
+        return "UploadModel{" +
+                "hash='" + hash + '\'' +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", size=" + size +
+                '}';
+    }
 }
