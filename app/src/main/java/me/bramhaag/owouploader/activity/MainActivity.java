@@ -27,7 +27,6 @@ import me.bramhaag.owouploader.R;
  * Main activity.
  */
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

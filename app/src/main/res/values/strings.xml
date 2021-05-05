@@ -3,5 +3,5 @@
     <string name="logo_name">OwO</string>
     <string name="logo_branding">A private, Pomf-compatible file host.</string>
     <string name="login_hint_token">Authentication Token</string>
-    <string name="login_button_continue">Skip Initial Setup</string>
+    <string name="login_button_continue">Enter</string>
 </resources>
