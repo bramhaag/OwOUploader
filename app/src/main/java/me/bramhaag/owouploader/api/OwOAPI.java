@@ -23,7 +23,8 @@ import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import java.io.File;
 import me.bramhaag.owouploader.BuildConfig;
-import me.bramhaag.owouploader.api.ProgressRequestBody.ProgressResult;
+import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
+import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.deserializer.UploadModelDeserializer;
 import me.bramhaag.owouploader.api.exception.ResponseStatusException;
 import me.bramhaag.owouploader.api.model.UploadModel;
@@ -66,7 +67,7 @@ public class OwOAPI {
      * @param progressResult the callbacks
      * @param associated     uses associated endpoint when set to true
      */
-    public void uploadFile(@NonNull File file, @NonNull ProgressResult<UploadModel> progressResult,
+    public void uploadFile(@NonNull File file, @NonNull ProgressResultCallback<UploadModel> progressResult,
             boolean associated) {
         var filePart = new ProgressRequestBody(file, progressResult);
         var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
@@ -84,7 +85,7 @@ public class OwOAPI {
      * @param associated     uses associated endpoint when set to true
      */
     public void shortenUrl(@NonNull String url, @Nullable String resultUrl,
-            @NonNull ProgressResult<String> progressResult, boolean associated) {
+            @NonNull ResultCallback<String> progressResult, boolean associated) {
         var call = associated ? service.shortenAssociated(url, resultUrl) : service.shorten(url, resultUrl);
         enqueueCall(call, progressResult);
     }
@@ -92,26 +93,25 @@ public class OwOAPI {
     /**
      * Enqueue a call with callbacks.
      *
-     * @param call           the call
-     * @param progressResult the callbacks
-     * @param <T>            the type of the result
+     * @param call   the call
+     * @param result the callbacks
+     * @param <T>    the type of the result
      */
-    public <T> void enqueueCall(@NonNull Call<T> call, @NonNull ProgressResult<T> progressResult) {
+    public <T> void enqueueCall(@NonNull Call<T> call, @NonNull ResultCallback<T> result) {
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    progressResult.onError(new ResponseStatusException(response.code(), response.message()));
+                    result.onError(new ResponseStatusException(response.code(), response.message()));
                     return;
                 }
 
-                progressResult.onProgress(1.0);
-                progressResult.onComplete(response.body());
+                result.onComplete(response.body());
             }
 
             @Override
             public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
-                progressResult.onError(t);
+                result.onError(t);
             }
         });
     }

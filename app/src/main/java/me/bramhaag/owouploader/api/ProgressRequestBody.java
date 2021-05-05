@@ -25,6 +25,7 @@ import io.reactivex.Observable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
@@ -40,7 +41,7 @@ public class ProgressRequestBody extends RequestBody {
     @NonNull
     private final File file;
     @NonNull
-    private final ProgressResult<?> progressResult;
+    private final ProgressResultCallback<?> progressResult;
 
     @NonNull
     private final MediaType contentType;
@@ -51,7 +52,7 @@ public class ProgressRequestBody extends RequestBody {
      * @param file           the file
      * @param progressResult the callbacks
      */
-    public ProgressRequestBody(@NonNull File file, @NonNull ProgressResult<?> progressResult) {
+    public ProgressRequestBody(@NonNull File file, @NonNull ProgressResultCallback<?> progressResult) {
         this(file, null, progressResult);
     }
 
@@ -63,7 +64,7 @@ public class ProgressRequestBody extends RequestBody {
      * @param progressResult the callbacks
      */
     public ProgressRequestBody(@NonNull File file, @Nullable String contentType,
-            @NonNull ProgressResult<?> progressResult) {
+            @NonNull ProgressResultCallback<?> progressResult) {
         this.file = file;
         this.progressResult = progressResult;
 
@@ -106,34 +107,5 @@ public class ProgressRequestBody extends RequestBody {
                 }
             }
         }
-    }
-
-    /**
-     * Callbacks for a call.
-     *
-     * @param <T> the type of the result
-     */
-    public interface ProgressResult<T> {
-
-        /**
-         * Called on progress update. A call to this method does not guarantee that the progress has changed.
-         *
-         * @param progress the progress
-         */
-        void onProgress(double progress);
-
-        /**
-         * Called when an error occurred during or after uploading.
-         *
-         * @param throwable the error
-         */
-        void onError(@NonNull Throwable throwable);
-
-        /**
-         * Called when the upload is successfully completed.
-         *
-         * @param result the result of the upload
-         */
-        void onComplete(@NonNull T result);
     }
 }
