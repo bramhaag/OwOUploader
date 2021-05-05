@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.api.service;
 
+import io.reactivex.Observable;
 import java.util.List;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
@@ -46,7 +47,7 @@ public interface OwOService extends PolrService, PomfService {
      */
     @Multipart
     @POST("upload/pomf/associated")
-    Call<UploadModel> uploadAssociated(@Part MultipartBody.Part file);
+    Observable<UploadModel> uploadAssociated(@Part MultipartBody.Part file);
 
     /**
      * Shorten link using the associated shorten endpoint.
@@ -56,7 +57,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} of type {@link String}
      */
     @GET("shorten/polr/associated?action=shorten")
-    Call<String> shortenAssociated(@Query("url") String url, @Query("resultUrl") String resultUrl);
+    Observable<String> shortenAssociated(@Query("url") String url, @Query("resultUrl") String resultUrl);
 
     /**
      * Get {@code limit} objects.
@@ -66,7 +67,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} with a list of {@link ObjectModel}s
      */
     @GET("objects")
-    Call<List<ObjectModel>> getObjects(@Query("limit") int limit, @Query("offset") int offset);
+    Observable<List<ObjectModel>> getObjects(@Query("limit") int limit, @Query("offset") int offset);
 
     /**
      * Get an object.
@@ -75,7 +76,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} of type {@link ObjectModel}
      */
     @GET("objects/{key}")
-    Call<ObjectModel> getObject(@Path("key") String key);
+    Observable<ObjectModel> getObject(@Path("key") String key);
 
     /**
      * Get and delete an object.
@@ -84,7 +85,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} of type {@link ObjectModel}
      */
     @DELETE("objects/{key}")
-    Call<ObjectModel> deleteObject(@Path("key") String key);
+    Observable<ObjectModel> deleteObject(@Path("key") String key);
 
     /**
      * Get the current user's details.
@@ -92,7 +93,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} of type {@link UserModel}
      */
     @GET("user/me")
-    Call<UserModel> getUser();
+    Observable<UserModel> getUser();
 
     /**
      * Upload a file to the upload endpoint.
@@ -100,7 +101,7 @@ public interface OwOService extends PolrService, PomfService {
      * @param file file to upload
      * @return {@link Call} of type {@link UploadModel}
      */
-    default Call<UploadModel> upload(@Part MultipartBody.Part file) {
+    default Observable<UploadModel> upload(@Part MultipartBody.Part file) {
         return upload("upload/pomf", file);
     }
 
@@ -113,7 +114,7 @@ public interface OwOService extends PolrService, PomfService {
      * @return {@link Call} of type {@link String}
      */
     @GET("shorten/polr?action=shorten")
-    Call<String> shorten(@Url String endpoint, @Query("url") String url, @Query("resultUrl") String resultUrl);
+    Observable<String> shorten(@Url String endpoint, @Query("url") String url, @Query("resultUrl") String resultUrl);
 
     /**
      * Shorten link using the shorten endpoint.
@@ -121,7 +122,7 @@ public interface OwOService extends PolrService, PomfService {
      * @param url URL to shorten
      * @return {@link Call} of type {@link String}
      */
-    default Call<String> shorten(@Query("url") String url) {
+    default Observable<String> shorten(@Query("url") String url) {
         return shorten("shorten/polr?action=shorten", url);
     }
 }

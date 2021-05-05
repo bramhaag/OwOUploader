@@ -25,6 +25,7 @@ import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.service.OwOService;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
@@ -55,12 +56,14 @@ public class OwOAPI {
         var gsonConverter = GsonConverterFactory.create(new GsonBuilder()
                 .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
                 .create());
+        var rxJavaAdapter = RxJava2CallAdapterFactory.createAsync();
 
         var retrofit = new Retrofit.Builder()
                 .baseUrl(DEFAULT_ENDPOINT)
                 .client(client)
                 .addConverterFactory(scalarsConverter)
                 .addConverterFactory(gsonConverter)
+                .addCallAdapterFactory(rxJavaAdapter)
                 .build();
 
         return retrofit.create(OwOService.class);

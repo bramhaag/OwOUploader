@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.api.service;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -36,5 +37,5 @@ public interface PolrService {
      * @return {@link Call} of type {@link String}
      */
     @GET
-    Call<String> shorten(@Url String endpoint, @Query("url") String url);
+    Observable<String> shorten(@Url String endpoint, @Query("url") String url);
 }
