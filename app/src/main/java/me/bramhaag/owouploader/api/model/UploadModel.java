@@ -18,6 +18,8 @@
 
 package me.bramhaag.owouploader.api.model;
 
+import androidx.annotation.NonNull;
+
 /**
  * Stores the result of a call to the {@code upload} endpoint.
  */
@@ -42,5 +44,16 @@ public class UploadModel {
 
     public long getSize() {
         return size;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "UploadModel{"
+                + "hash='" + hash + '\''
+                + ", name='" + name + '\''
+                + ", url='" + url + '\''
+                + ", size=" + size
+                + '}';
     }
 }

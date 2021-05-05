@@ -24,6 +24,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
+import me.bramhaag.owouploader.api.exception.ResponseStatusException;
 import me.bramhaag.owouploader.api.model.UploadModel;
 
 /**
@@ -37,6 +38,13 @@ public class UploadModelDeserializer implements JsonDeserializer<UploadModel> {
     @Override
     public UploadModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-        return GSON.fromJson(json.getAsJsonObject().get("files").getAsJsonArray().get(0), UploadModel.class);
+        var object = json.getAsJsonObject();
+
+        var success = object.get("success").getAsBoolean();
+        if (!success) {
+            return null;
+        }
+
+        return GSON.fromJson(object.get("files").getAsJsonArray().get(0), UploadModel.class);
     }
 }

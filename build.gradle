@@ -5,9 +5,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // FIXME Latest (alpha15) is broken
+        // FIXME update to latest when not broken
+        // alpha15 = broken.
+        // alpha03/04 = broken with hilt
+        // alpha05 seems to work.
         //noinspection AndroidGradlePluginVersion
-        classpath 'com.android.tools.build:gradle:7.0.0-alpha03'
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha05'
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.7.1.1"
 
         // NOTE: Do not place your application dependencies here; they belong

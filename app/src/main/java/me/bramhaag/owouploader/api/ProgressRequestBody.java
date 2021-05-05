@@ -59,21 +59,22 @@ public class ProgressRequestBody extends RequestBody {
      * Create a new {@link ProgressRequestBody} with the provided content type.
      *
      * @param file           the file
-     * @param contentType    the content type
+     * @param typeString     the content type
      * @param progressResult the callbacks
      */
-    public ProgressRequestBody(@NonNull File file, @Nullable String contentType,
+    public ProgressRequestBody(@NonNull File file, @Nullable String typeString,
             @NonNull ProgressResultCallback<?> progressResult) {
         this.file = file;
         this.progressResult = progressResult;
 
-        if (contentType == null) {
+        if (typeString == null) {
             String extension = MimeTypeMap.getFileExtensionFromUrl(file.getName());
-            contentType = extension == null
-                    ? DEFAULT_CONTENT_TYPE : MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            if (!extension.isEmpty()) {
+                typeString = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            }
         }
 
-        this.contentType = MediaType.get(contentType);
+        this.contentType = typeString == null ? MediaType.get(DEFAULT_CONTENT_TYPE) : MediaType.get(typeString);
     }
 
     @Override
