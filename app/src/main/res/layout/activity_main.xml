@@ -73,8 +73,6 @@
       app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
       app:contentScrim="@color/owoblue"
       app:expandedTitleGravity="bottom|center_horizontal"
-      app:expandedTitleMarginEnd="64dp"
-      app:expandedTitleMarginStart="48dp"
       app:expandedTitleTextAppearance="@style/ExpandedAppBar"
       app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
