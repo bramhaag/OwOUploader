@@ -38,6 +38,7 @@ import java.io.IOException;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
+import me.bramhaag.owouploader.api.model.UserModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +55,9 @@ class OwOAPITest {
 
     @Mock
     ProgressResultCallback<UploadModel> uploadCallback;
+
+    @Mock
+    ProgressResultCallback<UserModel> userCallback;
 
     @BeforeAll
     public static void setUp() {
@@ -104,5 +108,12 @@ class OwOAPITest {
         api.shortenUrl("https://google.com/", "https://example.com/", shortenCallback, false);
         verify(shortenCallback, timeout(5000)).onComplete(startsWith("https://example.com/"));
         verify(shortenCallback, times(0)).onError(any());
+    }
+
+    @Test
+    void getUser() {
+        api.getUser(userCallback);
+        verify(userCallback, timeout(5000)).onComplete(notNull());
+        verify(userCallback, times(0)).onError(any());
     }
 }
