@@ -27,7 +27,7 @@ jobs:
           distribution: "adopt"
           java-version: "11"
       - name: build project
-        run: ./gradlew build
+        run: ./gradlew assemble --stacktrace
   checkstyle:
     runs-on: ubuntu-latest
     steps:
@@ -47,10 +47,11 @@ jobs:
           distribution: "adopt"
           java-version: "11"
       - name: checkstyle
-        run: ./gradlew checkstyle
+        run: ./gradlew checkstyle --stacktrace
   test-unit:
     runs-on: ubuntu-latest
     needs: build
+    environment: testing_env
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -68,10 +69,13 @@ jobs:
           distribution: "adopt"
           java-version: "11"
       - name: run unit tests
-        run: ./gradlew test
+        run: ./gradlew test --stacktrace
+        env:
+          OWO_TEST_TOKEN: ${{ secrets.OWO_TEST_TOKEN }}
   test-instrumented:
     runs-on: macos-latest
     needs: build
+    environment: testing_env
     strategy:
       matrix:
         api-level: [26, 30]
@@ -99,4 +103,4 @@ jobs:
           target: ${{ matrix.target }}
           arch: x86_64
           profile: Nexus 6
-          script: ./gradlew connectedCheck
+          script: ./gradlew connectedCheck --stacktrace

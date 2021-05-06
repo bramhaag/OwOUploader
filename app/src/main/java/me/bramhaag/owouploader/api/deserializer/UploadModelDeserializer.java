@@ -16,22 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.api.deserializer;
 
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
+import com.google.gson.JsonObject;
+import me.bramhaag.owouploader.api.model.UploadModel;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Custom {@link com.google.gson.JsonDeserializer} to deserialize {@link UploadModel}.
  */
-public class ExampleUnitTest {
+public class UploadModelDeserializer extends ResponseDeserializer<UploadModel> {
 
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    @Override
+    UploadModel deserialize(JsonObject jsonObject) {
+        return GSON.fromJson(jsonObject.get("files").getAsJsonArray().get(0), UploadModel.class);
     }
 }
