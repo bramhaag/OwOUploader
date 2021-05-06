@@ -5,14 +5,58 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".activity.MainActivity">
+  tools:context=".activity.MainActivity"
+  android:background="@color/background">
 
-  <androidx.viewpager2.widget.ViewPager2
+  <androidx.viewpager.widget.ViewPager
     android:id="@+id/viewPager"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="15dp"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+  <com.getbase.floatingactionbutton.FloatingActionsMenu
+    android:id="@+id/multiple_actions"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_gravity="end|bottom"
+    fab:fab_addButtonColorNormal="@color/fabColor"
+    fab:fab_addButtonColorPressed="@color/fabColorPressed"
+    fab:fab_addButtonPlusIconColor="@color/fabColorIcon"
+    fab:fab_labelStyle="@style/menu_labels_style">
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_upload"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_file_upload_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Upload" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_shorten"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_link_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Shorten URL" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_screenrecord"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_mobile_screen_share_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Start screen recording" />
+
+  </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="wrap_content"
@@ -26,13 +70,13 @@
       android:layout_height="200dp"
       android:background="@color/owoblue"
       android:fitsSystemWindows="true"
+      app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
       app:contentScrim="@color/owoblue"
+      app:expandedTitleGravity="bottom|center_horizontal"
       app:expandedTitleMarginEnd="64dp"
       app:expandedTitleMarginStart="48dp"
-      app:layout_scrollFlags="scroll|exitUntilCollapsed"
-      app:expandedTitleGravity="bottom|center_horizontal"
       app:expandedTitleTextAppearance="@style/ExpandedAppBar"
-      app:collapsedTitleTextAppearance="@style/CollapsedAppBar">
+      app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
       <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -42,8 +86,7 @@
         app:layout_scrollFlags="scroll|enterAlways"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="OwO"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:titleTextColor="#ffffff" />
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium" />
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     <com.google.android.material.tabs.TabLayout
@@ -52,11 +95,10 @@
       android:layout_height="wrap_content"
       app:tabBackground="@color/owoblue"
       app:tabGravity="fill"
-      app:tabIndicatorColor="@android:color/white"
+      app:tabIndicatorColor="@color/tabIndicatorColor"
       app:tabMode="fixed"
-      app:tabSelectedTextColor="@android:color/white"
-      app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium"
-      app:tabTextColor="@android:color/white">
+      app:tabSelectedTextColor="@color/tabSelectedColor"
+      app:tabTextColor="@color/tabColor">
       <com.google.android.material.tabs.TabItem
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,50 +110,4 @@
     </com.google.android.material.tabs.TabLayout>
 
   </com.google.android.material.appbar.AppBarLayout>
-
-  <com.getbase.floatingactionbutton.FloatingActionsMenu
-    android:id="@+id/multiple_actions"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"
-    fab:fab_addButtonColorNormal="@color/white"
-    fab:fab_addButtonColorPressed="@color/white"
-    fab:fab_addButtonPlusIconColor="#808080"
-    android:layout_marginBottom="16dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_gravity="end|bottom"
-    fab:fab_labelStyle="@style/menu_labels_style"
-    >
-
-    <com.getbase.floatingactionbutton.FloatingActionButton
-      android:id="@+id/action_upload"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      fab:fab_colorNormal="@color/white"
-      fab:fab_title="Upload"
-      android:src="@drawable/outline_file_upload_24"
-      fab:fab_colorPressed="#f1f1f1"/>
-
-    <com.getbase.floatingactionbutton.FloatingActionButton
-      android:id="@+id/action_shorten"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      fab:fab_colorNormal="@color/white"
-      fab:fab_title="Shorten URL"
-      android:src="@drawable/outline_link_24"
-      fab:fab_colorPressed="#f1f1f1"/>
-
-    <com.getbase.floatingactionbutton.FloatingActionButton
-      android:id="@+id/action_screenrecord"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      fab:fab_colorNormal="@color/white"
-      fab:fab_title="Start screen recording"
-      android:src="@drawable/outline_mobile_screen_share_24"
-      fab:fab_colorPressed="#f1f1f1"/>
-
-  </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

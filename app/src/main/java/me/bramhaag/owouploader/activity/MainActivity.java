@@ -19,10 +19,22 @@
 package me.bramhaag.owouploader.activity;
 
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayout;
+import java.util.Arrays;
+import java.util.List;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
+import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 
 /**
  * Main activity.
@@ -34,13 +46,50 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        var toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+
+        var adapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
+
+        private final List<Pair<String, Fragment>> tabs;
+
+        public TabLayoutPageAdapter(FragmentManager fm) {
+            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
+            tabs = Arrays.asList(new Pair<>("upload", new UploadHistoryFragment()),
+                    new Pair<>("shorten", new ShortenHistoryFragment()));
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabs.get(position).first;
+        }
+
+        @Override
+        @NonNull
+        public Fragment getItem(int position) {
+            return tabs.get(position).second;
+        }
+
+        @Override
+        public int getCount() {
+            return tabs.size();
+        }
     }
 }

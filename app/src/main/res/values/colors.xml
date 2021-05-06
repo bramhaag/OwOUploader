@@ -8,4 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="owoblue">#448CCB</color>
+    <color name="fabColorPressed">#f1f1f1</color>
+    <color name="fabColor">#ffffff</color>
+    <color name="fabColorIcon">#808080</color>
+    <color name="tabIndicatorColor">#ffffff</color>
+    <color name="tabSelectedColor">#ffffff</color>
+    <color name="tabColor">#f0f0f0</color>
+    <color name="background">#f0f0f0</color>
 </resources>

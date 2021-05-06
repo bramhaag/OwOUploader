@@ -22,17 +22,22 @@
     <item name="android:textSize">72sp</item>
     <item name="android:textColor">#fff</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:font">@font/roboto_black</item>
+    <item name="android:fontFamily">@font/roboto_black</item>
   </style>
 
   <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
     <item name="android:textColor">#fff</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:font">@font/roboto_black</item>
+    <item name="android:fontFamily">@font/roboto_black</item>
   </style>
 
   <style name="menu_labels_style">
     <item name="android:background">@drawable/fab_label_background</item>
     <item name="android:textColor">@color/white</item>
+  </style>
+
+  <style name="TabTheme" parent="TextAppearance.AppCompat.Medium">
+    <item name="android:textColor">#fff</item>
+    <item name="android:fontFamily">@font/roboto_regular</item>
   </style>
 </resources>
