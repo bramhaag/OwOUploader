@@ -18,6 +18,9 @@
 
 package me.bramhaag.owouploader.api.model;
 
+import androidx.annotation.NonNull;
+import com.google.gson.annotations.SerializedName;
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -31,12 +34,13 @@ public class ObjectModel {
     private ObjectType type;
     private String destUrl;
     private String contentType;
-    private String contentLength;
+    private long contentLength;
     private Date createdAt;
     private Date deletedAt;
     private String deleteReason;
     private String md5Hash;
-    private String associatedWithCurrentUser;
+    private String sha256Hash;
+    private boolean associatedWithCurrentUser;
 
     public String getBucket() {
         return bucket;
@@ -62,7 +66,7 @@ public class ObjectModel {
         return contentType;
     }
 
-    public String getContentLength() {
+    public long getContentLength() {
         return contentLength;
     }
 
@@ -82,14 +86,43 @@ public class ObjectModel {
         return md5Hash;
     }
 
-    public String getAssociatedWithCurrentUser() {
+    public String getSha256Hash() {
+        return sha256Hash;
+    }
+
+    public boolean isAssociatedWithCurrentUser() {
         return associatedWithCurrentUser;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "ObjectModel{"
+                + "bucket='" + bucket + '\''
+                + ", key='" + key + '\''
+                + ", dir='" + dir + '\''
+                + ", type=" + type
+                + ", destUrl='" + destUrl + '\''
+                + ", contentType='" + contentType + '\''
+                + ", contentLength=" + contentLength
+                + ", createdAt=" + createdAt
+                + ", deletedAt=" + deletedAt
+                + ", deleteReason='" + deleteReason + '\''
+                + ", md5Hash='" + md5Hash + '\''
+                + ", sha256Hash='" + sha256Hash + '\''
+                + ", associatedWithCurrentUser=" + associatedWithCurrentUser
+                + '}';
     }
 
     /**
      * Enum that represents object types.
      */
     public enum ObjectType {
-        FILE, REDIRECT, TOMBSTONE
+        @SerializedName("0")
+        FILE,
+        @SerializedName("1")
+        REDIRECT,
+        @SerializedName("2")
+        TOMBSTONE
     }
 }

@@ -88,11 +88,11 @@ public interface OwOService {
      *
      * @param limit  the amount of objects to fetch
      * @param offset the amount of objects to skip
-     * @return {@link Call} with a list of {@link ObjectModel}s
+     * @return {@link Call} with an array of {@link ObjectModel}s
      */
     @GET("objects")
     @NonNull
-    Call<List<ObjectModel>> getObjects(@Query("limit") int limit, @Query("offset") int offset);
+    Call<ObjectModel[]> getObjects(@Query("limit") int limit, @Query("offset") int offset);
 
     /**
      * Get an object.
@@ -119,7 +119,7 @@ public interface OwOService {
      *
      * @return {@link Call} of type {@link UserModel}
      */
-    @GET("user/me")
+    @GET("users/me")
     @NonNull
     Call<UserModel> getUser();
 }

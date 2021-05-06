@@ -19,23 +19,25 @@
 package me.bramhaag.owouploader.api.deserializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.bramhaag.owouploader.api.model.UploadModel;
+import me.bramhaag.owouploader.api.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class UploadModelDeserializerTest {
+class UserModelDeserializerTest {
 
     private Gson gson;
 
     @BeforeEach
     void setUp() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
+                .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
     }
@@ -45,22 +47,22 @@ class UploadModelDeserializerTest {
         //language=JSON
         var input = "{\n"
                 + "  \"success\": true,\n"
-                + "  \"files\": [\n"
-                + "    {\n"
-                + "      \"success\": true,\n"
-                + "      \"hash\": \"9f76df5b93647c39fe5ec62dde46ed6b\",\n"
-                + "      \"name\": \"balloon cat.jpg\",\n"
-                + "      \"url\": \"4f23PwD.jpg\",\n"
-                + "      \"size\": 468048\n"
-                + "    }\n"
-                + "  ]\n"
+                + "  \"errorcode\": null,\n"
+                + "  \"user\": {\n"
+                + "    \"user_id\": \"a588874e-b12e-4ece-9b6d-fde185252613\",\n"
+                + "    \"username\": \"test-user\",\n"
+                + "    \"email\": \"test@email.com\",\n"
+                + "    \"is_admin\": true,\n"
+                + "    \"is_blocked\": false\n"
+                + "  }\n"
                 + "}";
 
-        var result = gson.fromJson(input, UploadModel.class);
-        assertEquals("9f76df5b93647c39fe5ec62dde46ed6b", result.getHash());
-        assertEquals("balloon cat.jpg", result.getName());
-        assertEquals("4f23PwD.jpg", result.getUrl());
-        assertEquals(468048, result.getSize());
+        var result = gson.fromJson(input, UserModel.class);
+        assertEquals("a588874e-b12e-4ece-9b6d-fde185252613", result.getUserId());
+        assertEquals("test-user", result.getUsername());
+        assertEquals("test@email.com", result.getEmail());
+        assertTrue(result.isAdmin());
+        assertFalse(result.isBlocked());
     }
 
     @Test
@@ -70,7 +72,7 @@ class UploadModelDeserializerTest {
                 + "  \"success\": false\n"
                 + "}";
 
-        var result = gson.fromJson(input, UploadModel.class);
+        var result = gson.fromJson(input, UserModel.class);
         assertNull(result);
     }
 }

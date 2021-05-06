@@ -18,6 +18,8 @@
 
 package me.bramhaag.owouploader.api.model;
 
+import androidx.annotation.NonNull;
+
 /**
  * Stores result of a call to the {@code users} endpoint.
  */
@@ -46,5 +48,17 @@ public class UserModel {
 
     public boolean isBlocked() {
         return isBlocked;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "UserModel{"
+                + "userId='" + userId + '\''
+                + ", username='" + username + '\''
+                + ", email='" + email + '\''
+                + ", isAdmin=" + isAdmin
+                + ", isBlocked=" + isBlocked
+                + '}';
     }
 }

@@ -18,16 +18,26 @@
 
 package me.bramhaag.owouploader.api.deserializer;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.bramhaag.owouploader.api.model.UploadModel;
+import me.bramhaag.owouploader.api.model.ObjectModel;
 
 /**
- * Custom {@link com.google.gson.JsonDeserializer} to deserialize {@link UploadModel}.
+ * Custom {@link com.google.gson.JsonDeserializer} to deserialize {@link ObjectModel}[]s.
  */
-public class UploadModelDeserializer extends ResponseDeserializer<UploadModel> {
+public class ObjectModelArrayDeserializer extends ResponseDeserializer<ObjectModel[]> {
 
     @Override
-    UploadModel deserialize(JsonObject jsonObject) {
-        return GSON.fromJson(jsonObject.get("files").getAsJsonArray().get(0), UploadModel.class);
+    ObjectModel[] deserialize(JsonObject jsonObject) {
+        var data = jsonObject.get("data").getAsJsonArray();
+        var result = new ObjectModel[data.size()];
+
+        int i = 0;
+        for (JsonElement object : data) {
+            result[i++] = GSON.fromJson(object, ObjectModel.class);
+        }
+
+        return result;
     }
 }
+

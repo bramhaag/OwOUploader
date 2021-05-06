@@ -25,12 +25,18 @@ import java.io.File;
 import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
+import me.bramhaag.owouploader.api.deserializer.ObjectModelArrayDeserializer;
+import me.bramhaag.owouploader.api.deserializer.ObjectModelDeserializer;
 import me.bramhaag.owouploader.api.deserializer.UploadModelDeserializer;
+import me.bramhaag.owouploader.api.deserializer.UserModelDeserializer;
 import me.bramhaag.owouploader.api.exception.ResponseStatusException;
+import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
+import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.api.service.OwOService;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.OkHttpClient.Builder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,6 +95,10 @@ public class OwOAPI {
         enqueueCall(call, progressResult);
     }
 
+    public void getUser(@NonNull ResultCallback<UserModel> result) {
+        enqueueCall(service.getUser(), result);
+    }
+
     /**
      * Enqueue a call with callbacks.
      *
@@ -117,15 +127,20 @@ public class OwOAPI {
 
     @NonNull
     private static OwOService createService(@NonNull final String key) {
-        var client = new OkHttpClient.Builder().addInterceptor(chain -> {
+        var client = new Builder().addInterceptor(chain -> {
             var request = chain.request();
-            var url = request.url().newBuilder().addQueryParameter("key", key).build();
-            return chain.proceed(request.newBuilder().header("User-Agent", USER_AGENT).url(url).build());
+            return chain.proceed(request.newBuilder()
+                    .header("User-Agent", USER_AGENT)
+                    .header("Authorization", key)
+                    .build());
         }).build();
 
         var scalarsConverter = ScalarsConverterFactory.create();
         var gsonConverter = GsonConverterFactory.create(new GsonBuilder()
                 .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
+                .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
+                .registerTypeAdapter(ObjectModel.class, new ObjectModelDeserializer())
+                .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
                 .create());
 
         var retrofit = new Retrofit.Builder()
