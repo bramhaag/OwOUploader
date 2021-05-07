@@ -18,10 +18,13 @@
 
 package me.bramhaag.owouploader.api;
 
+import android.content.Context;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import java.io.File;
+import java.io.InputStream;
 import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
@@ -36,6 +39,7 @@ import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.api.service.OwOService;
+import me.bramhaag.owouploader.file.FileProvider;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
@@ -74,10 +78,10 @@ public class OwOAPI {
      * @param progressResult the callbacks
      * @param associated     uses associated endpoint when set to true
      */
-    public void uploadFile(@NonNull File file, @NonNull ProgressResultCallback<UploadModel> progressResult,
+    public void uploadFile(@NonNull FileProvider file, @NonNull ProgressResultCallback<UploadModel> progressResult,
             boolean associated) {
         var filePart = new ProgressRequestBody(file, progressResult);
-        var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
+        var requestBody = MultipartBody.Part.createFormData("files[]", "file.png", filePart);
 
         var call = associated ? service.uploadAssociated(requestBody) : service.upload(requestBody);
         enqueueCall(call, progressResult);

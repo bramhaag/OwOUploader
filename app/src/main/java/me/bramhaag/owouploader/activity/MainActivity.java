@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MotionEvent;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,9 +33,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.Arrays;
 import java.util.List;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.api.OwOAPI;
+import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
+import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
+import me.bramhaag.owouploader.file.UriFileProvider;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
+import me.bramhaag.owouploader.result.UploadResultCallback;
 
 /**
  * Main activity.
@@ -54,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+
+        var extras = getIntent().getExtras();
+        if (extras != null) {
+            var token = extras.getString("TOKEN");
+            if (token != null) {
+                OwOAPI api = new OwOAPI(token);
+
+                var documentActivityLauncher = registerForActivityResult(
+                        new ActivityResultContracts.OpenDocument(),
+                        new UploadResultCallback(api, getApplicationContext())
+                );
+
+                binding.actionUpload.setOnClickListener(view -> documentActivityLauncher.launch(new String[]{"*/*"}));
+            }
+        }
     }
 
     @Override
