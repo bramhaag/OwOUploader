@@ -72,6 +72,10 @@ jobs:
         run: ./gradlew test --stacktrace
         env:
           OWO_TEST_TOKEN: ${{ secrets.OWO_TEST_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: unit-test
+          path: app/build/reports/
   test-instrumented:
     runs-on: macos-latest
     needs: build
