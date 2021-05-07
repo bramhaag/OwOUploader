@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ OwO Uploader
   ~ Copyright (C) 2021
   ~
@@ -27,6 +26,7 @@
     android:id="@+id/shorten_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="10dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:clipToPadding="false"

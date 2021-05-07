@@ -5,14 +5,13 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".activity.MainActivity"
-  android:background="@color/background">
+  android:background="@color/background"
+  tools:context=".activity.MainActivity">
 
   <androidx.viewpager.widget.ViewPager
     android:id="@+id/viewPager"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
   <com.getbase.floatingactionbutton.FloatingActionsMenu
@@ -91,6 +90,7 @@
       android:id="@+id/tabs"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:background="@color/owoblue"
       app:tabBackground="@color/owoblue"
       app:tabGravity="fill"
       app:tabIndicatorColor="@color/tabIndicatorColor"
