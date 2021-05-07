@@ -59,12 +59,13 @@
       android:maxLines="1"
       android:text="File title" />
 
-    <androidx.constraintlayout.utils.widget.ImageFilterButton
+    <ImageButton
       android:layout_width="48dp"
       android:layout_height="48dp"
       android:src="@drawable/outline_content_copy_24"
       android:layout_marginTop="13dp"
       android:layout_alignParentEnd="true"
-      android:layout_marginEnd="5dp"/>
+      android:layout_marginEnd="5dp"
+      android:background="@null"/>
   </RelativeLayout>
 </androidx.cardview.widget.CardView>

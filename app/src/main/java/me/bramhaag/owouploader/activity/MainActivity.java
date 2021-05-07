@@ -30,9 +30,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
+import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
+import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 
@@ -52,9 +57,13 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         ViewPager viewPager = findViewById(R.id.viewPager);
 
-        var adapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
+        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
+        viewPager.setAdapter(tabLayoutPageAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+
+
+
     }
 
 
