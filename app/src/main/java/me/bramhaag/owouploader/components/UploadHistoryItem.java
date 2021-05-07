@@ -19,14 +19,24 @@
 package me.bramhaag.owouploader.components;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Date;
 
+/**
+ * Data class for shorten history items.
+ */
 public class UploadHistoryItem {
-    private String name;
-    private URI url;
-    private Date date;
 
+    private final String name;
+    private final URI url;
+    private final Date date;
+
+    /**
+     * Instantiate a new {@link UploadHistoryItem}.
+     *
+     * @param name the file's name
+     * @param url  the file's url
+     * @param date the upload date
+     */
     public UploadHistoryItem(String name, URI url, Date date) {
         this.name = name;
         this.url = url;

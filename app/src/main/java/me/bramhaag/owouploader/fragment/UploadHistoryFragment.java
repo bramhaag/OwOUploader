@@ -34,6 +34,9 @@ import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 
+/**
+ * UploadHistoryFragment.
+ */
 public class UploadHistoryFragment extends Fragment {
 
     public UploadHistoryFragment() {
@@ -56,12 +59,26 @@ public class UploadHistoryFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.upload_recycler_view);
 
         var uploadHistoryAdapter = new UploadHistoryAdapter(Arrays.asList(
-                new UploadHistoryItem("File1.jpg", URI
-                        .create("https://totally-not.a-sketchy.site/4f23PwD.jpg"), new Date()),
-                new UploadHistoryItem("File2.docx", URI.create("https://awau.moe/4f23PwD.jpg"), new Date()),
-                new UploadHistoryItem("File_3_example.png", URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
-                        new Date()),
-                new UploadHistoryItem("ballooncat.jpg", URI.create("https://owo.whats-th.is/4f23PwD.jpg"), new Date())
+                new UploadHistoryItem(
+                        "File1.jpg",
+                        URI.create("https://totally-not.a-sketchy.site/4f23PwD.jpg"),
+                        new Date()
+                ),
+                new UploadHistoryItem(
+                        "File2.docx",
+                        URI.create("https://awau.moe/4f23PwD.jpg"),
+                        new Date()
+                ),
+                new UploadHistoryItem(
+                        "File_3_example.png",
+                        URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
+                        new Date()
+                ),
+                new UploadHistoryItem(
+                        "ballooncat.jpg",
+                        URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
+                        new Date()
+                )
         ), getContext());
 
         recyclerView.setAdapter(uploadHistoryAdapter);

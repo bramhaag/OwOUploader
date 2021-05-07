@@ -33,37 +33,16 @@ import java.util.List;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
 
+
+/**
+ * {@link RecyclerView.Adapter} for shorten history.
+ */
 public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAdapter.ViewHolder> {
 
     private final List<ShortenHistoryItem> data;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
-        private final TextView title;
-        private final TextView description;
-
-        public ViewHolder(View view) {
-            super(view);
-            title = view.findViewById(R.id.shorten_item_title);
-            description = view.findViewById(R.id.shorten_item_description);
-        }
-
-        public void setTitle(String title) {
-            this.title.setText(title);
-        }
-
-        public void setDescription(URI url, Date date) {
-            this.description.setText(String.format("%s - %s", url.toString(), DATE_FORMAT.format(date)));
-        }
-    }
-
-    private final Context context;
-
-    public ShortenHistoryAdapter(List<ShortenHistoryItem> data, Context context) {
+    public ShortenHistoryAdapter(List<ShortenHistoryItem> data) {
         this.data = data;
-        this.context = context;
     }
 
     @Override
@@ -86,5 +65,35 @@ public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAd
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    /**
+     * {@link RecyclerView.ViewHolder} for shorten history.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        private final TextView title;
+        private final TextView description;
+
+        /**
+         * Instantiate a new ViewHolder.
+         *
+         * @param view the view
+         */
+        public ViewHolder(View view) {
+            super(view);
+            title = view.findViewById(R.id.shorten_item_title);
+            description = view.findViewById(R.id.shorten_item_description);
+        }
+
+        public void setTitle(String title) {
+            this.title.setText(title);
+        }
+
+        public void setDescription(URI url, Date date) {
+            this.description.setText(String.format("%s - %s", url.toString(), DATE_FORMAT.format(date)));
+        }
     }
 }

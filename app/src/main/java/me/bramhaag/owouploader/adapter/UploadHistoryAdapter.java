@@ -36,46 +36,12 @@ import java.util.List;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 
+/**
+ * {@link RecyclerView.Adapter} for upload history.
+ */
 public class UploadHistoryAdapter extends RecyclerView.Adapter<UploadHistoryAdapter.ViewHolder> {
 
     private final List<UploadHistoryItem> files;
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-
-        private final TextView title;
-        private final TextView description;
-        private final ImageView image;
-        private URI url;
-
-        public ViewHolder(View view) {
-            super(view);
-            title = view.findViewById(R.id.upload_item_title);
-            description = view.findViewById(R.id.upload_item_description);
-            image = view.findViewById(R.id.upload_item_image);
-        }
-
-        public void setTitle(String title) {
-            this.title.setText(title);
-        }
-
-        public void setDescription(String host, Date date) {
-            this.description.setText(String.format("%s - %s", host, DATE_FORMAT.format(date)));
-        }
-
-        public void setImage(Drawable drawable) {
-            this.image.setImageDrawable(drawable);
-        }
-
-        public void setUrl(URI url) {
-            this.url = url;
-        }
-
-        public URI getUrl() {
-            return url;
-        }
-    }
 
     private final Context context;
 
@@ -106,5 +72,50 @@ public class UploadHistoryAdapter extends RecyclerView.Adapter<UploadHistoryAdap
     @Override
     public int getItemCount() {
         return files.size();
+    }
+
+    /**
+     * {@link RecyclerView.ViewHolder} for upload history.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        private final TextView title;
+        private final TextView description;
+        private final ImageView image;
+        private URI url;
+
+        /**
+         * Instantiate a new ViewHolder.
+         *
+         * @param view the view
+         */
+        public ViewHolder(View view) {
+            super(view);
+            title = view.findViewById(R.id.upload_item_title);
+            description = view.findViewById(R.id.upload_item_description);
+            image = view.findViewById(R.id.upload_item_image);
+        }
+
+        public void setTitle(String title) {
+            this.title.setText(title);
+        }
+
+        public void setDescription(String host, Date date) {
+            this.description.setText(String.format("%s - %s", host, DATE_FORMAT.format(date)));
+        }
+
+        public void setImage(Drawable drawable) {
+            this.image.setImageDrawable(drawable);
+        }
+
+        public void setUrl(URI url) {
+            this.url = url;
+        }
+
+        public URI getUrl() {
+            return url;
+        }
     }
 }

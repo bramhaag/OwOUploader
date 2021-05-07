@@ -21,11 +21,22 @@ package me.bramhaag.owouploader.components;
 import java.net.URI;
 import java.util.Date;
 
+/**
+ * Data class for shorten history items.
+ */
 public class ShortenHistoryItem {
-    private URI originalUrl;
-    private URI shortenedUrl;
-    private Date date;
 
+    private final URI originalUrl;
+    private final URI shortenedUrl;
+    private final Date date;
+
+    /**
+     * Instantiate a new {@link ShortenHistoryItem}.
+     *
+     * @param originalUrl  the original url
+     * @param shortenedUrl the shortened url
+     * @param date         the data
+     */
     public ShortenHistoryItem(URI originalUrl, URI shortenedUrl, Date date) {
         this.originalUrl = originalUrl;
         this.shortenedUrl = shortenedUrl;

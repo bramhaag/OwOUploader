@@ -36,6 +36,9 @@ import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 
+/**
+ * ShortenHistoryFragment.
+ */
 public class ShortenHistoryFragment extends Fragment {
 
     public ShortenHistoryFragment() {
@@ -66,7 +69,7 @@ public class ShortenHistoryFragment extends Fragment {
                         URI.create("https://www.youtube.com/watch?v=eNxqPNxqocM"),
                         URI.create("https://youtu.be/eNxqPNxqocM"),
                         new Date())
-        ), getContext());
+        ));
 
         recyclerView.setAdapter(shortenHistoryAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
