@@ -18,9 +18,11 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
+import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +31,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.tabs.TabLayout;
 import java.net.URI;
 import java.net.URL;
@@ -46,6 +50,8 @@ import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private FloatingActionsMenu fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +67,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(tabLayoutPageAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
-
+        fab = findViewById(R.id.multiple_actions);
     }
 
 
@@ -71,6 +75,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() != MotionEvent.ACTION_DOWN || !fab.isExpanded()) {
+            return super.dispatchTouchEvent(event);
+        }
+
+        var outRect = new Rect();
+        fab.getGlobalVisibleRect(outRect);
+
+        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+            fab.collapse();
+        }
+
+        return super.dispatchTouchEvent(event);
     }
 
     private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
