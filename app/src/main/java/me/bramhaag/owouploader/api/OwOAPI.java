@@ -30,6 +30,8 @@ import me.bramhaag.owouploader.api.deserializer.ObjectModelDeserializer;
 import me.bramhaag.owouploader.api.deserializer.UploadModelDeserializer;
 import me.bramhaag.owouploader.api.deserializer.UserModelDeserializer;
 import me.bramhaag.owouploader.api.exception.ResponseStatusException;
+import me.bramhaag.owouploader.api.interceptor.AuthenticationInterceptor;
+import me.bramhaag.owouploader.api.interceptor.RateLimitInterceptor;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
@@ -127,13 +129,10 @@ public class OwOAPI {
 
     @NonNull
     private static OwOService createService(@NonNull final String key) {
-        var client = new Builder().addInterceptor(chain -> {
-            var request = chain.request();
-            return chain.proceed(request.newBuilder()
-                    .header("User-Agent", USER_AGENT)
-                    .header("Authorization", key)
-                    .build());
-        }).build();
+        var client = new Builder()
+                .addNetworkInterceptor(new AuthenticationInterceptor(USER_AGENT, key))
+                .addInterceptor(new RateLimitInterceptor())
+                .build();
 
         var scalarsConverter = ScalarsConverterFactory.create();
         var gsonConverter = GsonConverterFactory.create(new GsonBuilder()
