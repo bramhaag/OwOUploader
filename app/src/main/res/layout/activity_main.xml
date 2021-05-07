@@ -1,18 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:fab="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/background"
+  tools:context=".activity.MainActivity">
+
+  <androidx.viewpager.widget.ViewPager
+    android:id="@+id/view_pager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+  <com.getbase.floatingactionbutton.FloatingActionsMenu
+    android:id="@+id/fab_menu"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_gravity="end|bottom"
+    fab:fab_addButtonColorNormal="@color/fabColor"
+    fab:fab_addButtonColorPressed="@color/fabColorPressed"
+    fab:fab_addButtonPlusIconColor="@color/fabColorIcon"
+    fab:fab_labelStyle="@style/menu_labels_style">
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_upload"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_file_upload_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Upload" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_shorten"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_link_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Shorten URL" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_screen_record"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_mobile_screen_share_24"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="Start screen recording" />
+
+  </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+      android:id="@+id/collapsing_toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:background="@color/owoblue"
+      android:fitsSystemWindows="true"
+      app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
+      app:contentScrim="@color/owoblue"
+      app:expandedTitleGravity="bottom|center_horizontal"
+      app:expandedTitleTextAppearance="@style/ExpandedAppBar"
+      app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+      <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".activity.MainActivity">
+        android:layout_height="?attr/actionBarSize"
+        app:layout_collapseMode="pin"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="OwO"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium" />
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.tabs.TabLayout
+      android:id="@+id/tab_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/owoblue"
+      app:tabBackground="@color/owoblue"
+      app:tabGravity="fill"
+      app:tabIndicatorColor="@color/tabIndicatorColor"
+      app:tabMode="fixed"
+      app:tabSelectedTextColor="@color/tabSelectedColor"
+      app:tabTextColor="@color/tabColor">
+    </com.google.android.material.tabs.TabLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+  </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

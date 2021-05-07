@@ -18,18 +18,94 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Pair;
+import android.view.Menu;
+import android.view.MotionEvent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import java.util.Arrays;
+import java.util.List;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.databinding.ActivityMainBinding;
+import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
+import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 
 /**
  * Main activity.
  */
 public class MainActivity extends AppCompatActivity {
 
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+
+        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
+        binding.viewPager.setAdapter(tabLayoutPageAdapter);
+        binding.tabLayout.setupWithViewPager(binding.viewPager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        var fabMenu = binding.fabMenu;
+
+        if (event.getAction() != MotionEvent.ACTION_DOWN || !fabMenu.isExpanded()) {
+            return super.dispatchTouchEvent(event);
+        }
+
+        var outRect = new Rect();
+        fabMenu.getGlobalVisibleRect(outRect);
+
+        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+            fabMenu.collapse();
+        }
+
+        return super.dispatchTouchEvent(event);
+    }
+
+    private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
+
+        private final List<Pair<String, Fragment>> tabs;
+
+        public TabLayoutPageAdapter(FragmentManager fm) {
+            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
+            tabs = Arrays.asList(new Pair<>("upload", new UploadHistoryFragment()),
+                    new Pair<>("shorten", new ShortenHistoryFragment()));
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabs.get(position).first;
+        }
+
+        @Override
+        @NonNull
+        public Fragment getItem(int position) {
+            return tabs.get(position).second;
+        }
+
+        @Override
+        public int getCount() {
+            return tabs.size();
+        }
     }
 }
