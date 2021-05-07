@@ -35,6 +35,7 @@ import android.webkit.MimeTypeMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
@@ -47,6 +48,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OwOAPITest {
+    private static final int TIMEOUT = 60 * 1000;
 
     static OwOAPI api;
 
@@ -99,21 +101,21 @@ class OwOAPITest {
     @Test
     void shortenUrl() {
         api.shortenUrl("https://google.com/", "https://example.com/", shortenCallback, false);
-        verify(shortenCallback, timeout(5000)).onComplete(startsWith("https://"));
+        verify(shortenCallback, timeout(TIMEOUT)).onComplete(startsWith("https://"));
         verify(shortenCallback, times(0)).onError(any());
     }
 
     @Test
     void shortenUrl_result() {
         api.shortenUrl("https://google.com/", "https://example.com/", shortenCallback, false);
-        verify(shortenCallback, timeout(5000)).onComplete(startsWith("https://example.com/"));
+        verify(shortenCallback, timeout(TIMEOUT)).onComplete(startsWith("https://example.com/"));
         verify(shortenCallback, times(0)).onError(any());
     }
 
     @Test
     void getUser() {
         api.getUser(userCallback);
-        verify(userCallback, timeout(5000)).onComplete(notNull());
+        verify(userCallback, timeout(TIMEOUT)).onComplete(notNull());
         verify(userCallback, times(0)).onError(any());
     }
 }
