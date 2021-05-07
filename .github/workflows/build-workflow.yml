@@ -73,6 +73,7 @@ jobs:
         env:
           OWO_TEST_TOKEN: ${{ secrets.OWO_TEST_TOKEN }}
       - uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: unit-test
           path: app/build/reports/
