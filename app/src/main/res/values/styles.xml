@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ OwO Uploader
+  ~ Copyright (C) 2021
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+
+  <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textSize">72sp</item>
+    <item name="android:textColor">#fff</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:fontFamily">@font/roboto_black</item>
+  </style>
+
+  <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:textColor">#fff</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:fontFamily">@font/roboto_black</item>
+  </style>
+
+  <style name="menu_labels_style">
+    <item name="android:background">@drawable/fab_label_background</item>
+    <item name="android:textColor">@color/white</item>
+  </style>
+
+  <style name="TabTheme" parent="TextAppearance.AppCompat.Medium">
+    <item name="android:textColor">#fff</item>
+    <item name="android:fontFamily">@font/roboto_regular</item>
+  </style>
+</resources>
