@@ -18,7 +18,6 @@
 
 package me.bramhaag.owouploader.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
 
@@ -39,10 +39,10 @@ import me.bramhaag.owouploader.components.ShortenHistoryItem;
  */
 public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAdapter.ViewHolder> {
 
-    private final List<ShortenHistoryItem> data;
+    private final List<ShortenHistoryItem> items;
 
-    public ShortenHistoryAdapter(List<ShortenHistoryItem> data) {
-        this.data = data;
+    public ShortenHistoryAdapter(List<ShortenHistoryItem> items) {
+        this.items = items;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        var item = data.get(position);
+        var item = items.get(position);
 
         viewHolder.setTitle(item.getOriginalUrl().toString());
         viewHolder.setDescription(item.getShortenedUrl(), item.getDate());
@@ -64,7 +64,7 @@ public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAd
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return items.size();
     }
 
     /**
@@ -72,7 +72,7 @@ public class ShortenHistoryAdapter extends RecyclerView.Adapter<ShortenHistoryAd
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
 
         private final TextView title;
         private final TextView description;

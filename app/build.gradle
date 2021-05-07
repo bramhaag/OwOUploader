@@ -40,6 +40,10 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     // Exclude conflicting files in test APK. See
     // https://github.com/mannodermaus/android-junit5/wiki/Instrumentation-Tests-Setup#4-setup-packaging
     packagingOptions {

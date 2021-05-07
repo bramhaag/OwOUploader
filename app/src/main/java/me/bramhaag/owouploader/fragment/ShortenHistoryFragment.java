@@ -35,11 +35,14 @@ import me.bramhaag.owouploader.adapter.ShortenHistoryAdapter;
 import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 
 /**
  * ShortenHistoryFragment.
  */
 public class ShortenHistoryFragment extends Fragment {
+
+    private FragmentHistoryBinding binding;
 
     public ShortenHistoryFragment() {
         // Required empty public constructor
@@ -51,15 +54,13 @@ public class ShortenHistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_shorten_history, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentHistoryBinding.inflate(inflater);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = view.findViewById(R.id.shorten_recycler_view);
-
         var shortenHistoryAdapter = new ShortenHistoryAdapter(Arrays.asList(
                 new ShortenHistoryItem(
                         URI.create("https://www.youtube.com/watch?v=gOK12Ombicg"),
@@ -71,8 +72,7 @@ public class ShortenHistoryFragment extends Fragment {
                         new Date())
         ));
 
-        recyclerView.setAdapter(shortenHistoryAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        binding.recyclerView.setAdapter(shortenHistoryAdapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

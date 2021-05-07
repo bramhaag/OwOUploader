@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 
@@ -41,12 +42,12 @@ import me.bramhaag.owouploader.components.UploadHistoryItem;
  */
 public class UploadHistoryAdapter extends RecyclerView.Adapter<UploadHistoryAdapter.ViewHolder> {
 
-    private final List<UploadHistoryItem> files;
+    private final List<UploadHistoryItem> items;
 
     private final Context context;
 
-    public UploadHistoryAdapter(List<UploadHistoryItem> files, Context context) {
-        this.files = files;
+    public UploadHistoryAdapter(List<UploadHistoryItem> items, Context context) {
+        this.items = items;
         this.context = context;
     }
 
@@ -61,17 +62,17 @@ public class UploadHistoryAdapter extends RecyclerView.Adapter<UploadHistoryAdap
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        var file = files.get(position);
+        var item = items.get(position);
 
-        viewHolder.setTitle(file.getName());
-        viewHolder.setDescription(file.getUrl().getHost(), file.getDate());
-        viewHolder.setUrl(file.getUrl());
+        viewHolder.setTitle(item.getName());
+        viewHolder.setDescription(item.getUrl().getHost(), item.getDate());
+        viewHolder.setUrl(item.getUrl());
         viewHolder.setImage(ContextCompat.getDrawable(context, R.drawable.ic_launcher_background));
     }
 
     @Override
     public int getItemCount() {
-        return files.size();
+        return items.size();
     }
 
     /**
@@ -79,7 +80,7 @@ public class UploadHistoryAdapter extends RecyclerView.Adapter<UploadHistoryAdap
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
 
         private final TextView title;
         private final TextView description;

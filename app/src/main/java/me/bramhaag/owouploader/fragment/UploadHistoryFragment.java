@@ -33,11 +33,14 @@ import java.util.Date;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 
 /**
  * UploadHistoryFragment.
  */
 public class UploadHistoryFragment extends Fragment {
+
+    private FragmentHistoryBinding binding;
 
     public UploadHistoryFragment() {
         // Required empty public constructor
@@ -49,15 +52,14 @@ public class UploadHistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_upload_history, container, false);
+        binding = FragmentHistoryBinding.inflate(inflater);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = view.findViewById(R.id.upload_recycler_view);
-
         var uploadHistoryAdapter = new UploadHistoryAdapter(Arrays.asList(
                 new UploadHistoryItem(
                         "File1.jpg",
@@ -81,8 +83,8 @@ public class UploadHistoryFragment extends Fragment {
                 )
         ), getContext());
 
-        recyclerView.setAdapter(uploadHistoryAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerView.setAdapter(uploadHistoryAdapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
     }
 }

@@ -26,22 +26,13 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.android.material.tabs.TabLayout;
-import java.net.URI;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 
@@ -50,26 +41,20 @@ import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private FloatingActionsMenu fab;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        setSupportActionBar(binding.toolbar);
 
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
-        viewPager.setAdapter(tabLayoutPageAdapter);
-        tabLayout.setupWithViewPager(viewPager);
-
-        fab = findViewById(R.id.multiple_actions);
+        binding.viewPager.setAdapter(tabLayoutPageAdapter);
+        binding.tabLayout.setupWithViewPager(binding.viewPager);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,15 +64,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() != MotionEvent.ACTION_DOWN || !fab.isExpanded()) {
+        var fabMenu = binding.fabMenu;
+
+        if (event.getAction() != MotionEvent.ACTION_DOWN || !fabMenu.isExpanded()) {
             return super.dispatchTouchEvent(event);
         }
 
         var outRect = new Rect();
-        fab.getGlobalVisibleRect(outRect);
+        fabMenu.getGlobalVisibleRect(outRect);
 
         if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-            fab.collapse();
+            fabMenu.collapse();
         }
 
         return super.dispatchTouchEvent(event);

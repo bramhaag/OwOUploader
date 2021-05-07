@@ -9,13 +9,13 @@
   tools:context=".activity.MainActivity">
 
   <androidx.viewpager.widget.ViewPager
-    android:id="@+id/viewPager"
+    android:id="@+id/view_pager"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
   <com.getbase.floatingactionbutton.FloatingActionsMenu
-    android:id="@+id/multiple_actions"
+    android:id="@+id/fab_menu"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
@@ -47,7 +47,7 @@
       fab:fab_title="Shorten URL" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
-      android:id="@+id/action_screenrecord"
+      android:id="@+id/action_screen_record"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_mobile_screen_share_24"
@@ -56,6 +56,7 @@
       fab:fab_title="Start screen recording" />
 
   </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="wrap_content"
@@ -87,7 +88,7 @@
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     <com.google.android.material.tabs.TabLayout
-      android:id="@+id/tabs"
+      android:id="@+id/tab_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="@color/owoblue"
@@ -97,14 +98,6 @@
       app:tabMode="fixed"
       app:tabSelectedTextColor="@color/tabSelectedColor"
       app:tabTextColor="@color/tabColor">
-      <com.google.android.material.tabs.TabItem
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Files" />
-      <com.google.android.material.tabs.TabItem
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="URLs" />
     </com.google.android.material.tabs.TabLayout>
 
   </com.google.android.material.appbar.AppBarLayout>
