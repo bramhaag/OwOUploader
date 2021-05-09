@@ -22,6 +22,7 @@ package me.bramhaag.owouploader.adapter.viewholder;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.Locale;
 import me.bramhaag.owouploader.R;
@@ -51,9 +52,15 @@ public class ProgressViewHolder extends HistoryViewHolder<ProgressItem> {
     }
 
     @Override
-    void initializeView() {
-        setTitle(getItem().getName());
-        setProgress(getItem().getUploaded(), getItem().getSize());
+    public void initializeView(@NonNull ProgressItem item) {
+        setTitle(item.getName());
+        setProgress(item.getUploaded(), item.getSize());
+
+        itemView.findViewById(R.id.progress_cancel_button).setOnClickListener(v -> {
+            if (!item.isCanceled()) {
+                item.cancel();
+            }
+        });
     }
 
     public void setTitle(String title) {

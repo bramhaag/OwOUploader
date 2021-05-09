@@ -26,18 +26,20 @@ import java.util.Date;
  */
 public class ProgressItem implements HistoryItem {
 
-    private final String name;
+    private String name;
     private long uploaded;
-    private final long size;
+    private long size;
 
-    public ProgressItem(String name, long uploaded, long size) {
-        this.name = name;
-        this.uploaded = uploaded;
-        this.size = size;
-    }
+    private Runnable onCancel;
+
+    private boolean canceled = false;
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getUploaded() {
@@ -50,5 +52,22 @@ public class ProgressItem implements HistoryItem {
 
     public long getSize() {
         return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public void cancel() {
+        canceled = true;
+        onCancel.run();
+    }
+
+    public void setOnCancel(Runnable onCancel) {
+        this.onCancel = onCancel;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
     }
 }

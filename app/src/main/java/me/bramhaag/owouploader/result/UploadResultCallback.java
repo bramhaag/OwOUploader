@@ -53,24 +53,41 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
     @Override
     public void onActivityResult(Uri result) {
+        if (result == null) {
+            return;
+        }
+
+        ProgressItem item = new ProgressItem();
         var file = new UriFileProvider(context, result);
-        api.uploadFile(file, new ProgressResultCallback<>() {
-            private ProgressItem item;
+        var call = api.uploadFile(file, new ProgressResultCallback<>() {
 
             @Override
             public void onStart() {
-                item = new ProgressItem(file.getName(), 0, file.getSize());
+                if (item.isCanceled()) {
+                    return;
+                }
+
+                item.setName(file.getName());
+                item.setSize(file.getSize());
                 adapter.addItem(item);
             }
 
             @Override
             public void onProgress(long progress) {
+                if (item.isCanceled()) {
+                    return;
+                }
+
                 item.setUploaded(progress);
                 runOnUiThread(() -> adapter.modifyItem(item));
             }
 
             @Override
             public void onError(@NonNull Throwable throwable) {
+                if (item.isCanceled()) {
+                    return;
+                }
+
                 System.out.println("Upload error: " + throwable.getMessage());
                 throwable.printStackTrace();
                 runOnUiThread(() -> {
@@ -90,6 +107,11 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
                 });
             }
         }, false);
+
+        item.setOnCancel(() -> {
+            call.cancel();
+            runOnUiThread(() -> adapter.removeItem(item));
+        });
     }
 
     private void runOnUiThread(Runnable runnable) {

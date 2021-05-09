@@ -21,6 +21,7 @@ package me.bramhaag.owouploader.adapter.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
 import java.text.DateFormat;
@@ -52,9 +53,9 @@ public class ShortenViewHolder extends HistoryViewHolder<ShortenHistoryItem> {
     }
 
     @Override
-    void initializeView() {
-        setTitle(getItem().getOriginalUrl().toString());
-        setDescription(getItem().getShortenedUrl(), getItem().getDate());
+    public void initializeView(@NonNull ShortenHistoryItem item) {
+        setTitle(item.getOriginalUrl().toString());
+        setDescription(item.getShortenedUrl(), item.getDate());
 
     }
 

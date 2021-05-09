@@ -60,6 +60,7 @@
       android:text="File title" />
 
     <ImageButton
+      android:id="@+id/upload_item_copy"
       android:layout_width="48dp"
       android:layout_height="48dp"
       android:src="@drawable/outline_content_copy_24"

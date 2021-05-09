@@ -71,6 +71,7 @@
       android:text="File title" />
 
     <ImageButton
+      android:id="@+id/progress_cancel_button"
       android:layout_width="48dp"
       android:layout_height="48dp"
       android:src="@drawable/outline_close_24"

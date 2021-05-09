@@ -70,7 +70,10 @@ public class MainActivity extends AppCompatActivity {
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
 
-        binding.actionUpload.setOnClickListener(view -> documentActivityLauncher.launch(new String[]{"*/*"}));
+        binding.actionUpload.setOnClickListener(view -> {
+            documentActivityLauncher.launch(new String[]{"*/*"});
+            binding.fabMenu.collapse();
+        });
     }
 
     @Override
@@ -90,11 +93,12 @@ public class MainActivity extends AppCompatActivity {
         var outRect = new Rect();
         fabMenu.getGlobalVisibleRect(outRect);
 
-        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-            fabMenu.collapse();
+        if (outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+            return super.dispatchTouchEvent(event);
         }
 
-        return super.dispatchTouchEvent(event);
+        fabMenu.collapse();
+        return true;
     }
 
     public UploadResultCallback getUploadCallback() {

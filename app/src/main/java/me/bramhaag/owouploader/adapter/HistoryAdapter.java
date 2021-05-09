@@ -96,7 +96,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
     @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        holder.setItem(items.get(position));
+        holder.initializeView(items.get(position));
     }
 
     @Override
@@ -119,19 +119,26 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
     }
 
     public void replaceItem(HistoryItem originalItem, HistoryItem newItem) {
-        var index = indexOf(originalItem);
+        try {
+            var index = indexOf(originalItem);
+            items.set(index, newItem);
+            itemsIndex.remove(originalItem);
+            itemsIndex.put(newItem, index);
 
-        items.set(index, newItem);
-        itemsIndex.remove(originalItem);
-        itemsIndex.put(newItem, index);
-
-        notifyItemChanged(index);
+            notifyItemChanged(index);
+        } catch (IndexOutOfBoundsException ex) {
+            addItem(newItem);
+        }
     }
 
     public void removeItem(HistoryItem item) {
         var index = indexOf(item);
 
+        System.out.println("Removed " + item);
         items.remove(index);
+        itemsIndex.remove(item);
+
+        notifyDataSetChanged();
 
         for (int i = index; i < items.size(); i++) {
             var key = items.get(i);
@@ -143,7 +150,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
 
     private int indexOf(HistoryItem item) {
         Integer index = itemsIndex.get(item);
-        assert index != null;
+        if (index == null) {
+            throw new IndexOutOfBoundsException();
+        }
+
         return index;
     }
 }

@@ -18,11 +18,16 @@
 
 package me.bramhaag.owouploader.adapter.viewholder;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import java.net.URI;
@@ -52,18 +57,27 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
         title = view.findViewById(R.id.upload_item_title);
         description = view.findViewById(R.id.upload_item_description);
         image = view.findViewById(R.id.upload_item_image);
-        view.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-            view.getContext().startActivity(browserIntent);
-        });
     }
 
     @Override
-    void initializeView() {
-        setTitle(getItem().getName());
-        setDescription(getItem().getUrl().getHost(), getItem().getDate());
-        setUrl(getItem().getUrl());
-        loadImage(getItem().getUrl());
+    public void initializeView(@NonNull UploadHistoryItem item) {
+        setTitle(item.getName());
+        setDescription(item.getUrl().getHost(), item.getDate());
+        setUrl(item.getUrl());
+        loadImage(item.getUrl());
+
+        itemView.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+            itemView.getContext().startActivity(browserIntent);
+        });
+
+        var clipboard = (ClipboardManager) itemView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        var clip = ClipData.newPlainText(item.getUrl().toString(), item.getUrl().toString());
+
+        itemView.findViewById(R.id.upload_item_copy).setOnClickListener(v -> {
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(v.getContext(), "URL copied to clipboard", Toast.LENGTH_LONG).show();
+        });
     }
 
     public void setTitle(String title) {

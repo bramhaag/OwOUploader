@@ -16,18 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.api;
 
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import me.bramhaag.owouploader.components.HistoryItem;
+import retrofit2.Call;
 
-public abstract class HistoryViewHolder<T extends HistoryItem> extends RecyclerView.ViewHolder {
+public class CancellableCall {
 
-    public HistoryViewHolder(@NonNull View itemView) {
-        super(itemView);
+    private final Call<?> call;
+
+    public CancellableCall(Call<?> call) {
+        this.call = call;
     }
 
-    public abstract void initializeView(@NonNull T item);
+    public void cancel() {
+        call.cancel();
+    }
 }

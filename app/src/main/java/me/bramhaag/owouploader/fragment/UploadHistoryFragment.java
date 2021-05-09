@@ -57,7 +57,7 @@ public class UploadHistoryFragment extends Fragment {
         binding = FragmentHistoryBinding.inflate(inflater);
 
         var uploadHistoryAdapter = new HistoryAdapter(Arrays.asList(
-                new ProgressItem("Balloon Cat.jpg", 10, 100),
+//                new ProgressItem("Balloon Cat.jpg", 10, 100),
                 new UploadHistoryItem(
                         "File1.jpg",
                         URI.create("https://totally-not.a-sketchy.site/4f23PwD.jpg"),
