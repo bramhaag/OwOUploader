@@ -76,6 +76,11 @@ public class UploadHistoryFragment extends Fragment {
                         "ballooncat.jpg",
                         URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
                         new Date()
+                ),
+                new UploadHistoryItem(
+                        "file.txt",
+                        URI.create("https://owo.whats-th.is/2soGoVy.txt"),
+                        new Date()
                 )
         ));
 
@@ -85,6 +90,7 @@ public class UploadHistoryFragment extends Fragment {
 
         binding.recyclerView.setAdapter(uploadHistoryAdapter);
         binding.recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setItemAnimator(null);
 
         var parent = (MainActivity) getActivity();
         assert parent != null;

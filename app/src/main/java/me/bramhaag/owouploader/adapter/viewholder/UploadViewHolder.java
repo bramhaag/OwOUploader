@@ -107,6 +107,7 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
         Glide.with(itemView)
                 .load(Uri.parse(url.toString()))
                 .placeholder(placeholder)
+                .error(R.drawable.outline_photo_24)
                 .into(image);
     }
 
