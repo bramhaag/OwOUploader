@@ -113,6 +113,8 @@ public class OwOAPI {
      * @param <T>    the type of the result
      */
     public <T> void enqueueCall(@NonNull Call<T> call, @NonNull ResultCallback<T> result) {
+        result.onStart();
+        
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {

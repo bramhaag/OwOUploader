@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ OwO Uploader
+  ~ Copyright (C) 2021
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginBottom="5dp">
+  <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ProgressBar
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:layout_marginTop="21dp"
+      android:layout_marginBottom="21dp"
+      android:layout_marginStart="21dp"
+      android:layout_alignParentStart="true"
+      android:indeterminate="true" />
+
+    <ProgressBar
+      android:id="@+id/progress_item_progress"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/progress_item_title"
+      style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+    <TextView
+      android:id="@+id/progress_item_description"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/progress_item_progress"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:text="32.61 / 96 MB"
+      android:gravity="right"
+      android:textSize="12sp" />
+
+    <TextView
+      android:id="@+id/progress_item_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:text="File title" />
+
+    <ImageButton
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:src="@drawable/outline_close_24"
+      android:layout_marginTop="13dp"
+      android:layout_alignParentEnd="true"
+      android:layout_marginEnd="5dp"
+      android:background="@null"/>
+  </RelativeLayout>
+</androidx.cardview.widget.CardView>

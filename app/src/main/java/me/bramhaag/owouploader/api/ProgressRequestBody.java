@@ -69,8 +69,7 @@ public class ProgressRequestBody extends RequestBody {
 
     @Override
     public void writeTo(@NonNull BufferedSink sink) throws IOException {
-        double uploaded = 0.0;
-        double progress = 0.0;
+        long uploaded = 0;
 
         var buffer = new byte[DEFAULT_BUFFER_SIZE];
 
@@ -79,12 +78,7 @@ public class ProgressRequestBody extends RequestBody {
             while ((read = in.read(buffer)) != -1) {
                 uploaded += read;
                 sink.write(buffer, 0, read);
-
-                double currentProgress = uploaded / contentLength();
-                if (currentProgress - progress > 0.01 || currentProgress == 1.0) {
-                    progress = currentProgress;
-                    this.progressResult.onProgress(progress);
-                }
+                this.progressResult.onProgress(uploaded);
             }
         }
     }

@@ -16,19 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.callback;
+package me.bramhaag.owouploader.adapter.viewholder;
 
-/**
- * Callbacks for a call with progress updates.
- *
- * @param <T> the type of the result
- */
-public interface ProgressResultCallback<T> extends ResultCallback<T> {
+import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import me.bramhaag.owouploader.components.HistoryItem;
 
-    /**
-     * Called on progress update. A call to this method does not guarantee that the progress has changed.
-     *
-     * @param progress the progress
-     */
-    void onProgress(long uploaded);
+public abstract class HistoryViewHolder<T extends HistoryItem> extends RecyclerView.ViewHolder {
+
+    private T item;
+
+    public HistoryViewHolder(@NonNull View itemView) {
+        super(itemView);
+    }
+
+    public void setItem(T item) {
+        this.item = item;
+        initializeView();
+    }
+
+    public T getItem() {
+        return this.item;
+    }
+
+    abstract void initializeView();
 }

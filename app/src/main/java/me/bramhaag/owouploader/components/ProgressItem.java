@@ -16,19 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.callback;
+package me.bramhaag.owouploader.components;
+
+import java.net.URI;
+import java.util.Date;
 
 /**
- * Callbacks for a call with progress updates.
- *
- * @param <T> the type of the result
+ * Data class for shorten history items.
  */
-public interface ProgressResultCallback<T> extends ResultCallback<T> {
+public class ProgressItem implements HistoryItem {
 
-    /**
-     * Called on progress update. A call to this method does not guarantee that the progress has changed.
-     *
-     * @param progress the progress
-     */
-    void onProgress(long uploaded);
+    private final String name;
+    private long uploaded;
+    private final long size;
+
+    public ProgressItem(String name, long uploaded, long size) {
+        this.name = name;
+        this.uploaded = uploaded;
+        this.size = size;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(long uploaded) {
+        this.uploaded = uploaded;
+    }
+
+    public long getSize() {
+        return size;
+    }
 }

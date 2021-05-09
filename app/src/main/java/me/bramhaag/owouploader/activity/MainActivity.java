@@ -34,10 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
-import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
-import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
-import me.bramhaag.owouploader.file.UriFileProvider;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 import me.bramhaag.owouploader.result.UploadResultCallback;
@@ -49,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    private UploadResultCallback uploadCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,24 +56,21 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        var extras = getIntent().getExtras();
+        var token = extras.getString("TOKEN");
+        var api = new OwOAPI(token);
+
+        uploadCallback = new UploadResultCallback(api, getApplicationContext());
+        var documentActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uploadCallback
+        );
+
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
 
-        var extras = getIntent().getExtras();
-        if (extras != null) {
-            var token = extras.getString("TOKEN");
-            if (token != null) {
-                OwOAPI api = new OwOAPI(token);
-
-                var documentActivityLauncher = registerForActivityResult(
-                        new ActivityResultContracts.OpenDocument(),
-                        new UploadResultCallback(api, getApplicationContext())
-                );
-
-                binding.actionUpload.setOnClickListener(view -> documentActivityLauncher.launch(new String[]{"*/*"}));
-            }
-        }
+        binding.actionUpload.setOnClickListener(view -> documentActivityLauncher.launch(new String[]{"*/*"}));
     }
 
     @Override
@@ -99,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
+    }
+
+    public UploadResultCallback getUploadCallback() {
+        return uploadCallback;
     }
 
     private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return tabs.size();
+        }
+
+        public List<Pair<String, Fragment>> getTabs() {
+            return tabs;
         }
     }
 }

@@ -16,19 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.callback;
+package me.bramhaag.owouploader.components;
 
-/**
- * Callbacks for a call with progress updates.
- *
- * @param <T> the type of the result
- */
-public interface ProgressResultCallback<T> extends ResultCallback<T> {
+public interface HistoryItem {
 
-    /**
-     * Called on progress update. A call to this method does not guarantee that the progress has changed.
-     *
-     * @param progress the progress
-     */
-    void onProgress(long uploaded);
 }

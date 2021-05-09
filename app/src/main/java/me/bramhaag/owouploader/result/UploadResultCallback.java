@@ -21,13 +21,17 @@ package me.bramhaag.owouploader.result;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Looper;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.annotation.NonNull;
+import java.net.URI;
+import java.util.Date;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
+import me.bramhaag.owouploader.components.ProgressItem;
+import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.file.UriFileProvider;
 
 public class UploadResultCallback implements ActivityResultCallback<Uri> {
@@ -35,6 +39,7 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
     private final OwOAPI api;
     private final Context context;
     private final Handler mainHandler;
+    private HistoryAdapter adapter;
 
     public UploadResultCallback(OwOAPI api, Context context) {
         this.api = api;
@@ -42,30 +47,47 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
         this.mainHandler = new Handler(context.getMainLooper());
     }
 
+    public void setAdapter(HistoryAdapter adapter) {
+        this.adapter = adapter;
+    }
+
     @Override
     public void onActivityResult(Uri result) {
         var file = new UriFileProvider(context, result);
         api.uploadFile(file, new ProgressResultCallback<>() {
+            private ProgressItem item;
+
             @Override
-            public void onProgress(double progress) {
-                System.out.println("Upload progress: " + progress);
+            public void onStart() {
+                item = new ProgressItem(file.getName(), 0, file.getSize());
+                adapter.addItem(item);
+            }
+
+            @Override
+            public void onProgress(long progress) {
+                item.setUploaded(progress);
+                runOnUiThread(() -> adapter.modifyItem(item));
             }
 
             @Override
             public void onError(@NonNull Throwable throwable) {
                 System.out.println("Upload error: " + throwable.getMessage());
                 throwable.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(context, "Upload error: " + throwable.getMessage(), Toast.LENGTH_LONG).show()
-                );
+                runOnUiThread(() -> {
+                    adapter.removeItem(item);
+                    Toast.makeText(context, "Upload error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                });
             }
 
             @Override
             public void onComplete(@NonNull UploadModel result) {
-                System.out.println(result);
-                runOnUiThread(() ->
-                        Toast.makeText(context, "Upload completed: " + result.getUrl(), Toast.LENGTH_LONG).show()
-                );
+                var newItem = new UploadHistoryItem(file.getName(),
+                        URI.create("https://owo.whats-th.is/" + result.getUrl()), new Date());
+
+                runOnUiThread(() -> {
+                    adapter.replaceItem(item, newItem);
+                    Toast.makeText(context, "Upload completed", Toast.LENGTH_SHORT).show();
+                });
             }
         }, false);
     }

@@ -26,12 +26,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
-import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
+import me.bramhaag.owouploader.activity.MainActivity;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
+import me.bramhaag.owouploader.components.ProgressItem;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 
@@ -40,7 +40,7 @@ import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
  */
 public class UploadHistoryFragment extends Fragment {
 
-    private FragmentHistoryBinding binding;
+    public FragmentHistoryBinding binding;
 
     public UploadHistoryFragment() {
         // Required empty public constructor
@@ -55,12 +55,9 @@ public class UploadHistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         binding = FragmentHistoryBinding.inflate(inflater);
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        var uploadHistoryAdapter = new UploadHistoryAdapter(Arrays.asList(
+        var uploadHistoryAdapter = new HistoryAdapter(Arrays.asList(
+                new ProgressItem("Balloon Cat.jpg", 10, 100),
                 new UploadHistoryItem(
                         "File1.jpg",
                         URI.create("https://totally-not.a-sketchy.site/4f23PwD.jpg"),
@@ -81,10 +78,24 @@ public class UploadHistoryFragment extends Fragment {
                         URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
                         new Date()
                 )
-        ), getContext());
+        ));
+
+        var layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
 
         binding.recyclerView.setAdapter(uploadHistoryAdapter);
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerView.setLayoutManager(layoutManager);
+
+        var parent = (MainActivity) getActivity();
+        assert parent != null;
+        parent.getUploadCallback().setAdapter(uploadHistoryAdapter);
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
     }
 }
