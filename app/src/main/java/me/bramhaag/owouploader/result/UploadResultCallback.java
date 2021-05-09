@@ -34,6 +34,9 @@ import me.bramhaag.owouploader.components.ProgressItem;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.file.UriFileProvider;
 
+/**
+ * Callback for document picker.
+ */
 public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
     private final OwOAPI api;
@@ -41,6 +44,12 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
     private final Handler mainHandler;
     private HistoryAdapter adapter;
 
+    /**
+     * Create a new callback.
+     *
+     * @param api     the api
+     * @param context the context
+     */
     public UploadResultCallback(OwOAPI api, Context context) {
         this.api = api;
         this.context = context;
@@ -90,6 +99,7 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
                 System.out.println("Upload error: " + throwable.getMessage());
                 throwable.printStackTrace();
+
                 runOnUiThread(() -> {
                     adapter.removeItem(item);
                     Toast.makeText(context, "Upload error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
@@ -102,7 +112,12 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
                         URI.create("https://owo.whats-th.is/" + result.getUrl()), new Date());
 
                 runOnUiThread(() -> {
-                    adapter.replaceItem(item, newItem);
+                    if (item.isCanceled()) {
+                        adapter.addItem(newItem);
+                    } else {
+                        adapter.replaceItem(item, newItem);
+                    }
+
                     Toast.makeText(context, "Upload completed", Toast.LENGTH_SHORT).show();
                 });
             }

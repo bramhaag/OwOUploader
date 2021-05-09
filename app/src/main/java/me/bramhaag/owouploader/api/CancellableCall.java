@@ -20,6 +20,9 @@ package me.bramhaag.owouploader.api;
 
 import retrofit2.Call;
 
+/**
+ * Wrapper around {@link Call} that only exposes the cancel method.
+ */
 public class CancellableCall {
 
     private final Call<?> call;

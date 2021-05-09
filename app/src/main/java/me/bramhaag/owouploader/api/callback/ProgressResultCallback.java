@@ -28,7 +28,7 @@ public interface ProgressResultCallback<T> extends ResultCallback<T> {
     /**
      * Called on progress update. A call to this method does not guarantee that the progress has changed.
      *
-     * @param progress the progress
+     * @param uploaded the amount of bytes uploaded
      */
     void onProgress(long uploaded);
 }

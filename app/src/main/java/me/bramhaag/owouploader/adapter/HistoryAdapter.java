@@ -22,12 +22,9 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import me.bramhaag.owouploader.R;
@@ -104,7 +101,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
         return items.size();
     }
 
-    public void addItem(HistoryItem item) {
+    /**
+     * Add a new item to the view.
+     *
+     * @param item the item.
+     */
+    public void addItem(@NonNull HistoryItem item) {
         var index = items.size();
 
         items.add(item);
@@ -113,32 +115,43 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
         notifyItemInserted(index);
     }
 
-    public void modifyItem(HistoryItem item) {
+    /**
+     * Modify an item in the view.
+     *
+     * @param item the item
+     */
+    public void modifyItem(@NonNull HistoryItem item) {
         var index = indexOf(item);
         notifyItemChanged(index);
     }
 
+    /**
+     * Replace an item in the view.
+     *
+     * @param originalItem the item to replace
+     * @param newItem      the new item
+     */
     public void replaceItem(HistoryItem originalItem, HistoryItem newItem) {
-        try {
-            var index = indexOf(originalItem);
-            items.set(index, newItem);
-            itemsIndex.remove(originalItem);
-            itemsIndex.put(newItem, index);
+        var index = indexOf(originalItem);
+        items.set(index, newItem);
+        itemsIndex.remove(originalItem);
+        itemsIndex.put(newItem, index);
 
-            notifyItemChanged(index);
-        } catch (IndexOutOfBoundsException ex) {
-            addItem(newItem);
-        }
+        notifyItemChanged(index);
     }
 
+    /**
+     * Remove an item from the view.
+     *
+     * @param item the item
+     */
     public void removeItem(HistoryItem item) {
         var index = indexOf(item);
 
-        System.out.println("Removed " + item);
         items.remove(index);
         itemsIndex.remove(item);
 
-        notifyDataSetChanged();
+        notifyItemRemoved(index);
 
         for (int i = index; i < items.size(); i++) {
             var key = items.get(i);
@@ -150,10 +163,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
 
     private int indexOf(HistoryItem item) {
         Integer index = itemsIndex.get(item);
-        if (index == null) {
-            throw new IndexOutOfBoundsException();
-        }
-
+        assert index != null;
+        
         return index;
     }
 }

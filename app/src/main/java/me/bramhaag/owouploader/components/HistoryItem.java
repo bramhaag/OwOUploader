@@ -18,6 +18,9 @@
 
 package me.bramhaag.owouploader.components;
 
+/**
+ * Marker interface for history items.
+ */
 public interface HistoryItem {
 
 }

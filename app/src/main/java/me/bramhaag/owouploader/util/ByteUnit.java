@@ -22,6 +22,9 @@ import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+/**
+ * Enum to convert bytes to different units.
+ */
 public enum ByteUnit {
     BYTE("B", 1),
     KILO_BYTE("kB", 1e3),

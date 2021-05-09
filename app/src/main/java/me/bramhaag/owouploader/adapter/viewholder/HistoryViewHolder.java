@@ -23,6 +23,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import me.bramhaag.owouploader.components.HistoryItem;
 
+/**
+ * {@link RecyclerView.ViewHolder} for {@link HistoryItem}s.
+ *
+ * @param <T> The concrete type of {@link HistoryItem}
+ */
 public abstract class HistoryViewHolder<T extends HistoryItem> extends RecyclerView.ViewHolder {
 
     public HistoryViewHolder(@NonNull View itemView) {

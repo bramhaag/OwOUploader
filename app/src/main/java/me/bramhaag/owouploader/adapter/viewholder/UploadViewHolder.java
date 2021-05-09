@@ -38,6 +38,9 @@ import java.util.Locale;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 
+/**
+ * {@link HistoryViewHolder} for {@link UploadHistoryItem}.
+ */
 public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
@@ -88,7 +91,13 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
         this.description.setText(String.format("%s - %s", host, DATE_FORMAT.format(date)));
     }
 
+    /**
+     * Load an image from a url.
+     *
+     * @param url the url
+     */
     public void loadImage(URI url) {
+        // FIXME
         var placeholder = new CircularProgressDrawable(itemView.getContext());
         placeholder.setCenterRadius(32);
         placeholder.setStrokeWidth(8);

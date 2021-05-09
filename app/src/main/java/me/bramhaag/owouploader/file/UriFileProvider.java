@@ -25,6 +25,9 @@ import android.provider.OpenableColumns;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+/**
+ * {@link FileProvider} for Uris.
+ */
 public class UriFileProvider implements FileProvider {
 
     private final ContentResolver resolver;
@@ -34,6 +37,12 @@ public class UriFileProvider implements FileProvider {
     private final long size;
     private final String contentType;
 
+    /**
+     * Create a new UriFileProvider.
+     *
+     * @param context the context
+     * @param uri     the uri
+     */
     public UriFileProvider(Context context, Uri uri) {
         this.resolver = context.getContentResolver();
         this.uri = uri;
@@ -47,7 +56,6 @@ public class UriFileProvider implements FileProvider {
             this.name = cursor.getString(nameIndex);
             this.size = cursor.getLong(sizeIndex);
         }
-
 
         var typeString = resolver.getType(uri);
         this.contentType = typeString == null ? DEFAULT_CONTENT_TYPE : typeString;

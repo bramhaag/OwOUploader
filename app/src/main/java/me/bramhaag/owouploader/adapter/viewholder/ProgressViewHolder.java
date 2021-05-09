@@ -67,18 +67,17 @@ public class ProgressViewHolder extends HistoryViewHolder<ProgressItem> {
         this.title.setText(title);
     }
 
+    /**
+     * Set the progress bar and text.
+     *
+     * @param uploadedBytes the number of bytes uploaded
+     * @param totalBytes    the total number of bytes to be uploaded
+     */
     public void setProgress(long uploadedBytes, long totalBytes) {
         var unit = ByteUnit.getPreferredUnit(totalBytes);
 
-        System.out.println("uploadedBytes = " + uploadedBytes);
-        System.out.println("totalBytes = " + totalBytes);
-        System.out.println("unit = " + unit);
-
         var uploaded = ByteUnit.BYTE.to(uploadedBytes, unit);
         var total = ByteUnit.BYTE.to(totalBytes, unit);
-
-        System.out.println("uploaded = " + uploaded);
-        System.out.println("total = " + total);
 
         var progress = uploaded / total;
 

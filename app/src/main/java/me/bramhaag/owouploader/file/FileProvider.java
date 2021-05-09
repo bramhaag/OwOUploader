@@ -18,10 +18,12 @@
 
 package me.bramhaag.owouploader.file;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Wrapper class around a file input.
+ */
 public interface FileProvider {
 
     String DEFAULT_CONTENT_TYPE = "application/octet-stream";
