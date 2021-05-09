@@ -43,7 +43,7 @@ import me.bramhaag.owouploader.components.UploadHistoryItem;
  */
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? extends HistoryItem>> {
 
-    public final List<HistoryItem> items;
+    private final List<HistoryItem> items;
     private final Map<HistoryItem, Integer> itemsIndex;
 
     public HistoryAdapter(List<HistoryItem> items) {

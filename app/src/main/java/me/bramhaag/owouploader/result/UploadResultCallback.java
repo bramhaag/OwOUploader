@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
 import java.util.Date;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
@@ -42,6 +43,7 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
     private final OwOAPI api;
     private final Context context;
     private final Handler mainHandler;
+    private RecyclerView recyclerView;
     private HistoryAdapter adapter;
 
     /**
@@ -56,8 +58,9 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
         this.mainHandler = new Handler(context.getMainLooper());
     }
 
-    public void setAdapter(HistoryAdapter adapter) {
-        this.adapter = adapter;
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+        this.adapter = ((HistoryAdapter) recyclerView.getAdapter());
     }
 
     @Override
@@ -72,13 +75,11 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
             @Override
             public void onStart() {
-                if (item.isCanceled()) {
-                    return;
-                }
-
                 item.setName(file.getName());
                 item.setSize(file.getSize());
                 adapter.addItem(item);
+
+                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
             }
 
             @Override

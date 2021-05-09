@@ -108,6 +108,7 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
                 .load(Uri.parse(url.toString()))
                 .placeholder(placeholder)
                 .error(R.drawable.outline_photo_24)
+                .centerCrop()
                 .into(image);
     }
 

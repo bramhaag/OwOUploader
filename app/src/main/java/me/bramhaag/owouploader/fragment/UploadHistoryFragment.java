@@ -94,7 +94,7 @@ public class UploadHistoryFragment extends Fragment {
 
         var parent = (MainActivity) getActivity();
         assert parent != null;
-        parent.getUploadCallback().setAdapter(uploadHistoryAdapter);
+        parent.getUploadCallback().setRecyclerView(binding.recyclerView);
 
         return binding.getRoot();
     }
