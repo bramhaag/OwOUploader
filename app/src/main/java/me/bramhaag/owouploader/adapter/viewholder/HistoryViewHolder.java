@@ -16,27 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.adapter.viewholder;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import me.bramhaag.owouploader.components.HistoryItem;
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * {@link RecyclerView.ViewHolder} for {@link HistoryItem}s.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @param <T> The concrete type of {@link HistoryItem}
  */
-public class ExampleInstrumentedTest {
+public abstract class HistoryViewHolder<T extends HistoryItem> extends RecyclerView.ViewHolder {
 
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
-
-    @Test
-    public void scenarioTest() {
-//        assertNotNull(scenarioExtension.getScenario());
+    public HistoryViewHolder(@NonNull View itemView) {
+        super(itemView);
     }
+
+    public abstract void initializeView(@NonNull T item);
 }

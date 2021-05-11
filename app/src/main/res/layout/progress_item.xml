@@ -24,31 +24,42 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-      android:id="@+id/upload_item_image"
-      android:layout_width="64dp"
-      android:layout_height="64dp"
-      android:layout_marginTop="5dp"
-      android:layout_marginBottom="5dp"
-      android:layout_marginStart="5dp"
-      android:layout_alignParentStart="true" />
+    <ProgressBar
+      android:layout_width="32dp"
+      android:layout_height="32dp"
+      android:layout_marginTop="21dp"
+      android:layout_marginBottom="21dp"
+      android:layout_marginStart="21dp"
+      android:layout_alignParentStart="true"
+      android:indeterminate="true" />
 
-    <TextView
-      android:id="@+id/upload_item_description"
+    <ProgressBar
+      android:id="@+id/progress_item_progress"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="5dp"
       android:layout_marginStart="74dp"
       android:layout_marginEnd="63dp"
       android:layout_alignParentStart="true"
-      android:layout_below="@+id/upload_item_title"
+      android:layout_below="@+id/progress_item_title"
+      style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+    <TextView
+      android:id="@+id/progress_item_description"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/progress_item_progress"
       android:ellipsize="end"
       android:maxLines="1"
-      android:text="File description"
+      android:text="32.61 / 96 MB"
+      android:gravity="right"
       android:textSize="12sp" />
 
     <TextView
-      android:id="@+id/upload_item_title"
+      android:id="@+id/progress_item_title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="10dp"
@@ -60,10 +71,10 @@
       android:text="File title" />
 
     <ImageButton
-      android:id="@+id/upload_item_copy"
+      android:id="@+id/progress_cancel_button"
       android:layout_width="48dp"
       android:layout_height="48dp"
-      android:src="@drawable/outline_content_copy_24"
+      android:src="@drawable/outline_close_24"
       android:layout_marginTop="13dp"
       android:layout_alignParentEnd="true"
       android:layout_marginEnd="5dp"

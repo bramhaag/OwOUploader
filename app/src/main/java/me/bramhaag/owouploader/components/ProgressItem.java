@@ -24,34 +24,50 @@ import java.util.Date;
 /**
  * Data class for shorten history items.
  */
-public class ShortenHistoryItem implements HistoryItem {
+public class ProgressItem implements HistoryItem {
 
-    private final URI originalUrl;
-    private final URI shortenedUrl;
-    private final Date date;
+    private String name;
+    private long uploaded;
+    private long size;
 
-    /**
-     * Instantiate a new {@link ShortenHistoryItem}.
-     *
-     * @param originalUrl  the original url
-     * @param shortenedUrl the shortened url
-     * @param date         the data
-     */
-    public ShortenHistoryItem(URI originalUrl, URI shortenedUrl, Date date) {
-        this.originalUrl = originalUrl;
-        this.shortenedUrl = shortenedUrl;
-        this.date = date;
+    private Runnable onCancel;
+
+    private boolean canceled = false;
+
+    public String getName() {
+        return name;
     }
 
-    public URI getOriginalUrl() {
-        return originalUrl;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public URI getShortenedUrl() {
-        return shortenedUrl;
+    public long getUploaded() {
+        return uploaded;
     }
 
-    public Date getDate() {
-        return date;
+    public void setUploaded(long uploaded) {
+        this.uploaded = uploaded;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public void cancel() {
+        canceled = true;
+        onCancel.run();
+    }
+
+    public void setOnCancel(Runnable onCancel) {
+        this.onCancel = onCancel;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
     }
 }

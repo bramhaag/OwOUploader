@@ -16,30 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.callback;
+package me.bramhaag.owouploader.file;
 
-import androidx.annotation.NonNull;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Callbacks for a call.
- *
- * @param <T> the type of the result
+ * Wrapper class around a file input.
  */
-public interface ResultCallback<T> {
+public interface FileProvider {
 
-    void onStart();
+    String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
-    /**
-     * Called when an error occurred during or after uploading.
-     *
-     * @param throwable the error
-     */
-    void onError(@NonNull Throwable throwable);
+    String getName();
 
-    /**
-     * Called when the upload is successfully completed.
-     *
-     * @param result the result of the upload
-     */
-    void onComplete(@NonNull T result);
+    String getContentType();
+
+    long getSize();
+
+    InputStream getContent() throws IOException;
 }

@@ -26,15 +26,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
-import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.ShortenHistoryAdapter;
-import me.bramhaag.owouploader.adapter.UploadHistoryAdapter;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 
 /**
@@ -61,7 +57,7 @@ public class ShortenHistoryFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        var shortenHistoryAdapter = new ShortenHistoryAdapter(Arrays.asList(
+        var shortenHistoryAdapter = new HistoryAdapter(Arrays.asList(
                 new ShortenHistoryItem(
                         URI.create("https://www.youtube.com/watch?v=gOK12Ombicg"),
                         URI.create("https://youtu.be/gOK12Ombicg"),

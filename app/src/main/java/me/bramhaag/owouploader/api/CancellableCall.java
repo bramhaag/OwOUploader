@@ -16,27 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.api;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import retrofit2.Call;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Wrapper around {@link Call} that only exposes the cancel method.
  */
-public class ExampleInstrumentedTest {
+public class CancellableCall {
 
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
+    private final Call<?> call;
 
-    @Test
-    public void scenarioTest() {
-//        assertNotNull(scenarioExtension.getScenario());
+    public CancellableCall(Call<?> call) {
+        this.call = call;
+    }
+
+    public void cancel() {
+        call.cancel();
     }
 }

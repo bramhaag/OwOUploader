@@ -16,30 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.callback;
-
-import androidx.annotation.NonNull;
+package me.bramhaag.owouploader.components;
 
 /**
- * Callbacks for a call.
- *
- * @param <T> the type of the result
+ * Marker interface for history items.
  */
-public interface ResultCallback<T> {
+public interface HistoryItem {
 
-    void onStart();
-
-    /**
-     * Called when an error occurred during or after uploading.
-     *
-     * @param throwable the error
-     */
-    void onError(@NonNull Throwable throwable);
-
-    /**
-     * Called when the upload is successfully completed.
-     *
-     * @param result the result of the upload
-     */
-    void onComplete(@NonNull T result);
 }

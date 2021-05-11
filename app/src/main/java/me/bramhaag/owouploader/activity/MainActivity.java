@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MotionEvent;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,9 +33,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.Arrays;
 import java.util.List;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
+import me.bramhaag.owouploader.result.UploadResultCallback;
 
 /**
  * Main activity.
@@ -42,6 +45,8 @@ import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
+    private UploadResultCallback uploadCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +56,24 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        var extras = getIntent().getExtras();
+        var token = extras.getString("TOKEN");
+        var api = new OwOAPI(token);
+
+        uploadCallback = new UploadResultCallback(api, getApplicationContext());
+        var documentActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uploadCallback
+        );
+
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+
+        binding.actionUpload.setOnClickListener(view -> {
+            documentActivityLauncher.launch(new String[]{"*/*"});
+            binding.fabMenu.collapse();
+        });
     }
 
     @Override
@@ -73,11 +93,16 @@ public class MainActivity extends AppCompatActivity {
         var outRect = new Rect();
         fabMenu.getGlobalVisibleRect(outRect);
 
-        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-            fabMenu.collapse();
+        if (outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+            return super.dispatchTouchEvent(event);
         }
 
-        return super.dispatchTouchEvent(event);
+        fabMenu.collapse();
+        return true;
+    }
+
+    public UploadResultCallback getUploadCallback() {
+        return uploadCallback;
     }
 
     private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
@@ -106,6 +131,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return tabs.size();
+        }
+
+        public List<Pair<String, Fragment>> getTabs() {
+            return tabs;
         }
     }
 }
