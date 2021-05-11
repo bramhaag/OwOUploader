@@ -38,7 +38,7 @@ import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
  */
 public class ShortenHistoryFragment extends Fragment {
 
-    private FragmentHistoryBinding binding;
+    public FragmentHistoryBinding binding;
 
     public ShortenHistoryFragment() {
         // Required empty public constructor
