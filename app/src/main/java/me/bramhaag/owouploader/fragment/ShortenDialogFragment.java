@@ -34,14 +34,13 @@ import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
 
 public class ShortenDialogFragment extends DialogFragment {
 
-    private Handler mainHandler;
-    private Context context;
-    private OwOAPI api;
-    private ShortenHistoryFragment shortenHistoryFragment;
+    private final Handler mainHandler;
+    private final Context context;
+    private final OwOAPI api;
+    private final ShortenHistoryFragment shortenHistoryFragment;
 
     public ShortenDialogFragment(OwOAPI api, Context context, ShortenHistoryFragment shortenHistoryFragment) {
         this.api = api;
@@ -68,7 +67,9 @@ public class ShortenDialogFragment extends DialogFragment {
 
                         @Override
                         public void onError(@NonNull Throwable throwable) {
-
+                            runOnUiThread(() -> Toast
+                                    .makeText(context, "Shorten error: " + throwable.getMessage(), Toast.LENGTH_LONG)
+                                    .show());
                         }
 
                         @Override

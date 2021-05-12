@@ -23,17 +23,13 @@ import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MotionEvent;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Arrays;
 import java.util.List;
 import me.bramhaag.owouploader.R;
@@ -49,7 +45,7 @@ import me.bramhaag.owouploader.result.UploadResultCallback;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    public ActivityMainBinding binding;
 
     private UploadResultCallback uploadCallback;
 
@@ -67,9 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         uploadCallback = new UploadResultCallback(api, getApplicationContext());
         var documentActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.OpenDocument(),
-                uploadCallback
-        );
+                new ActivityResultContracts.OpenDocument(), uploadCallback);
 
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
@@ -82,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding.actionShorten.setOnClickListener(view -> {
             new ShortenDialogFragment(api, getApplicationContext(),
-                    (ShortenHistoryFragment) tabLayoutPageAdapter.tabs.get(1).second).show(getSupportFragmentManager(), "tag");
+                    (ShortenHistoryFragment) tabLayoutPageAdapter.tabs.get(1).second)
+                    .show(getSupportFragmentManager(), "dialog_shorten");
             binding.fabMenu.collapse();
         });
     }

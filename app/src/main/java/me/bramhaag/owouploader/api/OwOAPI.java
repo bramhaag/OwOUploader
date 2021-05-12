@@ -18,13 +18,11 @@
 
 package me.bramhaag.owouploader.api;
 
-import android.content.Context;
-import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
@@ -35,13 +33,13 @@ import me.bramhaag.owouploader.api.deserializer.UserModelDeserializer;
 import me.bramhaag.owouploader.api.exception.ResponseStatusException;
 import me.bramhaag.owouploader.api.interceptor.AuthenticationInterceptor;
 import me.bramhaag.owouploader.api.interceptor.RateLimitInterceptor;
+import me.bramhaag.owouploader.api.model.ErrorModel;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.api.service.OwOService;
 import me.bramhaag.owouploader.file.FileProvider;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,6 +52,13 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * Wrapper class for the OwO API.
  */
 public class OwOAPI {
+
+    private static final Gson GSON_INSTANCE = new GsonBuilder()
+            .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
+            .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
+            .registerTypeAdapter(ObjectModel.class, new ObjectModelDeserializer())
+            .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
+            .create();
 
     private final OwOService service;
 
@@ -119,7 +124,15 @@ public class OwOAPI {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    result.onError(new ResponseStatusException(response.code(), response.message()));
+                    try {
+                        // Suppress NPE warning, as we're handling that in the catch statement
+                        @SuppressWarnings("ConstantConditions")
+                        ErrorModel model = GSON_INSTANCE.fromJson(response.errorBody().string(), ErrorModel.class);
+                        result.onError(new ResponseStatusException(model.getErrorCode(), model.getDescription()));
+                    } catch (IOException | NullPointerException e) {
+                        result.onError(new ResponseStatusException(response.code(), response.message()));
+                    }
+
                     return;
                 }
 
@@ -143,12 +156,7 @@ public class OwOAPI {
                 .build();
 
         var scalarsConverter = ScalarsConverterFactory.create();
-        var gsonConverter = GsonConverterFactory.create(new GsonBuilder()
-                .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
-                .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
-                .registerTypeAdapter(ObjectModel.class, new ObjectModelDeserializer())
-                .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
-                .create());
+        var gsonConverter = GsonConverterFactory.create(GSON_INSTANCE);
 
         var retrofit = new Retrofit.Builder()
                 .baseUrl(DEFAULT_ENDPOINT)
