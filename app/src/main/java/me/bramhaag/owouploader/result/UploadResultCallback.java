@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.tabs.TabLayout;
 import java.net.URI;
 import java.util.Date;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
@@ -43,6 +44,7 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
     private final OwOAPI api;
     private final Context context;
     private final Handler mainHandler;
+    private final TabLayout.Tab tab;
     private RecyclerView recyclerView;
     private HistoryAdapter adapter;
 
@@ -52,10 +54,11 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
      * @param api     the api
      * @param context the context
      */
-    public UploadResultCallback(OwOAPI api, Context context) {
+    public UploadResultCallback(OwOAPI api, Context context, TabLayout.Tab tab) {
         this.api = api;
         this.context = context;
         this.mainHandler = new Handler(context.getMainLooper());
+        this.tab = tab;
     }
 
     public void setRecyclerView(RecyclerView recyclerView) {
@@ -75,6 +78,8 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
             @Override
             public void onStart() {
+                tab.select();
+
                 item.setName(file.getName());
                 item.setSize(file.getSize());
                 adapter.addItem(item);

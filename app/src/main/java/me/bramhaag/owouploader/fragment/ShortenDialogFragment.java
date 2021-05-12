@@ -21,12 +21,20 @@ package me.bramhaag.owouploader.fragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import com.google.android.material.tabs.TabLayout;
 import java.net.URI;
 import java.util.Date;
 import me.bramhaag.owouploader.R;
@@ -34,62 +42,92 @@ import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.components.ShortenHistoryItem;
+import me.bramhaag.owouploader.databinding.ActivityMainBinding;
+import me.bramhaag.owouploader.databinding.DialogShortenBinding;
+import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
+import me.bramhaag.owouploader.util.TextChangedListener;
 
 public class ShortenDialogFragment extends DialogFragment {
 
-    private final Handler mainHandler;
-    private final Context context;
-    private final OwOAPI api;
-    private final ShortenHistoryFragment shortenHistoryFragment;
+    private DialogShortenBinding binding;
 
-    public ShortenDialogFragment(OwOAPI api, Context context, ShortenHistoryFragment shortenHistoryFragment) {
+    private final OwOAPI api;
+    private final TabLayout.Tab tab;
+    private HistoryAdapter adapter;
+
+    public ShortenDialogFragment(OwOAPI api, TabLayout.Tab tab) {
         this.api = api;
-        this.context = context;
-        this.mainHandler = new Handler(context.getMainLooper());
-        this.shortenHistoryFragment = shortenHistoryFragment;
+        this.tab = tab;
     }
 
+    public void setAdapter(HistoryAdapter adapter) {
+        this.adapter = adapter;
+    }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        var view = getLayoutInflater().inflate(R.layout.dialog_shorten, null);
+        binding = DialogShortenBinding.inflate(getLayoutInflater());
+        var view = binding.getRoot();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Shorten URL")
                 .setView(view)
-                .setPositiveButton("Shorten", (dialog, which) -> {
-                    EditText text = view.findViewById(R.id.shorten_dialog_input);
-                    api.shortenUrl(text.getText().toString(), null, new ResultCallback<>() {
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void onError(@NonNull Throwable throwable) {
-                            runOnUiThread(() -> Toast
-                                    .makeText(context, "Shorten error: " + throwable.getMessage(), Toast.LENGTH_LONG)
-                                    .show());
-                        }
-
-                        @Override
-                        public void onComplete(@NonNull String result) {
-                            runOnUiThread(() -> {
-                                Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-                                ((HistoryAdapter) shortenHistoryFragment.binding.recyclerView.getAdapter())
-                                        .addItem(new ShortenHistoryItem(
-                                                URI.create(text.getText().toString()), URI.create(result), new Date()));
-                            });
-                        }
-                    }, false);
-                })
+                .setPositiveButton("Shorten", null)
                 .setNegativeButton("Cancel", null);
 
         return builder.create();
     }
 
-    private void runOnUiThread(Runnable runnable) {
-        mainHandler.post(runnable);
-    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        var dialog = (AlertDialog) requireDialog();
+
+        var shortenButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        var cancelButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+        shortenButton.setEnabled(false);
+        shortenButton.setOnClickListener(view -> {
+            var call = api.shortenUrl(binding.shortenDialogInput.getText().toString(), null, new ResultCallback<>() {
+                @Override
+                public void onStart() {
+                    tab.select();
+                    binding.shortenDialogInput.setEnabled(false);
+                    binding.shortenProgressBar.setVisibility(View.VISIBLE);
+                    binding.shortenProgressText.setVisibility(View.VISIBLE);
+                    shortenButton.setEnabled(false);
+                }
+
+                @Override
+                public void onError(@NonNull Throwable throwable) {
+                    dialog.dismiss();
+                    Toast.makeText(getContext(), "Shorten error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onComplete(@NonNull String result) {
+                    dialog.dismiss();
+                    Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+                    adapter.addItem(new ShortenHistoryItem(URI.create(binding.shortenDialogInput.getText().toString()),
+                            URI.create(result), new Date()));
+                }
+            }, false);
+
+            cancelButton.setOnClickListener(v -> {
+                call.cancel();
+                dialog.dismiss();
+            });
+
+            dialog.setOnCancelListener(v -> {
+                call.cancel();
+                dialog.dismiss();
+            });
+        });
+
+        binding.shortenDialogInput.addTextChangedListener(
+                (TextChangedListener) input -> shortenButton.setEnabled(input.length() != 0));
+    }
 }

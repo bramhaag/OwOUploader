@@ -28,8 +28,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.Arrays;
 import java.util.List;
 import me.bramhaag.owouploader.R;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding binding;
 
     private UploadResultCallback uploadCallback;
+    private ShortenDialogFragment shortenDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,23 +65,25 @@ public class MainActivity extends AppCompatActivity {
         var token = extras.getString("TOKEN");
         var api = new OwOAPI(token);
 
-        uploadCallback = new UploadResultCallback(api, getApplicationContext());
+        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
+        binding.viewPager.setAdapter(tabLayoutPageAdapter);
+
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
+                (tab, position) ->
+                        tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
+
+        uploadCallback = new UploadResultCallback(api, this, binding.tabLayout.getTabAt(0));
         var documentActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(), uploadCallback);
-
-        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
-        binding.viewPager.setAdapter(tabLayoutPageAdapter);
-        binding.tabLayout.setupWithViewPager(binding.viewPager);
 
         binding.actionUpload.setOnClickListener(view -> {
             documentActivityLauncher.launch(new String[]{"*/*"});
             binding.fabMenu.collapse();
         });
 
+        shortenDialog = new ShortenDialogFragment(api, binding.tabLayout.getTabAt(1));
         binding.actionShorten.setOnClickListener(view -> {
-            new ShortenDialogFragment(api, getApplicationContext(),
-                    (ShortenHistoryFragment) tabLayoutPageAdapter.tabs.get(1).second)
-                    .show(getSupportFragmentManager(), "dialog_shorten");
+            shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
             binding.fabMenu.collapse();
         });
     }
@@ -111,36 +117,39 @@ public class MainActivity extends AppCompatActivity {
         return uploadCallback;
     }
 
-    private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
+    public ShortenDialogFragment getShortenDialog() {
+        return shortenDialog;
+    }
 
-        private final List<Pair<String, Fragment>> tabs;
+    private static class TabLayoutPageAdapter extends FragmentStateAdapter {
 
-        public TabLayoutPageAdapter(FragmentManager fm) {
-            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        private final String[] titles;
 
-            tabs = Arrays.asList(new Pair<>("upload", new UploadHistoryFragment()),
-                    new Pair<>("shorten", new ShortenHistoryFragment()));
+        public TabLayoutPageAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
+            titles = new String[]{"upload", "shorten"};
         }
 
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabs.get(position).first;
-        }
-
-        @Override
         @NonNull
-        public Fragment getItem(int position) {
-            return tabs.get(position).second;
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return new UploadHistoryFragment();
+                case 1:
+                    return new ShortenHistoryFragment();
+                default:
+                    throw new IllegalArgumentException();
+            }
         }
 
         @Override
-        public int getCount() {
-            return tabs.size();
+        public int getItemCount() {
+            return 2;
         }
 
-        public List<Pair<String, Fragment>> getTabs() {
-            return tabs;
+        public String getTitle(int position) {
+            return titles[position];
         }
     }
 }

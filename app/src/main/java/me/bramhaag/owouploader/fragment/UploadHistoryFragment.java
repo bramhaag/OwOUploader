@@ -92,15 +92,8 @@ public class UploadHistoryFragment extends Fragment {
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setItemAnimator(null);
 
-        var parent = (MainActivity) getActivity();
-        assert parent != null;
-        parent.getUploadCallback().setRecyclerView(binding.recyclerView);
+        ((MainActivity) requireActivity()).getUploadCallback().setRecyclerView(binding.recyclerView);
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
     }
 }
