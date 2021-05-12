@@ -47,6 +47,9 @@ import me.bramhaag.owouploader.databinding.DialogShortenBinding;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 import me.bramhaag.owouploader.util.TextChangedListener;
 
+/**
+ * {@link DialogFragment} that handles shortening urls.
+ */
 public class ShortenDialogFragment extends DialogFragment {
 
     private DialogShortenBinding binding;

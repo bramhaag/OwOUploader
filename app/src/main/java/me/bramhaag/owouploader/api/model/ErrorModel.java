@@ -18,6 +18,9 @@
 
 package me.bramhaag.owouploader.api.model;
 
+/**
+ * Stores the result of a call that returned an error.
+ */
 public class ErrorModel {
     private boolean success;
     private int errorcode;

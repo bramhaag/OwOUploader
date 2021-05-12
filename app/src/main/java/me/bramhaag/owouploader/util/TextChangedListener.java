@@ -21,6 +21,9 @@ package me.bramhaag.owouploader.util;
 import android.text.Editable;
 import android.text.TextWatcher;
 
+/**
+ * Wrapper around {@link TextWatcher} to prevent unnecessary boilerplate.
+ */
 public interface TextChangedListener extends TextWatcher {
 
     void onTextChanged(CharSequence input);
