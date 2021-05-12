@@ -26,7 +26,7 @@
   tools:context=".activity.LoginActivity">
 
   <androidx.appcompat.widget.AppCompatTextView
-    android:id="@+id/login_logo_text"
+    android:id="@+id/brand_logo"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/OwOBrandTextView"
@@ -36,17 +36,17 @@
     app:layout_constraintVertical_bias="0.15"/>
 
   <androidx.appcompat.widget.AppCompatTextView
-    android:id="@+id/login_token_text"
+    android:id="@+id/brand_description"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/logo_branding"
     android:textColor="@color/white"
     android:textAlignment="center"
     android:textSize="18sp"
-    app:layout_constraintTop_toBottomOf="@id/login_logo_text"/>
+    app:layout_constraintTop_toBottomOf="@id/brand_logo"/>
 
   <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/login_text_input"
+    android:id="@+id/login_token_input"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="25dp"
@@ -63,6 +63,7 @@
   </com.google.android.material.textfield.TextInputLayout>
 
   <com.google.android.material.button.MaterialButton
+    android:id="@+id/login_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/login_button_continue"

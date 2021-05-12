@@ -23,14 +23,19 @@ import android.os.PersistableBundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.databinding.ActivityLoginBinding;
 
 /**
  * Login Activity.
  */
 public class LoginActivity extends AppCompatActivity {
+
+    private ActivityLoginBinding binding;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 }

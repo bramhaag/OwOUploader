@@ -18,8 +18,10 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    // This should probably be moved in the future lol
+    @Nullable
+    private String apiKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,16 @@ public class MainActivity extends AppCompatActivity {
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+
+        var encryptedApiKey = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("owo_api_key", null);
+
+        // Probably move it up before the content is rendered (?)
+        if (encryptedApiKey != null) {
+            return;
+        }
+
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
     @Override
