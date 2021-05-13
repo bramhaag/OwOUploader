@@ -16,15 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.exception;
+package me.bramhaag.owouploader.api.model;
 
 /**
- * Exception associated with HTTP response status codes and messages.
+ * Stores the result of a call that returned an error.
  */
-public class ResponseStatusException extends RuntimeException {
+public class ErrorModel {
+    private boolean success;
+    private int errorcode;
+    private String description;
 
-    public ResponseStatusException(int code, String message) {
-        super(message + " (" + code + ")");
+    public boolean isSuccess() {
+        return success;
     }
 
+    public int getErrorCode() {
+        return errorcode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

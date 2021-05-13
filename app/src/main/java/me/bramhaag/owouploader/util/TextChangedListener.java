@@ -16,15 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.api.exception;
+package me.bramhaag.owouploader.util;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 
 /**
- * Exception associated with HTTP response status codes and messages.
+ * Wrapper around {@link TextWatcher} to prevent unnecessary boilerplate.
  */
-public class ResponseStatusException extends RuntimeException {
+public interface TextChangedListener extends TextWatcher {
 
-    public ResponseStatusException(int code, String message) {
-        super(message + " (" + code + ")");
+    void onTextChanged(CharSequence input);
+
+    @Override
+    default void onTextChanged(CharSequence s, int start, int before, int count) {
+        onTextChanged(s);
     }
 
+    @Override
+    default void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    default void afterTextChanged(Editable s) {
+    }
 }
