@@ -34,7 +34,11 @@ import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.components.ProgressItem;
 import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.file.ContentProvider;
+import me.bramhaag.owouploader.util.Runnables;
 
+/**
+ * Class that handles uploading.
+ */
 public class UploadHandler {
 
     private final OwOAPI api;
@@ -45,6 +49,13 @@ public class UploadHandler {
     private HistoryAdapter adapter;
     private RecyclerView recyclerView;
 
+    /**
+     * Create a new {@link UploadHandler}.
+     *
+     * @param api     the api
+     * @param context the context
+     * @param tab     the {@link TabLayout.Tab} belonging to the upload fragment.
+     */
     public UploadHandler(OwOAPI api, Context context, TabLayout.Tab tab) {
         this.api = api;
         this.context = context;
@@ -57,20 +68,31 @@ public class UploadHandler {
         this.adapter = ((HistoryAdapter) recyclerView.getAdapter());
     }
 
-    public void upload(ContentProvider file) {
-        upload(file, () -> {});
+    /**
+     * Upload content.
+     *
+     * @param content the content
+     */
+    public void upload(ContentProvider content) {
+        upload(content, Runnables.EMPTY);
     }
 
-    public void upload(ContentProvider file, Runnable onFinish) {
+    /**
+     * Upload content.
+     *
+     * @param content  the content
+     * @param onFinish on finish callback
+     */
+    public void upload(ContentProvider content, Runnable onFinish) {
         ProgressItem item = new ProgressItem();
-        var call = api.uploadFile(file, new ProgressResultCallback<>() {
+        var call = api.uploadFile(content, new ProgressResultCallback<>() {
 
             @Override
             public void onStart() {
                 tab.select();
 
-                item.setName(file.getName());
-                item.setSize(file.getSize());
+                item.setName(content.getName());
+                item.setSize(content.getSize());
                 adapter.addItem(item);
 
                 recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
@@ -105,7 +127,7 @@ public class UploadHandler {
 
             @Override
             public void onComplete(@NonNull UploadModel result) {
-                var newItem = new UploadHistoryItem(file.getName(),
+                var newItem = new UploadHistoryItem(content.getName(),
                         URI.create("https://owo.whats-th.is/" + result.getUrl()), new Date());
 
                 runOnUiThread(() -> {

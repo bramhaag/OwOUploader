@@ -41,7 +41,10 @@ import me.bramhaag.owouploader.file.FileContentProvider;
 import me.bramhaag.owouploader.upload.UploadHandler;
 import me.bramhaag.owouploader.util.NotificationsUtil;
 
-public class ScreenRecordService extends Service {
+/**
+ * Background service for screen recording.
+ */
+public class ScreenCaptureService extends Service {
 
     private static final String TAG = "ScreenCaptureService";
 
@@ -63,11 +66,12 @@ public class ScreenRecordService extends Service {
         return binder;
     }
 
-    @Override
-    public void onDestroy() {
-        mediaRecorder.release();
-    }
-
+    /**
+     * Start screen capture.
+     *
+     * @param resultCode result code for requesting permission
+     * @param data       the data
+     */
     public void start(int resultCode, Intent data) {
         var notification = NotificationsUtil.getNotification(this);
         startForeground(Objects.requireNonNull(notification.first), notification.second);
@@ -93,9 +97,13 @@ public class ScreenRecordService extends Service {
         mediaRecorder.start();
     }
 
+    /**
+     * Stop screen capture.
+     */
     public void stop() {
         mediaRecorder.stop();
         mediaRecorder.reset();
+        mediaRecorder.release();
         virtualDisplay.release();
         mediaProjection.stop();
 
@@ -163,10 +171,13 @@ public class ScreenRecordService extends Service {
         }
     }
 
+    /**
+     * {@link Binder} for {@link ScreenCaptureService} to set several instance variables.
+     */
     public class ScreenRecordBinder extends Binder {
 
-        public ScreenRecordService getService() {
-            return ScreenRecordService.this;
+        public ScreenCaptureService getService() {
+            return ScreenCaptureService.this;
         }
     }
 }

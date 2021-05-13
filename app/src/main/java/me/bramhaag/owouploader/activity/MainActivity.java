@@ -42,8 +42,8 @@ import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 import me.bramhaag.owouploader.result.UploadResultCallback;
-import me.bramhaag.owouploader.service.ScreenRecordService;
-import me.bramhaag.owouploader.service.ScreenRecordService.ScreenRecordBinder;
+import me.bramhaag.owouploader.service.ScreenCaptureService;
+import me.bramhaag.owouploader.service.ScreenCaptureService.ScreenRecordBinder;
 import me.bramhaag.owouploader.upload.UploadHandler;
 
 /**
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private UploadHandler uploadHandler;
     private ShortenDialogFragment shortenDialog;
 
-    private ScreenRecordService screenRecordService;
+    private ScreenCaptureService screenCaptureService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         var mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> screenRecordService.start(result.getResultCode(), result.getData()));
+                result -> screenCaptureService.start(result.getResultCode(), result.getData()));
 
         binding.actionScreenRecord.setOnClickListener(view -> {
             var intent = mediaProjectionManager.createScreenCaptureIntent();
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.actionEndScreenRecord.setOnClickListener(view -> {
-            screenRecordService.stop();
+            screenCaptureService.stop();
             binding.fabMenu.collapse();
         });
     }
@@ -119,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Intent intent = new Intent(this, ScreenRecordService.class);
+        Intent intent = new Intent(this, ScreenCaptureService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//
-//        unbindService(connection);
-//    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unbindService(connection);
+    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -162,15 +162,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             var binder = (ScreenRecordBinder) service;
-            screenRecordService = binder.getService();
-            screenRecordService.setUploadHandler(uploadHandler);
-            screenRecordService.setStartButton(binding.actionScreenRecord);
-            screenRecordService.setEndButton(binding.actionEndScreenRecord);
+            screenCaptureService = binder.getService();
+            screenCaptureService.setUploadHandler(uploadHandler);
+            screenCaptureService.setStartButton(binding.actionScreenRecord);
+            screenCaptureService.setEndButton(binding.actionEndScreenRecord);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            screenRecordService = null;
+            screenCaptureService = null;
         }
     };
 

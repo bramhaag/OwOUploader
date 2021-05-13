@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
+/**
+ * {@link ContentProvider} for {@link File}s.
+ */
 public class FileContentProvider implements ContentProvider {
 
     private final File file;

@@ -30,13 +30,21 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.util.Pair;
 import me.bramhaag.owouploader.R;
 
-
+/**
+ * Util for creating notifications.
+ */
 public class NotificationsUtil {
 
     public static final int NOTIFICATION_ID = 1;
     private static final String NOTIFICATION_CHANNEL_ID = "me.bramhaag.owouploader.app";
     private static final String NOTIFICATION_CHANNEL_NAME = "me.bramhaag.owouploader.app";
 
+    /**
+     * Get the notification's details.
+     *
+     * @param context the context
+     * @return the notification's id and the notification
+     */
     @NonNull
     public static Pair<Integer, Notification> getNotification(@NonNull Context context) {
         var notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
