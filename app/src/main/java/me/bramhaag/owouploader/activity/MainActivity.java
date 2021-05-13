@@ -18,23 +18,23 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Rect;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.util.Pair;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MotionEvent;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
-import java.util.Arrays;
-import java.util.List;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
@@ -42,6 +42,8 @@ import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 import me.bramhaag.owouploader.result.UploadResultCallback;
+import me.bramhaag.owouploader.service.ScreenRecordService;
+import me.bramhaag.owouploader.service.ScreenRecordService.ScreenRecordBinder;
 
 /**
  * Main activity.
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private UploadResultCallback uploadCallback;
     private ShortenDialogFragment shortenDialog;
+
+    private ScreenRecordService screenRecordService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +90,39 @@ public class MainActivity extends AppCompatActivity {
             shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
             binding.fabMenu.collapse();
         });
+
+        var mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> screenRecordService.start(result.getResultCode(), result.getData()));
+
+        binding.actionScreenRecord.setOnClickListener(
+                view -> screenRecordLauncher.launch(mediaProjectionManager.createScreenCaptureIntent()));
+
+        binding.actionEndScreenRecord.setOnClickListener(view -> {
+            screenRecordService.stop();
+            binding.fabMenu.collapse();
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(this, ScreenRecordService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unbindService(connection);
     }
 
     @Override
@@ -120,6 +151,22 @@ public class MainActivity extends AppCompatActivity {
     public ShortenDialogFragment getShortenDialog() {
         return shortenDialog;
     }
+
+    private final ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            var binder = (ScreenRecordBinder) service;
+            screenRecordService = binder.getService();
+            screenRecordService.setStartButton(binding.actionScreenRecord);
+            screenRecordService.setEndButton(binding.actionEndScreenRecord);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            screenRecordService = null;
+        }
+    };
 
     private static class TabLayoutPageAdapter extends FragmentStateAdapter {
 
