@@ -28,7 +28,6 @@ import android.media.MediaRecorder.VideoEncoder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
 import android.view.Surface;
@@ -38,6 +37,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import me.bramhaag.owouploader.file.FileContentProvider;
+import me.bramhaag.owouploader.upload.UploadHandler;
 import me.bramhaag.owouploader.util.NotificationsUtil;
 
 public class ScreenRecordService extends Service {
@@ -49,6 +50,9 @@ public class ScreenRecordService extends Service {
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
     private MediaRecorder mediaRecorder;
+    private File outputFile;
+
+    private UploadHandler uploadHandler;
 
     private FloatingActionButton startButton;
     private FloatingActionButton endButton;
@@ -77,7 +81,10 @@ public class ScreenRecordService extends Service {
 
         var metrics = getResources().getDisplayMetrics();
 
-        mediaRecorder = createMediaRecorder(metrics, new File(getApplicationContext().getCacheDir(), "video.mp4"));
+        String fileName = String.format("record_%s.mp4", System.currentTimeMillis());
+        outputFile = new File(getApplicationContext().getCacheDir(), fileName);
+
+        mediaRecorder = createMediaRecorder(metrics, outputFile);
         virtualDisplay = createVirtualDisplay(mediaProjection, metrics, mediaRecorder.getSurface(),
                 () -> setButtons(false));
 
@@ -92,6 +99,10 @@ public class ScreenRecordService extends Service {
         virtualDisplay.release();
         mediaProjection.stop();
 
+        // We don't really care about if the file is deleted successfully or not.
+        //noinspection ResultOfMethodCallIgnored
+        uploadHandler.upload(new FileContentProvider(outputFile), () -> outputFile.delete());
+
         stopForeground(true);
     }
 
@@ -100,8 +111,7 @@ public class ScreenRecordService extends Service {
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
         mediaRecorder.setOutputFormat(OutputFormat.MPEG_4);
-        mediaRecorder.setOutputFile(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/video.mp4");
+        mediaRecorder.setOutputFile(outputPath.getPath());
 
         mediaRecorder.setVideoSize(metrics.widthPixels, metrics.heightPixels);
         mediaRecorder.setVideoEncoder(VideoEncoder.H264);
@@ -129,6 +139,10 @@ public class ScreenRecordService extends Service {
 
         return mediaProjection.createVirtualDisplay(TAG, metrics.widthPixels, metrics.heightPixels, metrics.densityDpi,
                 0, surface, callback, null);
+    }
+
+    public void setUploadHandler(UploadHandler uploadHandler) {
+        this.uploadHandler = uploadHandler;
     }
 
     public void setStartButton(FloatingActionButton startButton) {

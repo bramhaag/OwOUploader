@@ -24,7 +24,7 @@ import java.io.InputStream;
 /**
  * Wrapper class around a file input.
  */
-public interface FileProvider {
+public interface ContentProvider {
 
     String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 

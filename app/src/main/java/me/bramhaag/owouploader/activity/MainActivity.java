@@ -44,6 +44,7 @@ import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 import me.bramhaag.owouploader.result.UploadResultCallback;
 import me.bramhaag.owouploader.service.ScreenRecordService;
 import me.bramhaag.owouploader.service.ScreenRecordService.ScreenRecordBinder;
+import me.bramhaag.owouploader.upload.UploadHandler;
 
 /**
  * Main activity.
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ActivityMainBinding binding;
 
-    private UploadResultCallback uploadCallback;
+    private UploadHandler uploadHandler;
     private ShortenDialogFragment shortenDialog;
 
     private ScreenRecordService screenRecordService;
@@ -76,9 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 (tab, position) ->
                         tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
 
-        uploadCallback = new UploadResultCallback(api, this, binding.tabLayout.getTabAt(0));
+        uploadHandler = new UploadHandler(api, this, binding.tabLayout.getTabAt(0));
+
         var documentActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.OpenDocument(), uploadCallback);
+                new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
 
         binding.actionUpload.setOnClickListener(view -> {
             documentActivityLauncher.launch(new String[]{"*/*"});
@@ -95,8 +97,11 @@ public class MainActivity extends AppCompatActivity {
         var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> screenRecordService.start(result.getResultCode(), result.getData()));
 
-        binding.actionScreenRecord.setOnClickListener(
-                view -> screenRecordLauncher.launch(mediaProjectionManager.createScreenCaptureIntent()));
+        binding.actionScreenRecord.setOnClickListener(view -> {
+            var intent = mediaProjectionManager.createScreenCaptureIntent();
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            screenRecordLauncher.launch(intent);
+        });
 
         binding.actionEndScreenRecord.setOnClickListener(view -> {
             screenRecordService.stop();
@@ -118,12 +123,12 @@ public class MainActivity extends AppCompatActivity {
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        unbindService(connection);
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//
+//        unbindService(connection);
+//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -144,8 +149,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public UploadResultCallback getUploadCallback() {
-        return uploadCallback;
+    public UploadHandler getUploadHandler() {
+        return uploadHandler;
     }
 
     public ShortenDialogFragment getShortenDialog() {
@@ -158,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className, IBinder service) {
             var binder = (ScreenRecordBinder) service;
             screenRecordService = binder.getService();
+            screenRecordService.setUploadHandler(uploadHandler);
             screenRecordService.setStartButton(binding.actionScreenRecord);
             screenRecordService.setEndButton(binding.actionEndScreenRecord);
         }

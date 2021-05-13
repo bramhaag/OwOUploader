@@ -26,9 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**
- * {@link FileProvider} for Uris.
+ * {@link ContentProvider} for Uris.
  */
-public class UriFileProvider implements FileProvider {
+public class UriContentProvider implements ContentProvider {
 
     private final ContentResolver resolver;
     private final Uri uri;
@@ -38,12 +38,12 @@ public class UriFileProvider implements FileProvider {
     private final String contentType;
 
     /**
-     * Create a new UriFileProvider.
+     * Create a new UriContentProvider.
      *
      * @param context the context
      * @param uri     the uri
      */
-    public UriFileProvider(Context context, Uri uri) {
+    public UriContentProvider(Context context, Uri uri) {
         this.resolver = context.getContentResolver();
         this.uri = uri;
 

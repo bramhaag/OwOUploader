@@ -38,7 +38,7 @@ import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.api.service.OwOService;
-import me.bramhaag.owouploader.file.FileProvider;
+import me.bramhaag.owouploader.file.ContentProvider;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient.Builder;
 import retrofit2.Call;
@@ -83,7 +83,7 @@ public class OwOAPI {
      * @param progressResult the callbacks
      * @param associated     uses associated endpoint when set to true
      */
-    public CancellableCall uploadFile(@NonNull FileProvider file,
+    public CancellableCall uploadFile(@NonNull ContentProvider file,
             @NonNull ProgressResultCallback<UploadModel> progressResult, boolean associated) {
         var filePart = new ProgressRequestBody(file, progressResult);
         var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
