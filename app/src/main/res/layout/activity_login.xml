@@ -22,13 +22,14 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@color/owoblue"
+  android:background="?attr/backgroundColorPrimary"
   tools:context=".activity.LoginActivity">
 
   <androidx.appcompat.widget.AppCompatTextView
     android:id="@+id/login_logo_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:text="@string/logo_name"
     style="@style/OwOBrandTextView"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -40,9 +41,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/logo_branding"
-    android:textColor="@color/white"
-    android:textAlignment="center"
-    android:textSize="18sp"
+    style="@style/OwOBrandSubtextView"
     app:layout_constraintTop_toBottomOf="@id/login_logo_text"/>
 
   <com.google.android.material.textfield.TextInputLayout
@@ -67,10 +66,10 @@
     android:layout_height="wrap_content"
     android:text="@string/login_button_continue"
     android:layout_marginBottom="20dp"
-    android:textColor="@color/white"
+    android:textColor="?attr/textColorPrimary"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:strokeColor="@color/white"
+    app:strokeColor="?attr/textColorPrimary"
     style="@style/Widget.MaterialComponents.Button.TextButton"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

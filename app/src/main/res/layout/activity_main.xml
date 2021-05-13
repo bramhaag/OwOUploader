@@ -5,7 +5,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@color/background"
+  android:background="?attr/backgroundColorSecondary"
   tools:context=".activity.MainActivity">
 
   <androidx.viewpager2.widget.ViewPager2
@@ -23,18 +23,15 @@
     android:layout_alignParentBottom="true"
     android:layout_alignParentEnd="true"
     android:layout_gravity="end|bottom"
-    fab:fab_addButtonColorNormal="@color/fabColor"
-    fab:fab_addButtonColorPressed="@color/fabColorPressed"
-    fab:fab_addButtonPlusIconColor="@color/fabColorIcon"
-    fab:fab_labelStyle="@style/menu_labels_style">
+    style="@style/MainFloatingActionMenu"
+    fab:fab_labelStyle="@style/MainFloatingActionMenuLabels">
 
     <com.getbase.floatingactionbutton.FloatingActionButton
       android:id="@+id/action_upload"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_file_upload_24"
-      fab:fab_colorNormal="@color/fabColor"
-      fab:fab_colorPressed="@color/fabColorPressed"
+      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Upload" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
@@ -42,8 +39,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_link_24"
-      fab:fab_colorNormal="@color/fabColor"
-      fab:fab_colorPressed="@color/fabColorPressed"
+      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Shorten URL" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
@@ -51,8 +47,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_mobile_screen_share_24"
-      fab:fab_colorNormal="@color/fabColor"
-      fab:fab_colorPressed="@color/fabColorPressed"
+      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Start screen recording" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
@@ -61,10 +56,8 @@
       android:layout_height="wrap_content"
       android:src="@drawable/outline_mobile_screen_share_24"
       android:visibility="gone"
-      fab:fab_colorNormal="@color/fabColor"
-      fab:fab_colorPressed="@color/fabColorPressed"
+      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="End screen recording" />
-
   </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 
@@ -78,10 +71,10 @@
       android:id="@+id/collapsing_toolbar"
       android:layout_width="match_parent"
       android:layout_height="200dp"
-      android:background="@color/owoblue"
+      android:background="?attr/backgroundColorPrimary"
       android:fitsSystemWindows="true"
       app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
-      app:contentScrim="@color/owoblue"
+      app:contentScrim="?attr/backgroundColorPrimary"
       app:expandedTitleGravity="bottom|center_horizontal"
       app:expandedTitleTextAppearance="@style/ExpandedAppBar"
       app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -101,13 +94,13 @@
       android:id="@+id/tab_layout"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/owoblue"
-      app:tabBackground="@color/owoblue"
+      android:background="?attr/backgroundColorPrimary"
+      app:tabBackground="?attr/backgroundColorPrimary"
       app:tabGravity="fill"
-      app:tabIndicatorColor="@color/tabIndicatorColor"
+      app:tabIndicatorColor="?attr/tabColorSelected"
       app:tabMode="fixed"
-      app:tabSelectedTextColor="@color/tabSelectedColor"
-      app:tabTextColor="@color/tabColor" />
+      app:tabSelectedTextColor="?attr/tabColorSelected"
+      app:tabTextColor="?attr/tabColor" />
 
   </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

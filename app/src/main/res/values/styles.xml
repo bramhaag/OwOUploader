@@ -16,37 +16,57 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
   <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
+    <item name="android:background">?attr/backgroundColorPrimary</item>
     <item name="android:textSize">72sp</item>
-    <item name="android:textColor">#fff</item>
+    <item name="android:textColor">?attr/brandColor</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:fontFamily">@font/roboto_black</item>
+    <item name="android:fontFamily">sans-serif</item>
+
   </style>
 
   <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
-    <item name="android:textColor">#fff</item>
+    <item name="android:background">?attr/backgroundColorPrimary</item>
+    <item name="android:textColor">?attr/brandColor</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:fontFamily">@font/roboto_black</item>
+    <item name="android:fontFamily">sans-serif</item>
   </style>
 
-  <style name="menu_labels_style">
+  <style name="MainFloatingActionMenuLabels">
     <item name="android:background">@drawable/fab_label_background</item>
     <item name="android:textColor">@color/white</item>
   </style>
 
+  <style name="MainFloatingActionMenu">
+    <item name="fab_addButtonColorNormal">@color/owo_blue</item>
+    <item name="fab_addButtonColorPressed">@color/owo_blue_dark</item>
+    <item name="fab_addButtonPlusIconColor">@color/white</item>
+  </style>
+
+  <style name="MainFloatingActionMenuButton">
+    <item name="fab_colorNormal">?attr/fabColor</item>
+    <item name="fab_colorPressed">?attr/fabColorSecondary</item>
+  </style>
+
   <style name="TabTheme" parent="TextAppearance.AppCompat.Medium">
-    <item name="android:textColor">#fff</item>
-    <item name="android:fontFamily">@font/roboto_regular</item>
+    <item name="android:textColor">?attr/textColorPrimary</item>
+    <item name="android:fontFamily">sans-serif</item>
   </style>
 
   <style name="OwOBrandTextView" parent="android:Widget.TextView">
     <item name="android:fontFamily">sans-serif</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:text">@string/logo_name</item>
     <item name="android:textAlignment">center</item>
     <item name="android:textSize">96sp</item>
-    <item name="android:textColor">@color/white</item>
+    <item name="android:textColor">?attr/brandColor</item>
+  </style>
+
+  <style name="OwOBrandSubtextView" parent="android:Widget.TextView">
+    <item name="android:fontFamily">sans-serif</item>
+    <item name="android:textSize">18sp</item>
+    <item name="android:textAlignment">center</item>
+    <item name="android:textColor">?attr/textColorPrimary</item>
   </style>
 </resources>
