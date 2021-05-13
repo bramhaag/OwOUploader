@@ -18,18 +18,10 @@
 
 package me.bramhaag.owouploader.api;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.net.Uri;
-import android.provider.OpenableColumns;
-import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
-import me.bramhaag.owouploader.file.FileProvider;
+import me.bramhaag.owouploader.file.ContentProvider;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
@@ -42,7 +34,7 @@ public class ProgressRequestBody extends RequestBody {
     private static final int DEFAULT_BUFFER_SIZE = 2048;
 
     @NonNull
-    private final FileProvider file;
+    private final ContentProvider file;
     @NonNull
     private final ProgressResultCallback<?> progressResult;
 
@@ -52,7 +44,7 @@ public class ProgressRequestBody extends RequestBody {
      * @param file           the file
      * @param progressResult the callbacks
      */
-    public ProgressRequestBody(@NonNull FileProvider file, @NonNull ProgressResultCallback<?> progressResult) {
+    public ProgressRequestBody(@NonNull ContentProvider file, @NonNull ProgressResultCallback<?> progressResult) {
         this.file = file;
         this.progressResult = progressResult;
     }

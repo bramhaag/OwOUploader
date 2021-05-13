@@ -55,6 +55,16 @@
       fab:fab_colorPressed="@color/fabColorPressed"
       fab:fab_title="Start screen recording" />
 
+    <com.getbase.floatingactionbutton.FloatingActionButton
+      android:id="@+id/action_end_screen_record"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/outline_mobile_screen_share_24"
+      android:visibility="gone"
+      fab:fab_colorNormal="@color/fabColor"
+      fab:fab_colorPressed="@color/fabColorPressed"
+      fab:fab_title="End screen recording" />
+
   </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 
@@ -97,8 +107,7 @@
       app:tabIndicatorColor="@color/tabIndicatorColor"
       app:tabMode="fixed"
       app:tabSelectedTextColor="@color/tabSelectedColor"
-      app:tabTextColor="@color/tabColor">
-    </com.google.android.material.tabs.TabLayout>
+      app:tabTextColor="@color/tabColor" />
 
   </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

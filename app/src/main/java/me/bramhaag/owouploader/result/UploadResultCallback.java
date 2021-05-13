@@ -20,50 +20,26 @@ package me.bramhaag.owouploader.result;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
-import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.tabs.TabLayout;
-import java.net.URI;
-import java.util.Date;
-import me.bramhaag.owouploader.adapter.HistoryAdapter;
-import me.bramhaag.owouploader.api.OwOAPI;
-import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
-import me.bramhaag.owouploader.api.model.UploadModel;
-import me.bramhaag.owouploader.components.ProgressItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
-import me.bramhaag.owouploader.file.UriFileProvider;
+import me.bramhaag.owouploader.file.UriContentProvider;
+import me.bramhaag.owouploader.upload.UploadHandler;
 
 /**
  * Callback for document picker.
  */
 public class UploadResultCallback implements ActivityResultCallback<Uri> {
 
-    private final OwOAPI api;
     private final Context context;
-    private final Handler mainHandler;
-    private final TabLayout.Tab tab;
-    private RecyclerView recyclerView;
-    private HistoryAdapter adapter;
+    private final UploadHandler uploadHandler;
 
     /**
      * Create a new callback.
      *
-     * @param api     the api
-     * @param context the context
+     * @param uploadHandler the upload handler
      */
-    public UploadResultCallback(OwOAPI api, Context context, TabLayout.Tab tab) {
-        this.api = api;
+    public UploadResultCallback(Context context, UploadHandler uploadHandler) {
+        this.uploadHandler = uploadHandler;
         this.context = context;
-        this.mainHandler = new Handler(context.getMainLooper());
-        this.tab = tab;
-    }
-
-    public void setRecyclerView(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
-        this.adapter = ((HistoryAdapter) recyclerView.getAdapter());
     }
 
     @Override
@@ -72,70 +48,6 @@ public class UploadResultCallback implements ActivityResultCallback<Uri> {
             return;
         }
 
-        ProgressItem item = new ProgressItem();
-        var file = new UriFileProvider(context, result);
-        var call = api.uploadFile(file, new ProgressResultCallback<>() {
-
-            @Override
-            public void onStart() {
-                tab.select();
-
-                item.setName(file.getName());
-                item.setSize(file.getSize());
-                adapter.addItem(item);
-
-                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
-            }
-
-            @Override
-            public void onProgress(long progress) {
-                if (item.isCanceled()) {
-                    return;
-                }
-
-                item.setUploaded(progress);
-                runOnUiThread(() -> adapter.modifyItem(item));
-            }
-
-            @Override
-            public void onError(@NonNull Throwable throwable) {
-                if (item.isCanceled()) {
-                    return;
-                }
-
-                System.out.println("Upload error: " + throwable.getMessage());
-                throwable.printStackTrace();
-
-                runOnUiThread(() -> {
-                    adapter.removeItem(item);
-                    Toast.makeText(context, "Upload error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
-                });
-            }
-
-            @Override
-            public void onComplete(@NonNull UploadModel result) {
-                var newItem = new UploadHistoryItem(file.getName(),
-                        URI.create("https://owo.whats-th.is/" + result.getUrl()), new Date());
-
-                runOnUiThread(() -> {
-                    if (item.isCanceled()) {
-                        adapter.addItem(newItem);
-                    } else {
-                        adapter.replaceItem(item, newItem);
-                    }
-
-                    Toast.makeText(context, "Upload completed", Toast.LENGTH_SHORT).show();
-                });
-            }
-        }, false);
-
-        item.setOnCancel(() -> {
-            call.cancel();
-            runOnUiThread(() -> adapter.removeItem(item));
-        });
-    }
-
-    private void runOnUiThread(Runnable runnable) {
-        mainHandler.post(runnable);
+        uploadHandler.upload(new UriContentProvider(context, result));
     }
 }

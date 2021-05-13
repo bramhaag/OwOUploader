@@ -18,23 +18,23 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Rect;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.util.Pair;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MotionEvent;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
-import java.util.Arrays;
-import java.util.List;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
@@ -42,6 +42,9 @@ import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
 import me.bramhaag.owouploader.result.UploadResultCallback;
+import me.bramhaag.owouploader.service.ScreenCaptureService;
+import me.bramhaag.owouploader.service.ScreenCaptureService.ScreenRecordBinder;
+import me.bramhaag.owouploader.upload.UploadHandler;
 
 /**
  * Main activity.
@@ -50,8 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
     public ActivityMainBinding binding;
 
-    private UploadResultCallback uploadCallback;
+    private UploadHandler uploadHandler;
     private ShortenDialogFragment shortenDialog;
+
+    private ScreenCaptureService screenCaptureService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 (tab, position) ->
                         tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
 
-        uploadCallback = new UploadResultCallback(api, this, binding.tabLayout.getTabAt(0));
+        uploadHandler = new UploadHandler(api, this, binding.tabLayout.getTabAt(0));
+
         var documentActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.OpenDocument(), uploadCallback);
+                new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
 
         binding.actionUpload.setOnClickListener(view -> {
             documentActivityLauncher.launch(new String[]{"*/*"});
@@ -86,12 +92,42 @@ public class MainActivity extends AppCompatActivity {
             shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
             binding.fabMenu.collapse();
         });
+
+        var mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> screenCaptureService.start(result.getResultCode(), result.getData()));
+
+        binding.actionScreenRecord.setOnClickListener(view -> {
+            var intent = mediaProjectionManager.createScreenCaptureIntent();
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            screenRecordLauncher.launch(intent);
+        });
+
+        binding.actionEndScreenRecord.setOnClickListener(view -> {
+            screenCaptureService.stop();
+            binding.fabMenu.collapse();
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(this, ScreenCaptureService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unbindService(connection);
     }
 
     @Override
@@ -113,13 +149,30 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public UploadResultCallback getUploadCallback() {
-        return uploadCallback;
+    public UploadHandler getUploadHandler() {
+        return uploadHandler;
     }
 
     public ShortenDialogFragment getShortenDialog() {
         return shortenDialog;
     }
+
+    private final ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            var binder = (ScreenRecordBinder) service;
+            screenCaptureService = binder.getService();
+            screenCaptureService.setUploadHandler(uploadHandler);
+            screenCaptureService.setStartButton(binding.actionScreenRecord);
+            screenCaptureService.setEndButton(binding.actionEndScreenRecord);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            screenCaptureService = null;
+        }
+    };
 
     private static class TabLayoutPageAdapter extends FragmentStateAdapter {
 

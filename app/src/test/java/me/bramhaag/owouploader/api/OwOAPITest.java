@@ -20,7 +20,6 @@ package me.bramhaag.owouploader.api;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.atLeastOnce;
@@ -29,16 +28,14 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.webkit.MimeTypeMap;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
-import me.bramhaag.owouploader.file.FileProvider;
+import me.bramhaag.owouploader.file.ContentProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,7 +70,7 @@ class OwOAPITest {
 
     @Test
     void uploadFile() {
-        var file = new FileProvider() {
+        var file = new ContentProvider() {
             private String content = "Hello, World!";
 
             @Override

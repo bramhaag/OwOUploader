@@ -92,7 +92,7 @@ public class UploadHistoryFragment extends Fragment {
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setItemAnimator(null);
 
-        ((MainActivity) requireActivity()).getUploadCallback().setRecyclerView(binding.recyclerView);
+        ((MainActivity) requireActivity()).getUploadHandler().setRecyclerView(binding.recyclerView);
 
         return binding.getRoot();
     }
