@@ -48,6 +48,7 @@
   <style name="MainFloatingActionMenuButton">
     <item name="fab_colorNormal">?attr/fabColor</item>
     <item name="fab_colorPressed">?attr/fabColorSecondary</item>
+    <item name="android:tint">?attr/fabColorIcon</item>
   </style>
 
   <style name="TabTheme" parent="TextAppearance.AppCompat.Medium">
