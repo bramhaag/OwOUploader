@@ -1,16 +1,20 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.OwOUploader" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-    </style>
+<resources>
+  <!-- Base application theme. -->
+  <style name="Theme.OwOUploader" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="backgroundColorPrimary">@color/owo_blue</item>
+    <item name="backgroundColorSecondary">@color/light_gray</item>
+
+    <item name="textColorPrimary">@color/white</item>
+    <item name="textColorSecondary">@color/light_gray</item>
+
+    <item name="brandColorPrimary">@color/white</item>
+    <item name="brandColorSecondary">@color/white</item>
+
+    <item name="tabColor">?attr/textColorPrimary</item>
+    <item name="tabColorSelected">?attr/textColorSecondary</item>
+
+    <item name="fabColor">@color/white</item>
+    <item name="fabColorSecondary">@color/light_gray</item>
+    <item name="fabColorIcon">@color/gray</item>
+  </style>
 </resources>

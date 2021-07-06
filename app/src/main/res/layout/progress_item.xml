@@ -20,9 +20,31 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:layout_marginBottom="5dp">
-  <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <ImageButton
+      android:id="@+id/progress_cancel_button"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginTop="13dp"
+      android:layout_marginEnd="5dp"
+      android:layout_alignParentEnd="true"
+      android:background="@null"
+      android:contentDescription="@string/progress_item_cancel_content_description"
+      android:src="@drawable/outline_close_24" />
+
+    <ProgressBar
+      android:id="@+id/progress_item_progress"
+      style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/progress_item_title" />
 
     <ProgressBar
       android:layout_width="32dp"
@@ -32,31 +54,6 @@
       android:layout_marginStart="21dp"
       android:layout_alignParentStart="true"
       android:indeterminate="true" />
-
-    <ProgressBar
-      android:id="@+id/progress_item_progress"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="5dp"
-      android:layout_marginStart="74dp"
-      android:layout_marginEnd="63dp"
-      android:layout_alignParentStart="true"
-      android:layout_below="@+id/progress_item_title"
-      style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
-
-    <TextView
-      android:id="@+id/progress_item_description"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="74dp"
-      android:layout_marginEnd="63dp"
-      android:layout_alignParentStart="true"
-      android:layout_below="@+id/progress_item_progress"
-      android:ellipsize="end"
-      android:maxLines="1"
-      android:text="32.61 / 96 MB"
-      android:gravity="right"
-      android:textSize="12sp" />
 
     <TextView
       android:id="@+id/progress_item_title"
@@ -68,16 +65,20 @@
       android:layout_alignParentStart="true"
       android:ellipsize="end"
       android:maxLines="1"
-      android:text="File title" />
+      android:text="@string/history_item_title_placeholder" />
 
-    <ImageButton
-      android:id="@+id/progress_cancel_button"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:src="@drawable/outline_close_24"
-      android:layout_marginTop="13dp"
-      android:layout_alignParentEnd="true"
-      android:layout_marginEnd="5dp"
-      android:background="@null"/>
+    <TextView
+      android:id="@+id/progress_item_description"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:layout_below="@+id/progress_item_progress"
+      android:ellipsize="end"
+      android:gravity="end"
+      android:maxLines="1"
+      android:text="@string/progress_item_progress_placeholder"
+      android:textSize="12sp" />
   </RelativeLayout>
 </androidx.cardview.widget.CardView>
