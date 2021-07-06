@@ -1,9 +1,15 @@
 <resources>
   <string name="app_name">OwOUploader</string>
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="logo_name">OwO</string>
   <string name="logo_branding">A private, Pomf-compatible file host.</string>
   <string name="login_hint_token">Authentication Token</string>
   <string name="login_button_continue">Enter</string>
+  <string name="shorten_loading">Loading…</string>
+  <string name="shorten_url_placeholder">URL</string>
+  <string name="history_item_content_description">File preview</string>
+  <string name="history_item_title_placeholder">Title</string>
+  <string name="history_item_description_placeholder">Description</string>
+  <string name="history_item_copy_content_description">Copy Button</string>
+  <string name="progress_item_cancel_content_description">Cancel button</string>
+  <string name="progress_item_progress_placeholder">-1 / 0 MB</string>
 </resources>

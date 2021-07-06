@@ -7,7 +7,8 @@
         <item name="textColorPrimary">@color/light_gray</item>
         <item name="textColorSecondary">@color/gray</item>
 
-        <item name="brandColor">@color/owo_blue</item>
+        <item name="brandColorPrimary">@color/owo_blue</item>
+        <item name="brandColorSecondary">@color/white</item>
 
         <item name="tabColorSelected">?attr/textColorPrimary</item>
         <item name="tabColor">?attr/textColorSecondary</item>

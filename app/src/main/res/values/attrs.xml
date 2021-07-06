@@ -23,7 +23,8 @@
   <attr format="reference|color" name="textColorPrimary" />
   <attr format="reference|color" name="textColorSecondary" />
 
-  <attr format="reference|color" name="brandColor" />
+  <attr format="reference|color" name="brandColorPrimary" />
+  <attr format="reference|color" name="brandColorSecondary" />
 
   <attr format="reference|color" name="tabColor" />
   <attr format="reference|color" name="tabColorSelected" />

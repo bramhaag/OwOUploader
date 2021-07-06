@@ -16,6 +16,7 @@
 
   <com.getbase.floatingactionbutton.FloatingActionsMenu
     android:id="@+id/fab_menu"
+    style="@style/MainFloatingActionMenu"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
@@ -23,40 +24,39 @@
     android:layout_alignParentBottom="true"
     android:layout_alignParentEnd="true"
     android:layout_gravity="end|bottom"
-    style="@style/MainFloatingActionMenu"
     fab:fab_labelStyle="@style/MainFloatingActionMenuLabels">
 
     <com.getbase.floatingactionbutton.FloatingActionButton
       android:id="@+id/action_upload"
+      style="@style/MainFloatingActionMenuButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_file_upload_24"
-      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Upload" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
       android:id="@+id/action_shorten"
+      style="@style/MainFloatingActionMenuButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_link_24"
-      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Shorten URL" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
       android:id="@+id/action_screen_record"
+      style="@style/MainFloatingActionMenuButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_mobile_screen_share_24"
-      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="Start screen recording" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
       android:id="@+id/action_end_screen_record"
+      style="@style/MainFloatingActionMenuButton"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/outline_mobile_screen_share_24"
       android:visibility="gone"
-      style="@style/MainFloatingActionMenuButton"
       fab:fab_title="End screen recording" />
   </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
@@ -70,7 +70,7 @@
     <com.google.android.material.appbar.CollapsingToolbarLayout
       android:id="@+id/collapsing_toolbar"
       android:layout_width="match_parent"
-      android:layout_height="200dp"
+      android:layout_height="150dp"
       android:background="?attr/backgroundColorPrimary"
       android:fitsSystemWindows="true"
       app:collapsedTitleTextAppearance="@style/CollapsedAppBar"

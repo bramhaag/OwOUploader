@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-  <!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ OwO Uploader
   ~ Copyright (C) 2021
   ~
@@ -18,8 +17,8 @@
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="?attr/backgroundColorPrimary"
@@ -27,22 +26,34 @@
 
   <androidx.appcompat.widget.AppCompatTextView
     android:id="@+id/login_logo_text"
+    style="@style/OwOBrandTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/logo_name"
-    style="@style/OwOBrandTextView"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.15"/>
+    app:layout_constraintVertical_bias="0.15" />
 
   <androidx.appcompat.widget.AppCompatTextView
     android:id="@+id/login_token_text"
+    style="@style/OwOBrandSubtextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/logo_branding"
-    style="@style/OwOBrandSubtextView"
-    app:layout_constraintTop_toBottomOf="@id/login_logo_text"/>
+    app:layout_constraintTop_toBottomOf="@id/login_logo_text" />
+
+  <com.google.android.material.button.MaterialButton
+    style="@style/Widget.MaterialComponents.Button.TextButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:text="@string/login_button_continue"
+    android:textColor="?attr/textColorPrimary"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:strokeColor="?attr/textColorPrimary" />
 
   <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/login_text_input"
@@ -53,23 +64,9 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    >
+    app:layout_constraintTop_toTopOf="parent">
     <com.google.android.material.textfield.TextInputEditText
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      />
+      android:layout_height="wrap_content" />
   </com.google.android.material.textfield.TextInputLayout>
-
-  <com.google.android.material.button.MaterialButton
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/login_button_continue"
-    android:layout_marginBottom="20dp"
-    android:textColor="?attr/textColorPrimary"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:strokeColor="?attr/textColorPrimary"
-    style="@style/Widget.MaterialComponents.Button.TextButton"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

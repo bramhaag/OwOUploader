@@ -21,7 +21,7 @@
   <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Medium">
     <item name="android:background">?attr/backgroundColorPrimary</item>
     <item name="android:textSize">72sp</item>
-    <item name="android:textColor">?attr/brandColor</item>
+    <item name="android:textColor">?attr/brandColorPrimary</item>
     <item name="android:textStyle">bold</item>
     <item name="android:fontFamily">sans-serif</item>
 
@@ -29,7 +29,7 @@
 
   <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
     <item name="android:background">?attr/backgroundColorPrimary</item>
-    <item name="android:textColor">?attr/brandColor</item>
+    <item name="android:textColor">?attr/brandColorSecondary</item>
     <item name="android:textStyle">bold</item>
     <item name="android:fontFamily">sans-serif</item>
   </style>
@@ -61,7 +61,7 @@
     <item name="android:textStyle">bold</item>
     <item name="android:textAlignment">center</item>
     <item name="android:textSize">96sp</item>
-    <item name="android:textColor">?attr/brandColor</item>
+    <item name="android:textColor">?attr/brandColorPrimary</item>
   </style>
 
   <style name="OwOBrandSubtextView" parent="android:Widget.TextView">
