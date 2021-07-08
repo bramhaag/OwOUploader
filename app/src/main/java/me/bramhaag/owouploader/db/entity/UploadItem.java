@@ -18,19 +18,40 @@
 
 package me.bramhaag.owouploader.db.entity;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.util.Date;
+import java.net.URI;
+import java.time.Instant;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
+/**
+ * Entity for upload history.
+ */
 @Entity
-public class UploadItem {
+public class UploadItem implements ViewHolderItem {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public String url;
+    public String name;
 
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
-    public Date createdAt;
+    public URI url;
+
+    public Instant createdAt;
+
+    /**
+     * Create a new UploadItem.
+     *
+     * @param name the name
+     * @param url  the url
+     * @return a new UploadItem
+     */
+    public static UploadItem create(String name, URI url) {
+        var item = new UploadItem();
+        item.name = name;
+        item.url = url;
+        item.createdAt = Instant.now();
+
+        return item;
+    }
 }

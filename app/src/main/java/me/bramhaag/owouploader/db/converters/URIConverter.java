@@ -16,42 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.components;
+package me.bramhaag.owouploader.db.converters;
 
+import androidx.room.TypeConverter;
 import java.net.URI;
-import java.util.Date;
+import java.time.Instant;
 
 /**
- * Data class for shorten history items.
+ * Type converters for {@link URI}s.
  */
-public class UploadHistoryItem implements HistoryItem {
-
-    private final String name;
-    private final URI url;
-    private final Date date;
-
-    /**
-     * Instantiate a new {@link UploadHistoryItem}.
-     *
-     * @param name the file's name
-     * @param url  the file's url
-     * @param date the upload date
-     */
-    public UploadHistoryItem(String name, URI url, Date date) {
-        this.name = name;
-        this.url = url;
-        this.date = date;
+public class URIConverter {
+    @TypeConverter
+    public static URI toURI(String value) {
+        return value == null ? null : URI.create(value);
     }
 
-    public String getName() {
-        return name;
+    @TypeConverter
+    public static String toString(URI uri) {
+        return uri == null ? null : uri.toString();
     }
 
-    public URI getUrl() {
-        return url;
-    }
-
-    public Date getDate() {
-        return date;
-    }
 }

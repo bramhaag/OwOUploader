@@ -22,18 +22,23 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import java.util.List;
 import me.bramhaag.owouploader.db.entity.UploadItem;
 
+/**
+ * Dao for upload history.
+ */
 @Dao
 public interface UploadItemDao {
 
     @Query("SELECT * FROM UploadItem")
-    List<UploadItem> getAll();
+    Single<List<UploadItem>> getAll();
 
     @Insert
-    void insert(UploadItem item);
+    Completable insert(UploadItem item);
 
     @Delete
-    void delete(UploadItem item);
+    Completable delete(UploadItem item);
 }

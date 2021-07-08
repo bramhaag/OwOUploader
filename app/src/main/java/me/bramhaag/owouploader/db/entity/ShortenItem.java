@@ -18,21 +18,40 @@
 
 package me.bramhaag.owouploader.db.entity;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.util.Date;
+import java.net.URI;
+import java.time.Instant;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
+/**
+ * Entity for shortening history.
+ */
 @Entity
-public class ShortenItem {
+public class ShortenItem implements ViewHolderItem {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
 
-    public String originalUrl;
+    public URI originalUrl;
 
-    public String resultUrl;
+    public URI resultUrl;
 
-    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
-    public Date createdAt;
+    public Instant createdAt;
+
+    /**
+     * Create a new ShortenItem.
+     *
+     * @param originalUrl the original url
+     * @param resultUrl   the resulting url
+     * @return a new ShortenItem
+     */
+    public static ShortenItem create(URI originalUrl, URI resultUrl) {
+        var item = new ShortenItem();
+        item.originalUrl = originalUrl;
+        item.resultUrl = resultUrl;
+        item.createdAt = Instant.now();
+
+        return item;
+    }
 }

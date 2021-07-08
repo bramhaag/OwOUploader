@@ -16,25 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.db.converters;
 
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import androidx.room.TypeConverter;
+import java.time.Instant;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Type converter for {@link Instant}s.
  */
-public class ExampleInstrumentedTest {
+public class InstantConverter {
 
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
+    @TypeConverter
+    public static Instant toInstant(Long value) {
+        return value == null ? null : Instant.ofEpochMilli(value);
+    }
 
-    @Test
-    public void scenarioTest() {
-        // assertNotNull(scenarioExtension.getScenario());
+    @TypeConverter
+    public static Long toTimestamp(Instant instant) {
+        return instant == null ? null : instant.toEpochMilli();
     }
 }

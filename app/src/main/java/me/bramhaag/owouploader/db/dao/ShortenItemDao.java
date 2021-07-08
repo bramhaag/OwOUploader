@@ -21,19 +21,26 @@ package me.bramhaag.owouploader.db.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import java.util.List;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 
+/**
+ * DAO for shortening history.
+ */
 @Dao
 public interface ShortenItemDao {
 
     @Query("SELECT * FROM ShortenItem")
-    List<ShortenItem> getAll();
+    Single<List<ShortenItem>> getAll();
 
     @Insert
-    void insert(ShortenItem item);
+    Completable insert(ShortenItem item);
 
     @Delete
-    void delete(ShortenItem item);
+    Completable delete(ShortenItem item);
 }

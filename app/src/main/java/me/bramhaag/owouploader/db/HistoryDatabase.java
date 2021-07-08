@@ -20,14 +20,24 @@ package me.bramhaag.owouploader.db;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+import me.bramhaag.owouploader.db.converters.InstantConverter;
+import me.bramhaag.owouploader.db.converters.URIConverter;
 import me.bramhaag.owouploader.db.dao.ShortenItemDao;
 import me.bramhaag.owouploader.db.dao.UploadItemDao;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.db.entity.UploadItem;
 
 
+/**
+ * Database for {@link ShortenItem}s and {@link UploadItem}s.
+ */
 @Database(entities = {ShortenItem.class, UploadItem.class}, version = 1)
+@TypeConverters({InstantConverter.class, URIConverter.class})
 public abstract class HistoryDatabase extends RoomDatabase {
+
+    public static final String NAME = "history";
+
     public abstract ShortenItemDao shortenItemDao();
 
     public abstract UploadItemDao uploadItemDao();

@@ -24,19 +24,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.components.ShortenHistoryItem;
+import me.bramhaag.owouploader.db.entity.ShortenItem;
 
 /**
- * {@link RecyclerView.ViewHolder} for shorten history.
+ * {@link RecyclerView.ViewHolder} for {@link ShortenItem}s.
  */
-public class ShortenViewHolder extends HistoryViewHolder<ShortenHistoryItem> {
+public class ShortenViewHolder extends HistoryViewHolder<ShortenItem> {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
+            .ofPattern("dd-MM-yyyy HH:mm")
+            .withZone(ZoneId.systemDefault());
 
     private final TextView title;
     private final TextView description;
@@ -53,9 +54,9 @@ public class ShortenViewHolder extends HistoryViewHolder<ShortenHistoryItem> {
     }
 
     @Override
-    public void initializeView(@NonNull ShortenHistoryItem item) {
-        setTitle(item.getOriginalUrl().toString());
-        setDescription(item.getShortenedUrl(), item.getDate());
+    public void initializeView(@NonNull ShortenItem item) {
+        setTitle(item.originalUrl.toString());
+        setDescription(item.resultUrl, item.createdAt);
 
     }
 
@@ -63,7 +64,7 @@ public class ShortenViewHolder extends HistoryViewHolder<ShortenHistoryItem> {
         this.title.setText(title);
     }
 
-    public void setDescription(URI url, Date date) {
+    public void setDescription(URI url, Instant date) {
         this.description.setText(String.format("%s - %s", url.toString(), DATE_FORMAT.format(date)));
     }
 }

@@ -35,8 +35,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
+import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
@@ -49,14 +50,18 @@ import me.bramhaag.owouploader.upload.UploadHandler;
 /**
  * Main activity.
  */
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
-    public ActivityMainBinding binding;
+    @Inject
+    UploadHandler uploadHandler;
 
-    private UploadHandler uploadHandler;
-    private ShortenDialogFragment shortenDialog;
+    @Inject
+    ShortenDialogFragment shortenDialog;
 
     private ScreenCaptureService screenCaptureService;
+
+    public ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,19 +71,13 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        var extras = getIntent().getExtras();
-        var token = extras.getString("TOKEN");
-        var api = new OwOAPI(token);
-
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
 
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,
-                (tab, position) ->
-                        tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
+                (tab, position) -> tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
 
-        uploadHandler = new UploadHandler(api, this, binding.tabLayout.getTabAt(0));
-
+        uploadHandler.setTab(binding.tabLayout.getTabAt(0));
         var documentActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
 
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             binding.fabMenu.collapse();
         });
 
-        shortenDialog = new ShortenDialogFragment(api, binding.tabLayout.getTabAt(1));
+        shortenDialog.setTab(binding.tabLayout.getTabAt(1));
         binding.actionShorten.setOnClickListener(view -> {
             shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
             binding.fabMenu.collapse();

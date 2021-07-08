@@ -19,10 +19,12 @@
 package me.bramhaag.owouploader;
 
 import android.app.Application;
+import dagger.hilt.android.HiltAndroidApp;
 
 /**
  * Application.
  */
+@HiltAndroidApp
 public class OwOApplication extends Application {
 
 }

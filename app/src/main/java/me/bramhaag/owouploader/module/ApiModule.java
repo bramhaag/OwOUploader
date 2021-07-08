@@ -16,11 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.components;
+package me.bramhaag.owouploader.module;
+
+import android.content.Context;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import javax.inject.Singleton;
+import me.bramhaag.owouploader.api.OwOAPI;
 
 /**
- * Marker interface for history items.
+ * Module that provides {@link OwOAPI}.
  */
-public interface HistoryItem {
+@Module
+@InstallIn(SingletonComponent.class)
+public class ApiModule {
 
+    @Singleton
+    @Provides
+    public static OwOAPI provideApi(@ApplicationContext Context context) {
+        return new OwOAPI("nahu is cringe");
+    }
 }

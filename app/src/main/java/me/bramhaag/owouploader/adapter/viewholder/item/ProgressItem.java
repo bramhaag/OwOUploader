@@ -16,15 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.components;
-
-import java.net.URI;
-import java.util.Date;
+package me.bramhaag.owouploader.adapter.viewholder.item;
 
 /**
  * Data class for shorten history items.
  */
-public class ProgressItem implements HistoryItem {
+public class ProgressItem implements ViewHolderItem {
 
     private String name;
     private long uploaded;
