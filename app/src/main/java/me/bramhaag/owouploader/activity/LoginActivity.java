@@ -37,5 +37,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        binding.loginButton.setOnClickListener(view -> {
+            var input = binding.loginTokenInput;
+        });
     }
 }

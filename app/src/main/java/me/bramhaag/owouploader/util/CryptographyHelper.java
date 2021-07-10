@@ -22,9 +22,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -44,6 +42,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 public class CryptographyHelper {
+    private static CryptographyHelper INSTANCE;
+
     private static final String TRANSFORMATION = String.format("%s/%s/%s",
             KeyProperties.KEY_ALGORITHM_AES,
             KeyProperties.BLOCK_MODE_GCM,
@@ -52,29 +52,31 @@ public class CryptographyHelper {
     private static final String KEY_STORE_NAME = "AndroidKeyStore";
     private static final String CONCATENATOR = "_";
 
+    private static final String KEY_ALIAS = "apikey";
+
     private final KeyStore keyStore;
     private final SecretKey secretKey;
 
     private final Cipher cipher;
 
-    public CryptographyHelper(@NonNull String keyAlias)
+    public CryptographyHelper()
             throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException,
             InvalidAlgorithmParameterException, NoSuchPaddingException {
         this.keyStore = getAndroidKeyStore();
-        this.secretKey = getSecretKey(keyAlias);
+        this.secretKey = getSecretKey();
         this.cipher = Cipher.getInstance(TRANSFORMATION);
     }
 
     @NonNull
-    private SecretKey getSecretKey(@NonNull String keyAlias)
+    private SecretKey getSecretKey()
             throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         SecretKey secretKey;
         try {
-            var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(keyAlias, null);
+            var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(CryptographyHelper.KEY_ALIAS, null);
             secretKey = secretKeyEntry.getSecretKey();
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             // non-existent, generate
-            secretKey = generateKey(keyAlias);
+            secretKey = generateKey();
         }
         return secretKey;
     }
@@ -88,11 +90,11 @@ public class CryptographyHelper {
     }
 
     @NonNull
-    private SecretKey generateKey(@NonNull String keyAlias)
+    private SecretKey generateKey()
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         var keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEY_STORE_NAME);
         var keyGenParameterSpec = new KeyGenParameterSpec
-                .Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .Builder(CryptographyHelper.KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build();
@@ -121,5 +123,15 @@ public class CryptographyHelper {
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
         return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
+    }
+
+    @NonNull
+    public static CryptographyHelper getInstance()
+            throws CertificateException, NoSuchPaddingException, NoSuchAlgorithmException, KeyStoreException,
+            NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        }
+        return INSTANCE = new CryptographyHelper();
     }
 }

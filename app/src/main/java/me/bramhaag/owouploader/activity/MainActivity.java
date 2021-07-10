@@ -31,12 +31,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.List;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
+import me.bramhaag.owouploader.util.CryptographyHelper;
 
 /**
  * Main activity.
@@ -66,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Probably move it up before the content is rendered (?)
         if (encryptedApiKey != null) {
+            try {
+                this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
+            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
+                    IllegalBlockSizeException | CertificateException | NoSuchPaddingException | NoSuchAlgorithmException |
+                    KeyStoreException | NoSuchProviderException | IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
