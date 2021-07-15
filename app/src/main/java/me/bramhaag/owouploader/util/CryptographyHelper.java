@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.util;
 
+import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
@@ -33,17 +34,21 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
 public class CryptographyHelper {
     private static CryptographyHelper INSTANCE;
 
+    private static final int TAG_LENGTH_BYTES = 16;
     private static final String TRANSFORMATION = String.format("%s/%s/%s",
             KeyProperties.KEY_ALGORITHM_AES,
             KeyProperties.BLOCK_MODE_GCM,
@@ -52,7 +57,7 @@ public class CryptographyHelper {
     private static final String KEY_STORE_NAME = "AndroidKeyStore";
     private static final String CONCATENATOR = "_";
 
-    private static final String KEY_ALIAS = "apikey";
+    private static final String KEY_ALIAS = "OwOApiKey";
 
     private final KeyStore keyStore;
     private final SecretKey secretKey;
@@ -72,9 +77,9 @@ public class CryptographyHelper {
             throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
         SecretKey secretKey;
         try {
-            var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(CryptographyHelper.KEY_ALIAS, null);
+            var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(KEY_ALIAS, null);
             secretKey = secretKeyEntry.getSecretKey();
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+        } catch (NullPointerException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             // non-existent, generate
             secretKey = generateKey();
         }
@@ -94,7 +99,7 @@ public class CryptographyHelper {
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         var keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEY_STORE_NAME);
         var keyGenParameterSpec = new KeyGenParameterSpec
-                .Builder(CryptographyHelper.KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build();
@@ -110,7 +115,7 @@ public class CryptographyHelper {
         var encrypted = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
 
         // gotta encode to string
-        return Base64.encodeToString(iv, Base64.DEFAULT) + CONCATENATOR + Base64.encodeToString(encrypted, Base64.DEFAULT);
+        return Base64.encodeToString(iv, Base64.NO_WRAP) + CONCATENATOR + Base64.encodeToString(encrypted, Base64.NO_WRAP);
     }
 
     @NonNull
@@ -118,20 +123,24 @@ public class CryptographyHelper {
             throws InvalidKeyException, InvalidAlgorithmParameterException, BadPaddingException, IllegalBlockSizeException {
         var parts = input.split(CONCATENATOR);
 
-        var iv = Base64.decode(parts[0], Base64.DEFAULT);
-        var encrypted = Base64.decode(parts[1], Base64.DEFAULT);
+        var iv = Base64.decode(parts[0], Base64.NO_WRAP);
+        var encrypted = Base64.decode(parts[1], Base64.NO_WRAP);
 
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(TAG_LENGTH_BYTES * 8, iv, 0, iv.length));
         return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
     }
 
     @NonNull
-    public static CryptographyHelper getInstance()
-            throws CertificateException, NoSuchPaddingException, NoSuchAlgorithmException, KeyStoreException,
-            NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
+    public static CryptographyHelper getInstance() {
         if (INSTANCE != null) {
             return INSTANCE;
         }
-        return INSTANCE = new CryptographyHelper();
+
+        try {
+            return INSTANCE = new CryptographyHelper();
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException | NoSuchProviderException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
+            e.printStackTrace();
+            return null; // shouldn't happen?
+        }
     }
 }

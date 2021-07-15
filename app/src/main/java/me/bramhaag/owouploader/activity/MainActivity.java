@@ -74,14 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
         var encryptedApiKey = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("owo_api_key", null);
-
         // Probably move it up before the content is rendered (?)
         if (encryptedApiKey != null) {
             try {
                 this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
-            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                    IllegalBlockSizeException | CertificateException | NoSuchPaddingException | NoSuchAlgorithmException |
-                    KeyStoreException | NoSuchProviderException | IOException e) {
+            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
                 e.printStackTrace();
             }
             return;

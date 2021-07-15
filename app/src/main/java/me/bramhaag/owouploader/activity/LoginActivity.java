@@ -20,10 +20,22 @@ package me.bramhaag.owouploader.activity;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.databinding.ActivityLoginBinding;
+import me.bramhaag.owouploader.util.CryptographyHelper;
 
 /**
  * Login Activity.
@@ -40,6 +52,13 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.loginButton.setOnClickListener(view -> {
             var input = binding.loginTokenInput;
+            String inputKey = input.getEditText().getText().toString().trim();
+            try {
+                PreferenceManager.getDefaultSharedPreferences(this).edit()
+                        .putString("owo_api_key", CryptographyHelper.getInstance().encrypt(inputKey)).commit();
+            } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+                e.printStackTrace();
+            }
         });
     }
 }
