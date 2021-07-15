@@ -27,6 +27,8 @@ import androidx.annotation.NonNull;
  */
 public interface ResultCallback<T> {
 
+    void onStart();
+
     /**
      * Called when an error occurred during or after uploading.
      *

@@ -18,17 +18,27 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Pair;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MotionEvent;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import java.io.IOException;
@@ -44,9 +54,15 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
+import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
+import me.bramhaag.owouploader.result.UploadResultCallback;
+import me.bramhaag.owouploader.service.ScreenCaptureService;
+import me.bramhaag.owouploader.service.ScreenCaptureService.ScreenRecordBinder;
+import me.bramhaag.owouploader.upload.UploadHandler;
 import me.bramhaag.owouploader.util.CryptographyHelper;
 
 /**
@@ -54,7 +70,12 @@ import me.bramhaag.owouploader.util.CryptographyHelper;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    public ActivityMainBinding binding;
+
+    private UploadHandler uploadHandler;
+    private ShortenDialogFragment shortenDialog;
+
+    private ScreenCaptureService screenCaptureService;
 
     // This should probably be moved in the future lol
     @Nullable
@@ -68,7 +89,11 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this.getSupportFragmentManager());
+        var extras = getIntent().getExtras();
+        var token = extras.getString("TOKEN");
+        var api = new OwOAPI(token);
+
+        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
 
@@ -85,12 +110,62 @@ public class MainActivity extends AppCompatActivity {
         }
 
         startActivity(new Intent(this, LoginActivity.class));
+
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
+                (tab, position) ->
+                        tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
+
+        uploadHandler = new UploadHandler(api, this, binding.tabLayout.getTabAt(0));
+
+        var documentActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
+
+        binding.actionUpload.setOnClickListener(view -> {
+            documentActivityLauncher.launch(new String[]{"*/*"});
+            binding.fabMenu.collapse();
+        });
+
+        shortenDialog = new ShortenDialogFragment(api, binding.tabLayout.getTabAt(1));
+        binding.actionShorten.setOnClickListener(view -> {
+            shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
+            binding.fabMenu.collapse();
+        });
+
+        var mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> screenCaptureService.start(result.getResultCode(), result.getData()));
+
+        binding.actionScreenRecord.setOnClickListener(view -> {
+            var intent = mediaProjectionManager.createScreenCaptureIntent();
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            screenRecordLauncher.launch(intent);
+        });
+
+        binding.actionEndScreenRecord.setOnClickListener(view -> {
+            screenCaptureService.stop();
+            binding.fabMenu.collapse();
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(this, ScreenCaptureService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unbindService(connection);
     }
 
     @Override
@@ -104,39 +179,68 @@ public class MainActivity extends AppCompatActivity {
         var outRect = new Rect();
         fabMenu.getGlobalVisibleRect(outRect);
 
-        if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-            fabMenu.collapse();
+        if (outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+            return super.dispatchTouchEvent(event);
         }
 
-        return super.dispatchTouchEvent(event);
+        fabMenu.collapse();
+        return true;
     }
 
-    private static class TabLayoutPageAdapter extends FragmentPagerAdapter {
+    public UploadHandler getUploadHandler() {
+        return uploadHandler;
+    }
 
-        private final List<Pair<String, Fragment>> tabs;
+    public ShortenDialogFragment getShortenDialog() {
+        return shortenDialog;
+    }
 
-        public TabLayoutPageAdapter(FragmentManager fm) {
-            super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-
-            tabs = Arrays.asList(new Pair<>("upload", new UploadHistoryFragment()),
-                    new Pair<>("shorten", new ShortenHistoryFragment()));
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabs.get(position).first;
-        }
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            var binder = (ScreenRecordBinder) service;
+            screenCaptureService = binder.getService();
+            screenCaptureService.setUploadHandler(uploadHandler);
+            screenCaptureService.setStartButton(binding.actionScreenRecord);
+            screenCaptureService.setEndButton(binding.actionEndScreenRecord);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            screenCaptureService = null;
+        }
+    };
+
+    private static class TabLayoutPageAdapter extends FragmentStateAdapter {
+
+        private final String[] titles;
+
+        public TabLayoutPageAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
+            titles = new String[]{"upload", "shorten"};
+        }
+
         @NonNull
-        public Fragment getItem(int position) {
-            return tabs.get(position).second;
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return new UploadHistoryFragment();
+                case 1:
+                    return new ShortenHistoryFragment();
+                default:
+                    throw new IllegalArgumentException();
+            }
         }
 
         @Override
-        public int getCount() {
-            return tabs.size();
+        public int getItemCount() {
+            return 2;
+        }
+
+        public String getTitle(int position) {
+            return titles[position];
         }
     }
 }

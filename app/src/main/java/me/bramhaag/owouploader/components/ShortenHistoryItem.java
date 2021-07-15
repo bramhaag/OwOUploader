@@ -24,7 +24,7 @@ import java.util.Date;
 /**
  * Data class for shorten history items.
  */
-public class ShortenHistoryItem {
+public class ShortenHistoryItem implements HistoryItem {
 
     private final URI originalUrl;
     private final URI shortenedUrl;

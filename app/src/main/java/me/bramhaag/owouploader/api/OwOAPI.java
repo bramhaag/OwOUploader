@@ -20,8 +20,9 @@ package me.bramhaag.owouploader.api;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.File;
+import java.io.IOException;
 import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
@@ -32,12 +33,13 @@ import me.bramhaag.owouploader.api.deserializer.UserModelDeserializer;
 import me.bramhaag.owouploader.api.exception.ResponseStatusException;
 import me.bramhaag.owouploader.api.interceptor.AuthenticationInterceptor;
 import me.bramhaag.owouploader.api.interceptor.RateLimitInterceptor;
+import me.bramhaag.owouploader.api.model.ErrorModel;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.api.service.OwOService;
+import me.bramhaag.owouploader.file.ContentProvider;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +52,13 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * Wrapper class for the OwO API.
  */
 public class OwOAPI {
+
+    private static final Gson GSON_INSTANCE = new GsonBuilder()
+            .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
+            .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
+            .registerTypeAdapter(ObjectModel.class, new ObjectModelDeserializer())
+            .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
+            .create();
 
     private final OwOService service;
 
@@ -74,13 +83,13 @@ public class OwOAPI {
      * @param progressResult the callbacks
      * @param associated     uses associated endpoint when set to true
      */
-    public void uploadFile(@NonNull File file, @NonNull ProgressResultCallback<UploadModel> progressResult,
-            boolean associated) {
+    public CancellableCall uploadFile(@NonNull ContentProvider file,
+            @NonNull ProgressResultCallback<UploadModel> progressResult, boolean associated) {
         var filePart = new ProgressRequestBody(file, progressResult);
         var requestBody = MultipartBody.Part.createFormData("files[]", file.getName(), filePart);
 
         var call = associated ? service.uploadAssociated(requestBody) : service.upload(requestBody);
-        enqueueCall(call, progressResult);
+        return enqueueCall(call, progressResult);
     }
 
     /**
@@ -91,10 +100,10 @@ public class OwOAPI {
      * @param progressResult the callbacks
      * @param associated     uses associated endpoint when set to true
      */
-    public void shortenUrl(@NonNull String url, @Nullable String resultUrl,
+    public CancellableCall shortenUrl(@NonNull String url, @Nullable String resultUrl,
             @NonNull ResultCallback<String> progressResult, boolean associated) {
         var call = associated ? service.shortenAssociated(url, resultUrl) : service.shorten(url, resultUrl);
-        enqueueCall(call, progressResult);
+        return enqueueCall(call, progressResult);
     }
 
     public void getUser(@NonNull ResultCallback<UserModel> result) {
@@ -108,12 +117,22 @@ public class OwOAPI {
      * @param result the callbacks
      * @param <T>    the type of the result
      */
-    public <T> void enqueueCall(@NonNull Call<T> call, @NonNull ResultCallback<T> result) {
+    public <T> CancellableCall enqueueCall(@NonNull Call<T> call, @NonNull ResultCallback<T> result) {
+        result.onStart();
+        
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    result.onError(new ResponseStatusException(response.code(), response.message()));
+                    try {
+                        // Suppress NPE warning, as we're handling that in the catch statement
+                        @SuppressWarnings("ConstantConditions")
+                        ErrorModel model = GSON_INSTANCE.fromJson(response.errorBody().string(), ErrorModel.class);
+                        result.onError(new ResponseStatusException(model.getErrorCode(), model.getDescription()));
+                    } catch (IOException | NullPointerException e) {
+                        result.onError(new ResponseStatusException(response.code(), response.message()));
+                    }
+
                     return;
                 }
 
@@ -125,6 +144,8 @@ public class OwOAPI {
                 result.onError(t);
             }
         });
+
+        return new CancellableCall(call);
     }
 
     @NonNull
@@ -135,12 +156,7 @@ public class OwOAPI {
                 .build();
 
         var scalarsConverter = ScalarsConverterFactory.create();
-        var gsonConverter = GsonConverterFactory.create(new GsonBuilder()
-                .registerTypeAdapter(UploadModel.class, new UploadModelDeserializer())
-                .registerTypeAdapter(UserModel.class, new UserModelDeserializer())
-                .registerTypeAdapter(ObjectModel.class, new ObjectModelDeserializer())
-                .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
-                .create());
+        var gsonConverter = GsonConverterFactory.create(GSON_INSTANCE);
 
         var retrofit = new Retrofit.Builder()
                 .baseUrl(DEFAULT_ENDPOINT)

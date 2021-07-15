@@ -24,7 +24,7 @@ package me.bramhaag.owouploader.api.exception;
 public class ResponseStatusException extends RuntimeException {
 
     public ResponseStatusException(int code, String message) {
-        super("Error " + code + ": " + message);
+        super(message + " (" + code + ")");
     }
 
 }

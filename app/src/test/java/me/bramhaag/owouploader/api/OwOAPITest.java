@@ -19,8 +19,7 @@
 package me.bramhaag.owouploader.api;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.atLeastOnce;
@@ -29,17 +28,14 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.webkit.MimeTypeMap;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;
+import me.bramhaag.owouploader.file.ContentProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,6 +44,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OwOAPITest {
+
     private static final int TIMEOUT = 60 * 1000;
 
     static OwOAPI api;
@@ -73,29 +70,34 @@ class OwOAPITest {
 
     @Test
     void uploadFile() {
-        var file = new File("file.txt");
+        var file = new ContentProvider() {
+            private String content = "Hello, World!";
 
-        try (var mocked = mockStatic(MimeTypeMap.class)) {
-            var mimeTypeMap = mock(MimeTypeMap.class);
-            when(mimeTypeMap.getMimeTypeFromExtension("txt")).thenReturn("text/plain");
-
-            mocked.when(() -> MimeTypeMap.getFileExtensionFromUrl(anyString())).thenReturn("txt");
-            mocked.when(MimeTypeMap::getSingleton).thenReturn(mimeTypeMap);
-
-            file.createNewFile();
-            try (var os = new FileOutputStream(file)) {
-                os.write("Hello, World!".getBytes());
+            @Override
+            public String getName() {
+                return "file.txt";
             }
 
-            api.uploadFile(file, uploadCallback, false);
-            verify(uploadCallback, timeout(5000)).onComplete(notNull());
-            verify(uploadCallback, atLeastOnce()).onProgress(anyDouble());
-            verify(uploadCallback, times(0)).onError(any());
-        } catch (IOException e) {
-            if (file.exists()) {
-                file.delete();
+            @Override
+            public String getContentType() {
+                return "text/plain";
             }
-        }
+
+            @Override
+            public long getSize() {
+                return content.getBytes().length;
+            }
+
+            @Override
+            public InputStream getContent() {
+                return new ByteArrayInputStream(content.getBytes());
+            }
+        };
+
+        api.uploadFile(file, uploadCallback, false);
+        verify(uploadCallback, timeout(5000)).onComplete(notNull());
+        verify(uploadCallback, atLeastOnce()).onProgress(anyLong());
+        verify(uploadCallback, times(0)).onError(any());
     }
 
     @Test

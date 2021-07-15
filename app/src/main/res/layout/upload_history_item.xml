@@ -19,10 +19,22 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:layout_marginBottom="5dp">
-  <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_marginBottom="5dp"
+  android:layout_marginHorizontal="5dp">
+  <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <ImageButton
+      android:id="@+id/upload_item_copy"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginTop="13dp"
+      android:layout_marginEnd="5dp"
+      android:layout_alignParentEnd="true"
+      android:background="@null"
+      android:contentDescription="@string/history_item_copy_content_description"
+      android:src="@drawable/outline_content_copy_24" />
 
     <ImageView
       android:id="@+id/upload_item_image"
@@ -31,7 +43,20 @@
       android:layout_marginTop="5dp"
       android:layout_marginBottom="5dp"
       android:layout_marginStart="5dp"
-      android:layout_alignParentStart="true" />
+      android:layout_alignParentStart="true"
+      android:contentDescription="@string/history_item_content_description" />
+
+    <TextView
+      android:id="@+id/upload_item_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="10dp"
+      android:layout_marginStart="74dp"
+      android:layout_marginEnd="63dp"
+      android:layout_alignParentStart="true"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:text="@string/history_item_title_placeholder" />
 
     <TextView
       android:id="@+id/upload_item_description"
@@ -44,28 +69,7 @@
       android:layout_below="@+id/upload_item_title"
       android:ellipsize="end"
       android:maxLines="1"
-      android:text="File description"
+      android:text="@string/history_item_description_placeholder"
       android:textSize="12sp" />
-
-    <TextView
-      android:id="@+id/upload_item_title"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="10dp"
-      android:layout_marginStart="74dp"
-      android:layout_marginEnd="63dp"
-      android:layout_alignParentStart="true"
-      android:ellipsize="end"
-      android:maxLines="1"
-      android:text="File title" />
-
-    <ImageButton
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:src="@drawable/outline_content_copy_24"
-      android:layout_marginTop="13dp"
-      android:layout_alignParentEnd="true"
-      android:layout_marginEnd="5dp"
-      android:background="@null"/>
   </RelativeLayout>
 </androidx.cardview.widget.CardView>
