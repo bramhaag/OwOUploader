@@ -31,19 +31,19 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
+import dagger.hilt.android.AndroidEntryPoint;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import dagger.hilt.android.AndroidEntryPoint;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
@@ -66,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     ShortenDialogFragment shortenDialog;
 
-    private ScreenCaptureService screenCaptureService;
+    @Inject
+    OwOAPI api;
 
-    // This should probably be moved in the future lol
-    @Nullable
-    private String apiKey;
+    private ScreenCaptureService screenCaptureService;
 
     public ActivityMainBinding binding;
 
@@ -92,16 +91,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
+            api.setApiKey(CryptographyHelper.getInstance().decrypt(encryptedApiKey));
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException
                 | IllegalBlockSizeException e) {
+            e.printStackTrace();
             // Something went wrong, maybe try logging in again (?
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-
-        var api = new OwOAPI(this.apiKey);
 
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
@@ -182,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
 
     public UploadHandler getUploadHandler() {
         return uploadHandler;
+    }
+
+    public OwOAPI getApi() {
+        return api;
     }
 
     public ShortenDialogFragment getShortenDialog() {

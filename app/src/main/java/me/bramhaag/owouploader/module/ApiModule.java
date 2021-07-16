@@ -37,6 +37,6 @@ public class ApiModule {
     @Singleton
     @Provides
     public static OwOAPI provideApi(@ApplicationContext Context context) {
-        return new OwOAPI("nahu is cringe");
+        return new OwOAPI();
     }
 }
