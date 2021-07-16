@@ -16,25 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.db.converters;
 
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import androidx.room.TypeConverter;
+import java.net.URI;
+import java.time.Instant;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Type converters for {@link URI}s.
  */
-public class ExampleInstrumentedTest {
-
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
-
-    @Test
-    public void scenarioTest() {
-        // assertNotNull(scenarioExtension.getScenario());
+public class URIConverter {
+    @TypeConverter
+    public static URI toURI(String value) {
+        return value == null ? null : URI.create(value);
     }
+
+    @TypeConverter
+    public static String toString(URI uri) {
+        return uri == null ? null : uri.toString();
+    }
+
 }

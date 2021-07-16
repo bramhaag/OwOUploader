@@ -16,11 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.components;
+package me.bramhaag.owouploader.db.dao;
+
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import java.util.List;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 
 /**
- * Marker interface for history items.
+ * Dao for upload history.
  */
-public interface HistoryItem {
+@Dao
+public interface UploadItemDao {
 
+    @Query("SELECT * FROM UploadItem")
+    Single<List<UploadItem>> getAll();
+
+    @Insert
+    Completable insert(UploadItem item);
+
+    @Delete
+    Completable delete(UploadItem item);
 }

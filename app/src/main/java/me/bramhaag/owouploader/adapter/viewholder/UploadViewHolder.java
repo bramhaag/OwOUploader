@@ -31,19 +31,20 @@ import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 
 /**
- * {@link HistoryViewHolder} for {@link UploadHistoryItem}.
+ * {@link HistoryViewHolder} for {@link UploadItem}.
  */
-public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
+public class UploadViewHolder extends HistoryViewHolder<UploadItem> {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
+            .ofPattern("dd-MM-yyyy HH:mm")
+            .withZone(ZoneId.systemDefault());
 
     private final TextView title;
     private final TextView description;
@@ -63,11 +64,11 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
     }
 
     @Override
-    public void initializeView(@NonNull UploadHistoryItem item) {
-        setTitle(item.getName());
-        setDescription(item.getUrl().getHost(), item.getDate());
-        setUrl(item.getUrl());
-        loadImage(item.getUrl());
+    public void initializeView(@NonNull UploadItem item) {
+        setTitle(item.name);
+        setDescription(item.url.getHost(), item.createdAt);
+        setUrl(item.url);
+        loadImage(item.url);
 
         itemView.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
@@ -75,7 +76,7 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
         });
 
         var clipboard = (ClipboardManager) itemView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        var clip = ClipData.newPlainText(item.getUrl().toString(), item.getUrl().toString());
+        var clip = ClipData.newPlainText(item.url.toString(), item.url.toString());
 
         itemView.findViewById(R.id.upload_item_copy).setOnClickListener(v -> {
             clipboard.setPrimaryClip(clip);
@@ -87,7 +88,7 @@ public class UploadViewHolder extends HistoryViewHolder<UploadHistoryItem> {
         this.title.setText(title);
     }
 
-    public void setDescription(String host, Date date) {
+    public void setDescription(String host, Instant date) {
         this.description.setText(String.format("%s - %s", host, DATE_FORMAT.format(date)));
     }
 

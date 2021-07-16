@@ -22,41 +22,59 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.adapter.viewholder.HistoryViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.ProgressViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.ShortenViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.UploadViewHolder;
-import me.bramhaag.owouploader.components.HistoryItem;
-import me.bramhaag.owouploader.components.ProgressItem;
-import me.bramhaag.owouploader.components.ShortenHistoryItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.db.entity.ShortenItem;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 
 
 /**
  * {@link RecyclerView.Adapter} for shorten history.
  */
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? extends HistoryItem>> {
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? extends ViewHolderItem>> {
 
-    private final List<HistoryItem> items;
-    private final Map<HistoryItem, Integer> itemsIndex;
+    private final CompositeDisposable disposables;
 
-    public HistoryAdapter(List<HistoryItem> items) {
-        this.items = new ArrayList<>(items);
-        this.itemsIndex = IntStream.range(0, items.size()).boxed().collect(Collectors.toMap(items::get, i -> i));
+    private final List<ViewHolderItem> items;
+    private final Map<ViewHolderItem, Integer> itemsIndex;
+
+    /**
+     * Create a new HistoryAdapter from a preexisting source.
+     *
+     * @param source the source
+     */
+    public HistoryAdapter(Single<? extends List<? extends ViewHolderItem>> source) {
+        this.items = new ArrayList<>();
+        this.itemsIndex = new HashMap<>();
+
+        this.disposables = new CompositeDisposable();
+
+        var init = source.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::addItems);
+
+        disposables.add(init);
     }
 
     @Override
     public int getItemViewType(int position) {
         var item = items.get(position);
-        if (item instanceof UploadHistoryItem) {
+        if (item instanceof UploadItem) {
             return 0;
-        } else if (item instanceof ShortenHistoryItem) {
+        } else if (item instanceof ShortenItem) {
             return 1;
         } else if (item instanceof ProgressItem) {
             return 2;
@@ -67,7 +85,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
 
     @NonNull
     @Override
-    public HistoryViewHolder<? extends HistoryItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HistoryViewHolder<? extends ViewHolderItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         var inflater = LayoutInflater.from(parent.getContext());
 
         switch (viewType) {
@@ -88,7 +106,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
         }
     }
 
-    // Unchecked cast from HistoryViewHolder<T extends HistoryItem> to HistoryViewHolder<Concrete Type>. Cast is safe
+    // Unchecked cast from HistoryViewHolder<T extends ViewHolderItem> to HistoryViewHolder<Concrete Type>. Cast is safe
     // because type checking is done in the getItemViewType(int) method.
     @SuppressWarnings("unchecked")
     @Override
@@ -101,12 +119,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
         return items.size();
     }
 
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        disposables.dispose();
+        disposables.clear();
+    }
+
     /**
      * Add a new item to the view.
      *
      * @param item the item.
      */
-    public void addItem(@NonNull HistoryItem item) {
+    public void addItem(@NonNull ViewHolderItem item) {
         var index = items.size();
 
         items.add(item);
@@ -116,11 +140,28 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
     }
 
     /**
+     * Add multiple items to the view.
+     *
+     * @param items the items
+     */
+    public void addItems(@NonNull List<? extends ViewHolderItem> items) {
+        var index = items.size();
+
+        this.items.addAll(items);
+
+        for (int i = 0; i < items.size(); i++) {
+            this.itemsIndex.put(items.get(i), index + i);
+        }
+
+        notifyItemRangeInserted(index, items.size());
+    }
+
+    /**
      * Modify an item in the view.
      *
      * @param item the item
      */
-    public void modifyItem(@NonNull HistoryItem item) {
+    public void modifyItem(@NonNull ViewHolderItem item) {
         var index = indexOf(item);
         notifyItemChanged(index);
     }
@@ -131,7 +172,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
      * @param originalItem the item to replace
      * @param newItem      the new item
      */
-    public void replaceItem(HistoryItem originalItem, HistoryItem newItem) {
+    public void replaceItem(ViewHolderItem originalItem, ViewHolderItem newItem) {
         var index = indexOf(originalItem);
         items.set(index, newItem);
         itemsIndex.remove(originalItem);
@@ -145,7 +186,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
      *
      * @param item the item
      */
-    public void removeItem(HistoryItem item) {
+    public void removeItem(ViewHolderItem item) {
         var index = indexOf(item);
 
         items.remove(index);
@@ -161,10 +202,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
         }
     }
 
-    private int indexOf(HistoryItem item) {
+    private int indexOf(ViewHolderItem item) {
         Integer index = itemsIndex.get(item);
         assert index != null;
-        
+
         return index;
     }
 }

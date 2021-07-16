@@ -16,25 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.module;
 
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import android.content.Context;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import javax.inject.Singleton;
+import me.bramhaag.owouploader.api.OwOAPI;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Module that provides {@link OwOAPI}.
  */
-public class ExampleInstrumentedTest {
+@Module
+@InstallIn(SingletonComponent.class)
+public class ApiModule {
 
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
-
-    @Test
-    public void scenarioTest() {
-        // assertNotNull(scenarioExtension.getScenario());
+    @Singleton
+    @Provides
+    public static OwOAPI provideApi(@ApplicationContext Context context) {
+        return new OwOAPI("nahu is cringe");
     }
 }

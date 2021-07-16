@@ -23,24 +23,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Date;
+import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.activity.MainActivity;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
-import me.bramhaag.owouploader.components.ProgressItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
+import me.bramhaag.owouploader.db.HistoryDatabase;
 
 /**
  * UploadHistoryFragment.
  */
+@AndroidEntryPoint
 public class UploadHistoryFragment extends Fragment {
 
     public FragmentHistoryBinding binding;
+
+    @Inject
+    HistoryDatabase database;
 
     public UploadHistoryFragment() {
         // Required empty public constructor
@@ -56,33 +57,7 @@ public class UploadHistoryFragment extends Fragment {
             Bundle savedInstanceState) {
         binding = FragmentHistoryBinding.inflate(inflater);
 
-        var uploadHistoryAdapter = new HistoryAdapter(Arrays.asList(
-                new UploadHistoryItem(
-                        "File1.jpg",
-                        URI.create("https://totally-not.a-sketchy.site/4f23PwD.jpg"),
-                        new Date()
-                ),
-                new UploadHistoryItem(
-                        "File2.docx",
-                        URI.create("https://awau.moe/4f23PwD.jpg"),
-                        new Date()
-                ),
-                new UploadHistoryItem(
-                        "File_3_example.png",
-                        URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
-                        new Date()
-                ),
-                new UploadHistoryItem(
-                        "ballooncat.jpg",
-                        URI.create("https://owo.whats-th.is/4f23PwD.jpg"),
-                        new Date()
-                ),
-                new UploadHistoryItem(
-                        "file.txt",
-                        URI.create("https://owo.whats-th.is/2soGoVy.txt"),
-                        new Date()
-                )
-        ));
+        var uploadHistoryAdapter = new HistoryAdapter(database.uploadItemDao().getAll());
 
         var layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(true);

@@ -16,42 +16,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.components;
+package me.bramhaag.owouploader.db.entity;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import java.net.URI;
-import java.util.Date;
+import java.time.Instant;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
 /**
- * Data class for shorten history items.
+ * Entity for upload history.
  */
-public class UploadHistoryItem implements HistoryItem {
+@Entity
+public class UploadItem implements ViewHolderItem {
 
-    private final String name;
-    private final URI url;
-    private final Date date;
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
+    public String name;
+
+    public URI url;
+
+    public Instant createdAt;
 
     /**
-     * Instantiate a new {@link UploadHistoryItem}.
+     * Create a new UploadItem.
      *
-     * @param name the file's name
-     * @param url  the file's url
-     * @param date the upload date
+     * @param name the name
+     * @param url  the url
+     * @return a new UploadItem
      */
-    public UploadHistoryItem(String name, URI url, Date date) {
-        this.name = name;
-        this.url = url;
-        this.date = date;
-    }
+    public static UploadItem create(String name, URI url) {
+        var item = new UploadItem();
+        item.name = name;
+        item.url = url;
+        item.createdAt = Instant.now();
 
-    public String getName() {
-        return name;
-    }
-
-    public URI getUrl() {
-        return url;
-    }
-
-    public Date getDate() {
-        return date;
+        return item;
     }
 }
