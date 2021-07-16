@@ -56,11 +56,12 @@ public class LoginActivity extends AppCompatActivity {
             String inputKey = input.getEditText().getText().toString().trim();
             try {
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
-                        .putString("owo_api_key", CryptographyHelper.getInstance().encrypt(inputKey)).apply();
+                        .putString(CryptographyHelper.KEY_ALIAS, CryptographyHelper.getInstance().encrypt(inputKey))
+                        .apply();
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-                e.printStackTrace();
+                finish();
             }
         });
     }

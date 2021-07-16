@@ -60,7 +60,10 @@ public class CryptographyHelper {
     private static final String KEY_STORE_NAME = "AndroidKeyStore";
     private static final String CONCATENATOR = "_";
 
-    private static final String KEY_ALIAS = "OwOApiKey";
+    /**
+     * Key alias that we'll use for both the key store and shared preferences.
+     */
+    public static final String KEY_ALIAS = "owo_api_key";
 
     private final KeyStore keyStore;
     private final SecretKey secretKey;
@@ -185,8 +188,7 @@ public class CryptographyHelper {
             return INSTANCE = new CryptographyHelper();
         } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException
                 | NoSuchProviderException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
-            e.printStackTrace();
-            return null; // shouldn't happen?
+            throw new RuntimeException("this should not happen!");
         }
     }
 }

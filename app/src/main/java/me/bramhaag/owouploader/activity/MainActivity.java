@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
 
         var encryptedApiKey = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("owo_api_key", null);
+                .getString(CryptographyHelper.KEY_ALIAS, null);
 
         if (encryptedApiKey == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -90,7 +90,10 @@ public class MainActivity extends AppCompatActivity {
             this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException
                 | IllegalBlockSizeException e) {
-            e.printStackTrace();
+            // Something went wrong, maybe try logging in again (?
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
         }
 
         var api = new OwOAPI(this.apiKey);
