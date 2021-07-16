@@ -45,6 +45,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
+/**
+ * Cryptography helper that we'll use to encrypt/decrypt user keys.
+ */
 public class CryptographyHelper {
     private static CryptographyHelper INSTANCE;
 
@@ -64,9 +67,20 @@ public class CryptographyHelper {
 
     private final Cipher cipher;
 
+    /**
+     * Main constructor for this {@link CryptographyHelper}.
+     *
+     * @throws CertificateException When the certificate is expired.
+     * @throws NoSuchAlgorithmException When the algorithm does not exist.
+     * @throws KeyStoreException When the key is not found/does not exist.
+     * @throws IOException When opening the file.
+     * @throws NoSuchProviderException When the provider doesn't exist.
+     * @throws InvalidAlgorithmParameterException When the algorithm provided doesn't exist.
+     * @throws NoSuchPaddingException When the padding passed is not valid.
+     */
     public CryptographyHelper()
-            throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException,
-            InvalidAlgorithmParameterException, NoSuchPaddingException {
+            throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException,
+            NoSuchProviderException, InvalidAlgorithmParameterException, NoSuchPaddingException {
         this.keyStore = getAndroidKeyStore();
         this.secretKey = getSecretKey();
         this.cipher = Cipher.getInstance(TRANSFORMATION);
@@ -107,6 +121,18 @@ public class CryptographyHelper {
         return keyGenerator.generateKey();
     }
 
+    /**
+     * Encrypt a given input into a nicely packed string that contains our cipher's IV and the encrypted content,
+     * concatenated and encoded using Base 64.
+     *
+     * @see #decrypt(String) For a method to decrypt the encrypted input.
+     *
+     * @param input Input to encrypt.
+     * @return Encrypted string.
+     * @throws InvalidKeyException When the secret key used is invalid.
+     * @throws BadPaddingException When the padding used is invalid.
+     * @throws IllegalBlockSizeException When the block is illegally sized.
+     */
     @NonNull
     public String encrypt(@NonNull String input)
             throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
@@ -114,13 +140,27 @@ public class CryptographyHelper {
         var iv = cipher.getIV();
         var encrypted = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
 
-        // gotta encode to string
-        return Base64.encodeToString(iv, Base64.NO_WRAP) + CONCATENATOR + Base64.encodeToString(encrypted, Base64.NO_WRAP);
+        return Base64.encodeToString(iv, Base64.NO_WRAP)
+                + CONCATENATOR
+                + Base64.encodeToString(encrypted, Base64.NO_WRAP);
     }
 
+    /**
+     * Decrypt any input given. Beware that this will NOT parse any kind of encrypted string and will require the
+     * format applied by the encryption method.
+     *
+     * @see #encrypt(String) To get a valid encrypted string.
+     *
+     * @param input Text that we want to decrypt.
+     * @return Decrypted text with the very nice information we want to use.
+     * @throws InvalidKeyException When the secret key used is invalid.
+     * @throws InvalidAlgorithmParameterException When the algorithm used is invalid.
+     * @throws BadPaddingException When the padding is invalid.
+     * @throws IllegalBlockSizeException When the block is illegally sized.
+     */
     @NonNull
-    public String decrypt(@NonNull String input)
-            throws InvalidKeyException, InvalidAlgorithmParameterException, BadPaddingException, IllegalBlockSizeException {
+    public String decrypt(@NonNull String input) throws InvalidKeyException, InvalidAlgorithmParameterException,
+            BadPaddingException, IllegalBlockSizeException {
         var parts = input.split(CONCATENATOR);
 
         var iv = Base64.decode(parts[0], Base64.NO_WRAP);
@@ -130,6 +170,11 @@ public class CryptographyHelper {
         return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Singleton accessor for this helper.
+     *
+     * @return {@link CryptographyHelper} instance (or null, but that should never happen).
+     */
     @NonNull
     public static CryptographyHelper getInstance() {
         if (INSTANCE != null) {
@@ -138,7 +183,8 @@ public class CryptographyHelper {
 
         try {
             return INSTANCE = new CryptographyHelper();
-        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException | NoSuchProviderException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException
+                | NoSuchProviderException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
             e.printStackTrace();
             return null; // shouldn't happen?
         }

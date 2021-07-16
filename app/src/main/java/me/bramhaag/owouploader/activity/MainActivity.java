@@ -25,8 +25,8 @@ import android.content.ServiceConnection;
 import android.graphics.Rect;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MotionEvent;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException
+                | IllegalBlockSizeException e) {
             e.printStackTrace();
         }
 
