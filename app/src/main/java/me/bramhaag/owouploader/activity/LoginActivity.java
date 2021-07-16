@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
@@ -55,7 +56,9 @@ public class LoginActivity extends AppCompatActivity {
             String inputKey = input.getEditText().getText().toString().trim();
             try {
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
-                        .putString("owo_api_key", CryptographyHelper.getInstance().encrypt(inputKey)).commit();
+                        .putString("owo_api_key", CryptographyHelper.getInstance().encrypt(inputKey)).apply();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
             } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
                 e.printStackTrace();
             }

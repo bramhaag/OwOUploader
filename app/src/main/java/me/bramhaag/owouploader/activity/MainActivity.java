@@ -22,12 +22,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Pair;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -39,20 +37,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
-import java.util.Arrays;
-import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
@@ -89,27 +77,25 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        var extras = getIntent().getExtras();
-        var token = extras.getString("TOKEN");
-        var api = new OwOAPI(token);
-
-        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
-        binding.viewPager.setAdapter(tabLayoutPageAdapter);
-        binding.tabLayout.setupWithViewPager(binding.viewPager);
-
         var encryptedApiKey = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("owo_api_key", null);
-        // Probably move it up before the content is rendered (?)
-        if (encryptedApiKey != null) {
-            try {
-                this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
-            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
-                e.printStackTrace();
-            }
+
+        if (encryptedApiKey == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
             return;
         }
 
-        startActivity(new Intent(this, LoginActivity.class));
+        try {
+            this.apiKey = CryptographyHelper.getInstance().decrypt(encryptedApiKey);
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
+        var api = new OwOAPI(this.apiKey);
+
+        var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
+        binding.viewPager.setAdapter(tabLayoutPageAdapter);
 
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,
                 (tab, position) ->
