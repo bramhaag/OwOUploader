@@ -21,14 +21,14 @@ package me.bramhaag.owouploader.adapter.viewholder;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import me.bramhaag.owouploader.components.HistoryItem;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
 /**
- * {@link RecyclerView.ViewHolder} for {@link HistoryItem}s.
+ * {@link RecyclerView.ViewHolder} for {@link ViewHolderItem}s.
  *
- * @param <T> The concrete type of {@link HistoryItem}
+ * @param <T> The concrete type of the item
  */
-public abstract class HistoryViewHolder<T extends HistoryItem> extends RecyclerView.ViewHolder {
+public abstract class HistoryViewHolder<T extends ViewHolderItem> extends RecyclerView.ViewHolder {
 
     public HistoryViewHolder(@NonNull View itemView) {
         super(itemView);

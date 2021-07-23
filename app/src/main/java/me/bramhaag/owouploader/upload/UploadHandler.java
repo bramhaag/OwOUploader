@@ -25,14 +25,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayout.Tab;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.net.URI;
-import java.util.Date;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
+import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
-import me.bramhaag.owouploader.components.ProgressItem;
-import me.bramhaag.owouploader.components.UploadHistoryItem;
+import me.bramhaag.owouploader.db.HistoryDatabase;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 import me.bramhaag.owouploader.file.ContentProvider;
 import me.bramhaag.owouploader.util.Runnables;
 
@@ -42,30 +45,36 @@ import me.bramhaag.owouploader.util.Runnables;
 public class UploadHandler {
 
     private final OwOAPI api;
-    private final Tab tab;
     private final Context context;
     private final Handler mainHandler;
+    private final HistoryDatabase database;
 
     private HistoryAdapter adapter;
     private RecyclerView recyclerView;
+    private Tab tab;
 
     /**
      * Create a new {@link UploadHandler}.
      *
-     * @param api     the api
-     * @param context the context
-     * @param tab     the {@link TabLayout.Tab} belonging to the upload fragment.
+     * @param api      the api
+     * @param context  the context
+     * @param database the database
      */
-    public UploadHandler(OwOAPI api, Context context, TabLayout.Tab tab) {
+    @Inject
+    public UploadHandler(OwOAPI api, @ApplicationContext Context context, HistoryDatabase database) {
         this.api = api;
         this.context = context;
         this.mainHandler = new Handler(context.getMainLooper());
-        this.tab = tab;
+        this.database = database;
     }
 
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         this.adapter = ((HistoryAdapter) recyclerView.getAdapter());
+    }
+
+    public void setTab(TabLayout.Tab tab) {
+        this.tab = tab;
     }
 
     /**
@@ -84,7 +93,7 @@ public class UploadHandler {
      * @param onFinish on finish callback
      */
     public void upload(ContentProvider content, Runnable onFinish) {
-        ProgressItem item = new ProgressItem();
+        var item = new ProgressItem();
         var call = api.uploadFile(content, new ProgressResultCallback<>() {
 
             @Override
@@ -127,18 +136,23 @@ public class UploadHandler {
 
             @Override
             public void onComplete(@NonNull UploadModel result) {
-                var newItem = new UploadHistoryItem(content.getName(),
-                        URI.create("https://owo.whats-th.is/" + result.getUrl()), new Date());
+                var newItem = UploadItem
+                        .create(content.getName(), URI.create("https://owo.whats-th.is/" + result.getUrl()));
 
                 runOnUiThread(() -> {
-                    if (item.isCanceled()) {
-                        adapter.addItem(newItem);
-                    } else {
+                    if (!item.isCanceled()) {
                         adapter.replaceItem(item, newItem);
+                    } else {
+                        // If the upload is cancelled but still succeeded, the progress item is already removed
+                        adapter.addItem(newItem);
                     }
 
                     Toast.makeText(context, "Upload completed", Toast.LENGTH_SHORT).show();
                 });
+
+                database.uploadItemDao().insert(newItem)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
 
                 onFinish.run();
             }

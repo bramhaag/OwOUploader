@@ -16,25 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.db.dao;
 
-import de.mannodermaus.junit5.ActivityScenarioExtension;
-import me.bramhaag.owouploader.activity.MainActivity;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import java.util.List;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Dao for upload history.
  */
-public class ExampleInstrumentedTest {
+@Dao
+public interface UploadItemDao {
 
-    @RegisterExtension
-    ActivityScenarioExtension<MainActivity> scenarioExtension = ActivityScenarioExtension.launch(MainActivity.class);
+    @Query("SELECT * FROM UploadItem")
+    Single<List<UploadItem>> getAll();
 
-    @Test
-    public void scenarioTest() {
-        // assertNotNull(scenarioExtension.getScenario());
-    }
+    @Insert
+    Completable insert(UploadItem item);
+
+    @Delete
+    Completable delete(UploadItem item);
 }

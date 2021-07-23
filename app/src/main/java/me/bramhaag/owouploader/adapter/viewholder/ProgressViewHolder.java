@@ -26,7 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.Locale;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.components.ProgressItem;
+import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
 import me.bramhaag.owouploader.util.ByteUnit;
 
 /**

@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dagger.internal.Preconditions;
 import java.io.IOException;
 import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
@@ -60,7 +61,8 @@ public class OwOAPI {
             .registerTypeAdapter(ObjectModel[].class, new ObjectModelArrayDeserializer())
             .create();
 
-    private final OwOService service;
+    private OwOService service;
+    private String apiKey;
 
     private static final String USER_AGENT = String.format("WhatsThisClient (%s, %s)",
             "https://github.com/bramhaag/OwOUploader", BuildConfig.VERSION_CODE);
@@ -68,12 +70,19 @@ public class OwOAPI {
     private static final String DEFAULT_ENDPOINT = "https://api.awau.moe/";
 
     /**
+     * Empty constructor in case we don't get any provided keys.
+     *
+     * @see #setApiKey(String) To set the key and kick-start the service.
+     */
+    public OwOAPI() { }
+    
+    /**
      * Initialize a new instance of OwO API with an API key.
      *
      * @param key the API key
      */
-    public OwOAPI(String key) {
-        this.service = createService(key);
+    public OwOAPI(@NonNull String key) {
+        setApiKey(key);
     }
 
     /**
@@ -148,10 +157,22 @@ public class OwOAPI {
         return new CancellableCall(call);
     }
 
+    /**
+     * Set a new api key and start create a new service instance with it.
+     *
+     * @param apiKey New api key to use.
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+        this.service = createService();
+    }
+
     @NonNull
-    private static OwOService createService(@NonNull final String key) {
+    private OwOService createService() {
+        Preconditions.checkNotNull(this.apiKey, "key cannot be null!");
+
         var client = new Builder()
-                .addNetworkInterceptor(new AuthenticationInterceptor(USER_AGENT, key))
+                .addNetworkInterceptor(new AuthenticationInterceptor(USER_AGENT, this.apiKey))
                 .addInterceptor(new RateLimitInterceptor())
                 .build();
 

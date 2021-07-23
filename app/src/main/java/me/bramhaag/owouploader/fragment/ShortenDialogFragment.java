@@ -20,51 +20,52 @@ package me.bramhaag.owouploader.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import com.google.android.material.tabs.TabLayout;
+import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.net.URI;
-import java.util.Date;
-import me.bramhaag.owouploader.R;
+import java.time.Instant;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
-import me.bramhaag.owouploader.components.ShortenHistoryItem;
-import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.databinding.DialogShortenBinding;
-import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
+import me.bramhaag.owouploader.db.HistoryDatabase;
+import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.util.TextChangedListener;
 
 /**
  * {@link DialogFragment} that handles shortening urls.
  */
+@AndroidEntryPoint
 public class ShortenDialogFragment extends DialogFragment {
 
     private DialogShortenBinding binding;
 
     private final OwOAPI api;
-    private final TabLayout.Tab tab;
+    private final HistoryDatabase database;
+
+    private TabLayout.Tab tab;
     private HistoryAdapter adapter;
 
-    public ShortenDialogFragment(OwOAPI api, TabLayout.Tab tab) {
+    @Inject
+    public ShortenDialogFragment(OwOAPI api, HistoryDatabase database) {
         this.api = api;
-        this.tab = tab;
+        this.database = database;
     }
 
     public void setAdapter(HistoryAdapter adapter) {
         this.adapter = adapter;
+    }
+
+    public void setTab(TabLayout.Tab tab) {
+        this.tab = tab;
     }
 
     @NonNull
@@ -114,8 +115,15 @@ public class ShortenDialogFragment extends DialogFragment {
                 public void onComplete(@NonNull String result) {
                     dialog.dismiss();
                     Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
-                    adapter.addItem(new ShortenHistoryItem(URI.create(binding.shortenDialogInput.getText().toString()),
-                            URI.create(result), new Date()));
+
+                    var newItem = ShortenItem
+                            .create(URI.create(binding.shortenDialogInput.getText().toString()), URI.create(result));
+
+                    adapter.addItem(newItem);
+                    database.shortenItemDao()
+                            .insert(newItem)
+                            .subscribeOn(Schedulers.io())
+                            .subscribe();
                 }
             }, false);
 
