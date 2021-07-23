@@ -182,10 +182,6 @@ public class MainActivity extends AppCompatActivity {
         return uploadHandler;
     }
 
-    public OwOAPI getApi() {
-        return api;
-    }
-
     public ShortenDialogFragment getShortenDialog() {
         return shortenDialog;
     }

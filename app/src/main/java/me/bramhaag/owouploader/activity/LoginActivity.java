@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,7 +95,11 @@ public class LoginActivity extends AppCompatActivity {
                                 ).apply();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-                        finish();
+                        Toast.makeText(
+                            getApplicationContext(),
+                            "Something went wrong while encrypting your key!",
+                            Toast.LENGTH_LONG
+                        ).show();
                     }
                 }
             });
