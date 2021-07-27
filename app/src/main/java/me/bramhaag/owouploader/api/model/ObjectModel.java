@@ -20,7 +20,6 @@ package me.bramhaag.owouploader.api.model;
 
 import androidx.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
-import java.time.Instant;
 import java.util.Date;
 
 /**

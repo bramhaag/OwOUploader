@@ -29,7 +29,6 @@ import java.time.Instant;
 import java.util.Date;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.ObjectModel.ObjectType;
-import me.bramhaag.owouploader.api.model.UploadModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

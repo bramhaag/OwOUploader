@@ -20,35 +20,21 @@ package me.bramhaag.owouploader.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.textfield.TextInputLayout;
 import dagger.hilt.android.AndroidEntryPoint;
-import dagger.hilt.android.qualifiers.ActivityContext;
-import dagger.hilt.android.scopes.ActivityRetainedScoped;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
-import java.util.UUID;
+import java.util.Objects;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.inject.Inject;
-import me.bramhaag.owouploader.DaggerOwOApplication_HiltComponents_SingletonC;
-import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.databinding.ActivityLoginBinding;
-import me.bramhaag.owouploader.module.ApiModule;
 import me.bramhaag.owouploader.util.CryptographyHelper;
 
 /**
@@ -68,10 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
         binding.loginButton.setOnClickListener(view -> {
             var input = binding.loginTokenInput;
-            var inputKey = input.getEditText().getText().toString().trim();
+            var inputKey = Objects.requireNonNull(input.getEditText()).getText().toString().trim();
 
             api.setApiKey(inputKey);
             api.getUser(new ResultCallback<>() {
@@ -88,17 +73,17 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull UserModel result) {
                     try {
-                        PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit()
-                                .putString(
-                                    CryptographyHelper.KEY_ALIAS,
-                                    CryptographyHelper.getInstance().encrypt(inputKey)
-                                ).apply();
+                        PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
+                                .edit()
+                                .putString(CryptographyHelper.KEY_ALIAS, CryptographyHelper.encrypt(inputKey))
+                                .apply();
+
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
                         Toast.makeText(
-                            getApplicationContext(),
-                            "Something went wrong while encrypting your key!",
-                            Toast.LENGTH_LONG
+                                getApplicationContext(),
+                                "Something went wrong while encrypting your key!",
+                                Toast.LENGTH_LONG
                         ).show();
                     }
                 }

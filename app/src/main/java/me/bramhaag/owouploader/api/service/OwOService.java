@@ -20,7 +20,6 @@ package me.bramhaag.owouploader.api.service;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.List;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.api.model.UserModel;

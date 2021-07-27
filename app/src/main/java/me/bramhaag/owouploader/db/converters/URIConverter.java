@@ -20,12 +20,12 @@ package me.bramhaag.owouploader.db.converters;
 
 import androidx.room.TypeConverter;
 import java.net.URI;
-import java.time.Instant;
 
 /**
  * Type converters for {@link URI}s.
  */
 public class URIConverter {
+
     @TypeConverter
     public static URI toURI(String value) {
         return value == null ? null : URI.create(value);

@@ -37,10 +37,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
 import dagger.hilt.android.AndroidEntryPoint;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import java.security.GeneralSecurityException;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
@@ -91,9 +88,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            api.setApiKey(CryptographyHelper.getInstance().decrypt(encryptedApiKey));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException
-                | IllegalBlockSizeException e) {
+            api.setApiKey(CryptographyHelper.decrypt(encryptedApiKey));
+        } catch (GeneralSecurityException e) {
             e.printStackTrace();
             // Something went wrong, maybe try logging in again (?
             startActivity(new Intent(this, LoginActivity.class));

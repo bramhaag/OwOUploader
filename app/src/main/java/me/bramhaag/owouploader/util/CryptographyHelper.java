@@ -18,13 +18,13 @@
 
 package me.bramhaag.owouploader.util;
 
-import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -34,85 +34,74 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
 
 /**
  * Cryptography helper that we'll use to encrypt/decrypt user keys.
  */
 public class CryptographyHelper {
-    private static CryptographyHelper INSTANCE;
 
-    private static final int TAG_LENGTH_BYTES = 16;
+    private static final int TAG_LENGTH_BITS = 128;
     private static final String TRANSFORMATION = String.format("%s/%s/%s",
             KeyProperties.KEY_ALGORITHM_AES,
             KeyProperties.BLOCK_MODE_GCM,
             KeyProperties.ENCRYPTION_PADDING_NONE
     );
     private static final String KEY_STORE_NAME = "AndroidKeyStore";
-    private static final String CONCATENATOR = "_";
+    private static final String DELIMITER = "_";
+
+    private static final KeyStore keyStore;
+    private static final SecretKey secretKey;
+
+    private static final Cipher cipher;
 
     /**
      * Key alias that we'll use for both the key store and shared preferences.
      */
     public static final String KEY_ALIAS = "owo_api_key";
 
-    private final KeyStore keyStore;
-    private final SecretKey secretKey;
+    static {
+        try {
+            keyStore = getAndroidKeyStore();
+            secretKey = getSecretKey();
+            cipher = Cipher.getInstance(TRANSFORMATION);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    private final Cipher cipher;
-
-    /**
-     * Main constructor for this {@link CryptographyHelper}.
-     *
-     * @throws CertificateException When the certificate is expired.
-     * @throws NoSuchAlgorithmException When the algorithm does not exist.
-     * @throws KeyStoreException When the key is not found/does not exist.
-     * @throws IOException When opening the file.
-     * @throws NoSuchProviderException When the provider doesn't exist.
-     * @throws InvalidAlgorithmParameterException When the algorithm provided doesn't exist.
-     * @throws NoSuchPaddingException When the padding passed is not valid.
-     */
-    public CryptographyHelper()
-            throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException,
-            NoSuchProviderException, InvalidAlgorithmParameterException, NoSuchPaddingException {
-        this.keyStore = getAndroidKeyStore();
-        this.secretKey = getSecretKey();
-        this.cipher = Cipher.getInstance(TRANSFORMATION);
+    private CryptographyHelper() {
+        throw new AssertionError("Cannot instantiate utility class");
     }
 
     @NonNull
-    private SecretKey getSecretKey()
+    private static SecretKey getSecretKey()
             throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
-        SecretKey secretKey;
         try {
             var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(KEY_ALIAS, null);
-            secretKey = secretKeyEntry.getSecretKey();
+            return secretKeyEntry.getSecretKey();
         } catch (NullPointerException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
             // non-existent, generate
-            secretKey = generateKey();
+            return generateKey();
         }
-        return secretKey;
     }
 
     @NonNull
-    private KeyStore getAndroidKeyStore()
+    private static KeyStore getAndroidKeyStore()
             throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         var keyStore = KeyStore.getInstance(KEY_STORE_NAME);
         keyStore.load(null);
+
         return keyStore;
     }
 
     @NonNull
-    private SecretKey generateKey()
+    private static SecretKey generateKey()
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         var keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEY_STORE_NAME);
         var keyGenParameterSpec = new KeyGenParameterSpec
@@ -120,7 +109,9 @@ public class CryptographyHelper {
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .build();
+
         keyGenerator.init(keyGenParameterSpec);
+
         return keyGenerator.generateKey();
     }
 
@@ -128,67 +119,45 @@ public class CryptographyHelper {
      * Encrypt a given input into a nicely packed string that contains our cipher's IV and the encrypted content,
      * concatenated and encoded using Base 64.
      *
-     * @see #decrypt(String) For a method to decrypt the encrypted input.
-     *
      * @param input Input to encrypt.
      * @return Encrypted string.
-     * @throws InvalidKeyException When the secret key used is invalid.
-     * @throws BadPaddingException When the padding used is invalid.
+     * @throws InvalidKeyException       When the secret key used is invalid.
+     * @throws BadPaddingException       When the padding used is invalid.
      * @throws IllegalBlockSizeException When the block is illegally sized.
+     * @see #decrypt(String) For a method to decrypt the encrypted input.
      */
     @NonNull
-    public String encrypt(@NonNull String input)
+    public static String encrypt(@NonNull String input)
             throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         var iv = cipher.getIV();
         var encrypted = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
 
-        return Base64.encodeToString(iv, Base64.NO_WRAP)
-                + CONCATENATOR
+        return Base64.encodeToString(iv, Base64.NO_WRAP) + DELIMITER
                 + Base64.encodeToString(encrypted, Base64.NO_WRAP);
     }
 
     /**
-     * Decrypt any input given. Beware that this will NOT parse any kind of encrypted string and will require the
-     * format applied by the encryption method.
-     *
-     * @see #encrypt(String) To get a valid encrypted string.
+     * Decrypt any input given. Beware that this will NOT parse any kind of encrypted string and will require the format
+     * applied by the encryption method.
      *
      * @param input Text that we want to decrypt.
      * @return Decrypted text with the very nice information we want to use.
-     * @throws InvalidKeyException When the secret key used is invalid.
+     * @throws InvalidKeyException                When the secret key used is invalid.
      * @throws InvalidAlgorithmParameterException When the algorithm used is invalid.
-     * @throws BadPaddingException When the padding is invalid.
-     * @throws IllegalBlockSizeException When the block is illegally sized.
+     * @throws BadPaddingException                When the padding is invalid.
+     * @throws IllegalBlockSizeException          When the block is illegally sized.
+     * @see #encrypt(String) To get a valid encrypted string.
      */
     @NonNull
-    public String decrypt(@NonNull String input) throws InvalidKeyException, InvalidAlgorithmParameterException,
+    public static String decrypt(@NonNull String input) throws InvalidKeyException, InvalidAlgorithmParameterException,
             BadPaddingException, IllegalBlockSizeException {
-        var parts = input.split(CONCATENATOR);
+        var parts = input.split(DELIMITER);
 
         var iv = Base64.decode(parts[0], Base64.NO_WRAP);
         var encrypted = Base64.decode(parts[1], Base64.NO_WRAP);
 
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(TAG_LENGTH_BYTES * 8, iv, 0, iv.length));
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(TAG_LENGTH_BITS, iv, 0, iv.length));
         return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Singleton accessor for this helper.
-     *
-     * @return {@link CryptographyHelper} instance (or null, but that should never happen).
-     */
-    @NonNull
-    public static CryptographyHelper getInstance() {
-        if (INSTANCE != null) {
-            return INSTANCE;
-        }
-
-        try {
-            return INSTANCE = new CryptographyHelper();
-        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException
-                | NoSuchProviderException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
-            throw new RuntimeException("this should not happen!");
-        }
     }
 }

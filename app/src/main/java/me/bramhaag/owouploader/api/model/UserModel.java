@@ -19,13 +19,12 @@
 package me.bramhaag.owouploader.api.model;
 
 import androidx.annotation.NonNull;
-import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * Stores result of a call to the {@code users} endpoint.
  */
 public class UserModel {
+
     private String userId;
     private String username;
     private String email;

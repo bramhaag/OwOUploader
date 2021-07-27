@@ -19,7 +19,6 @@
 package me.bramhaag.owouploader.api.deserializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,8 +29,6 @@ import java.time.Instant;
 import java.util.Date;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.api.model.ObjectModel.ObjectType;
-import me.bramhaag.owouploader.api.model.UploadModel;
-import me.bramhaag.owouploader.api.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
