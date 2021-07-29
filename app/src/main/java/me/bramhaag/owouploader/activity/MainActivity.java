@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        crash();
-
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
 
@@ -134,10 +132,6 @@ public class MainActivity extends AppCompatActivity {
             screenCaptureService.stop();
             binding.fabMenu.collapse();
         });
-    }
-
-    private void crash() {
-        throw new RuntimeException("Hello Sentry!");
     }
 
     @Override
