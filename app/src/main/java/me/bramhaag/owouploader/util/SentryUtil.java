@@ -16,25 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.util;
 
-import android.app.Application;
-import android.preference.PreferenceManager;
-import dagger.hilt.android.HiltAndroidApp;
-import me.bramhaag.owouploader.util.SentryUtil;
+import android.content.Context;
+import io.sentry.android.core.SentryAndroid;
+import me.bramhaag.owouploader.BuildConfig;
 
 /**
- * Application.
+ * Utility class for Sentry.
  */
-@HiltAndroidApp
-public class OwOApplication extends Application {
+public class SentryUtil {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public static final String SENTRY_ENABLED_KEY = "sentry_enabled";
 
-        var enableTelemetry = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SentryUtil.SENTRY_ENABLED_KEY, false);
-        SentryUtil.enableSentry(this, enableTelemetry);
+    private SentryUtil() {
+        throw new AssertionError("Cannot instantiate utility class");
+    }
+
+    public static void enableSentry(Context context, boolean enabled) {
+        SentryAndroid.init(context, options -> options.setDsn(enabled ? BuildConfig.SENTRY_DSN : ""));
     }
 }

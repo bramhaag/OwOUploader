@@ -28,6 +28,7 @@ android {
 
         // JUnit 5 Instrumentation runner
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.debug
         testInstrumentationRunnerArgument 'runnerBuilder', 'de.mannodermaus.junit5.AndroidJUnit5Builder'
     }
 
@@ -35,6 +36,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "SENTRY_DSN", "\"https://6e1c2049e4eb4fc7a867d59c51df6a90@o935366.ingest.sentry.io/5885112\""
+        }
+
+        debug {
+            buildConfigField "String", "SENTRY_DSN", "\"\""
         }
     }
 
@@ -74,13 +80,15 @@ dependencies {
     implementation "androidx.room:room-rxjava3:$roomVersion"
 
     // Components
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.activity:activity:1.3.0-rc01'
     implementation 'androidx.fragment:fragment:1.3.5'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.activity:activity:1.3.0-rc02'
+    implementation 'androidx.fragment:fragment:1.3.6'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
 
@@ -91,6 +99,9 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
+
+    // Telemetry
+    implementation 'io.sentry:sentry-android:5.1.0-beta.9'
 
     // Testing
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"

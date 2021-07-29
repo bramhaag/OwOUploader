@@ -25,8 +25,8 @@
   tools:context=".activity.LoginActivity">
 
   <androidx.appcompat.widget.AppCompatTextView
-    style="@style/OwOBrandTextView"
     android:id="@+id/brand_logo"
+    style="@style/OwOBrandTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/logo_name"
@@ -43,6 +43,42 @@
     android:text="@string/logo_branding"
     app:layout_constraintTop_toBottomOf="@id/brand_logo" />
 
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/login_button"
+    style="@style/Widget.MaterialComponents.Button.TextButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:text="@string/login_button_continue"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+    android:textColor="?attr/textColorPrimary"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:strokeColor="?attr/textColorPrimary" />
+
+  <com.google.android.material.checkbox.MaterialCheckBox
+    android:id="@+id/telemetry_checkbox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toTopOf="@id/login_button"
+    android:text="@string/crash_report_checkbox"
+    android:textColor="?attr/textColorPrimary"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+  <ImageButton
+    android:id="@+id/telemetry_button"
+    android:src="@drawable/outline_help_outline_24"
+    android:background="?android:selectableItemBackground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintStart_toEndOf="@+id/telemetry_checkbox"
+    app:layout_constraintTop_toTopOf="@id/telemetry_checkbox"
+    app:layout_constraintBottom_toBottomOf="@id/telemetry_checkbox"
+    android:layout_marginStart="6dp"
+    android:contentDescription="@string/show_more_info" />
+
   <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/login_token_input"
     android:layout_width="300dp"
@@ -57,18 +93,4 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content" />
   </com.google.android.material.textfield.TextInputLayout>
-
-  <com.google.android.material.button.MaterialButton
-    style="@style/Widget.MaterialComponents.Button.TextButton"
-    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-    android:id="@+id/login_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
-    android:text="@string/login_button_continue"
-    android:textColor="?attr/textColorPrimary"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:strokeColor="?attr/textColorPrimary" />
 </androidx.constraintlayout.widget.ConstraintLayout>
