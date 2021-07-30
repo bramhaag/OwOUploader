@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.sentry.Sentry;
 import java.security.InvalidKeyException;
 import java.util.Objects;
 import javax.crypto.BadPaddingException;
@@ -79,6 +80,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onComplete(@NonNull UserModel result) {
+                    SentryUtil.enableSentry(LoginActivity.this, binding.telemetryCheckbox.isEnabled());
+
                     try {
                         PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
                                 .edit()
@@ -86,10 +89,11 @@ public class LoginActivity extends AppCompatActivity {
                                 .putBoolean(SentryUtil.SENTRY_ENABLED_KEY, binding.telemetryCheckbox.isEnabled())
                                 .apply();
 
-                        SentryUtil.enableSentry(LoginActivity.this, binding.telemetryCheckbox.isEnabled());
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+                        Sentry.captureException(e);
+
                         Toast.makeText(
                                 getApplicationContext(),
                                 "Something went wrong while encrypting your key!",

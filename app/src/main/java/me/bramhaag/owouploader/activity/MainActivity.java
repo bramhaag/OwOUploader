@@ -37,6 +37,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.google.android.material.tabs.TabLayoutMediator;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.sentry.Sentry;
 import java.security.GeneralSecurityException;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
@@ -90,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             api.setApiKey(CryptographyHelper.decrypt(encryptedApiKey));
         } catch (GeneralSecurityException e) {
-            e.printStackTrace();
+            Sentry.captureException(e);
+
             // Something went wrong, maybe try logging in again (?
             startActivity(new Intent(this, LoginActivity.class));
             finish();
