@@ -56,7 +56,7 @@ public class ShortenHistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHistoryBinding.inflate(inflater);
 
-        var shortenHistoryAdapter = new HistoryAdapter(database.shortenItemDao().getAll());
+        var shortenHistoryAdapter = new HistoryAdapter();
 
         var layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(true);

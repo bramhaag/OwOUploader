@@ -15,22 +15,15 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context=".fragment.UploadHistoryFragment"
-  android:id="@+id/refresh_layout">
+  android:layout_height="74dp">
 
-  <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recycler_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:clipToPadding="false"
-    android:focusable="true" />
+  <ProgressBar
+    android:id="@+id/indeterminateBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true" />
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</RelativeLayout>
+

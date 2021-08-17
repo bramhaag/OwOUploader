@@ -118,7 +118,7 @@ public class ShortenDialogFragment extends DialogFragment {
                     var newItem = ShortenItem
                             .create(URI.create(binding.shortenDialogInput.getText().toString()), URI.create(result));
 
-                    adapter.addItem(newItem);
+                    adapter.addItemFirst(newItem);
                     database.shortenItemDao()
                             .insert(newItem)
                             .subscribeOn(Schedulers.io())
