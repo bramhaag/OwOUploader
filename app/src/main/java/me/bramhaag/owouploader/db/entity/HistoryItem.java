@@ -16,24 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.util;
+package me.bramhaag.owouploader.db.entity;
 
-import java.net.URI;
+import java.time.Instant;
 
-public class ApiUtil {
+public interface HistoryItem extends Comparable<HistoryItem> {
 
-    /**
-     * Normalize a key. Strips the leading {@code /} and file extension.
-     *
-     * @param key the key
-     * @return the normalized key
-     */
-    public static String normalizeKey(String key) {
-        return key.split("\\.")[0].replace("/", "");
+    String key();
+
+    Instant createdAt();
+
+    @Override
+    default int compareTo(HistoryItem o) {
+        return createdAt().compareTo(o.createdAt());
     }
-
-    public static String getKey(URI url) {
-        return url.getPath();
-    }
-
 }

@@ -37,6 +37,7 @@ import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.databinding.DialogShortenBinding;
 import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
+import me.bramhaag.owouploader.util.ApiUtil;
 import me.bramhaag.owouploader.util.TextChangedListener;
 
 /**
@@ -115,8 +116,10 @@ public class ShortenDialogFragment extends DialogFragment {
                     dialog.dismiss();
                     Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
 
-                    var newItem = ShortenItem
-                            .create(URI.create(binding.shortenDialogInput.getText().toString()), URI.create(result));
+                    var destUrl = URI.create(binding.shortenDialogInput.getText().toString());
+                    var newUrl = URI.create(result);
+
+                    var newItem = new ShortenItem(ApiUtil.getKey(newUrl), destUrl, newUrl);
 
                     adapter.addItemFirst(newItem);
                     database.shortenItemDao()

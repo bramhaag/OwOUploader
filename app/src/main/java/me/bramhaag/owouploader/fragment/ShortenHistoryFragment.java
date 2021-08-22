@@ -18,56 +18,56 @@
 
 package me.bramhaag.owouploader.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Single;
+import java.net.URI;
+import java.util.List;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.activity.MainActivity;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
+import me.bramhaag.owouploader.api.OwOAPI;
+import me.bramhaag.owouploader.api.callback.ResultCallback;
+import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 import me.bramhaag.owouploader.db.HistoryDatabase;
+import me.bramhaag.owouploader.db.entity.ShortenItem;
+import me.bramhaag.owouploader.util.ApiUtil;
 
 /**
  * ShortenHistoryFragment.
  */
 @AndroidEntryPoint
-public class ShortenHistoryFragment extends Fragment {
-
-    public FragmentHistoryBinding binding;
+public class ShortenHistoryFragment extends HistoryFragment<ShortenItem> {
 
     @Inject
     HistoryDatabase database;
 
-    public ShortenHistoryFragment() {
-        // Required empty public constructor
+    @Inject
+    OwOAPI api;
+
+    @Override
+    protected Single<List<ShortenItem>> provideLocalHistory() {
+        return database.shortenItemDao().getAll();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void getHistory(int offset, ResultCallback<ObjectModel[]> callback) {
+        api.getObjects(null, offset, "link", null, callback);
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHistoryBinding.inflate(inflater);
+    protected void setRecyclerView(RecyclerView recyclerView) {
+        ((MainActivity) requireActivity()).getShortenDialog().setAdapter((HistoryAdapter) recyclerView.getAdapter());
+    }
 
-        var shortenHistoryAdapter = new HistoryAdapter();
+    @Override
+    protected ShortenItem modelToItem(ObjectModel model) {
+        var key = ApiUtil.normalizeKey(model.getKey());
+        // TODO insert other url here
+        var destUrl = URI.create(model.getDestUrl());
+        var url = URI.create("https://owo.whats-th.is/" + model.getKey());
+        return new ShortenItem(key, destUrl, url, model.getCreatedAt().toInstant());
 
-        var layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-
-        binding.recyclerView.setAdapter(shortenHistoryAdapter);
-        binding.recyclerView.setLayoutManager(layoutManager);
-        binding.recyclerView.setItemAnimator(null);
-
-        ((MainActivity) requireActivity()).getShortenDialog().setAdapter(shortenHistoryAdapter);
-
-        return binding.getRoot();
     }
 }

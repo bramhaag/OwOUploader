@@ -18,7 +18,9 @@
 
 package me.bramhaag.owouploader.db.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.net.URI;
 import java.time.Instant;
@@ -28,10 +30,11 @@ import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
  * Entity for shortening history.
  */
 @Entity
-public class ShortenItem implements ViewHolderItem {
+public class ShortenItem implements ViewHolderItem, HistoryItem {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @NonNull
+    @PrimaryKey()
+    public String key;
 
     public URI originalUrl;
 
@@ -39,19 +42,25 @@ public class ShortenItem implements ViewHolderItem {
 
     public Instant createdAt;
 
-    /**
-     * Create a new ShortenItem.
-     *
-     * @param originalUrl the original url
-     * @param resultUrl   the resulting url
-     * @return a new ShortenItem
-     */
-    public static ShortenItem create(URI originalUrl, URI resultUrl) {
-        var item = new ShortenItem();
-        item.originalUrl = originalUrl;
-        item.resultUrl = resultUrl;
-        item.createdAt = Instant.now();
+    @Ignore
+    public ShortenItem(@NonNull String key, URI originalUrl, URI resultUrl) {
+        this(key, originalUrl, resultUrl, Instant.now());
+    }
 
-        return item;
+    public ShortenItem(@NonNull String key, URI originalUrl, URI resultUrl, Instant createdAt) {
+        this.key = key;
+        this.originalUrl = originalUrl;
+        this.resultUrl = resultUrl;
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public String key() {
+        return key;
+    }
+
+    @Override
+    public Instant createdAt() {
+        return createdAt;
     }
 }

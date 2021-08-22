@@ -30,7 +30,7 @@ import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
  * Entity for upload history.
  */
 @Entity
-public class UploadItem implements ViewHolderItem, Comparable<UploadItem> {
+public class UploadItem implements ViewHolderItem, HistoryItem {
 
     @PrimaryKey
     @NonNull
@@ -54,9 +54,13 @@ public class UploadItem implements ViewHolderItem, Comparable<UploadItem> {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String key() {
+        return key;
+    }
 
     @Override
-    public int compareTo(UploadItem o) {
-        return this.createdAt.compareTo(o.createdAt);
+    public Instant createdAt() {
+        return createdAt;
     }
 }

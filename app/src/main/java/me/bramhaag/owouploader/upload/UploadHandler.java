@@ -156,7 +156,7 @@ public class UploadHandler {
 
                 onFinish.run();
             }
-        }, true);
+        }, false);
 
         item.setOnCancel(() -> {
             call.cancel();

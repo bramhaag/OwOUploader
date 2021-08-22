@@ -217,6 +217,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
             end--;
         }
 
+        loading = false;
+
         notifyItemRangeRemoved(end, start - end);
     }
 
