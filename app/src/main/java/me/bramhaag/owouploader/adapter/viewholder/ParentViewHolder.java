@@ -18,18 +18,24 @@
 
 package me.bramhaag.owouploader.adapter.viewholder;
 
-import android.view.View;
 import androidx.annotation.NonNull;
-import me.bramhaag.owouploader.adapter.viewholder.item.LoadingItem;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
-public class LoadingViewHolder extends BaseViewHolder<LoadingItem> {
+public abstract class ParentViewHolder<T extends ViewHolderItem> extends BaseViewHolder<T> {
 
-    public LoadingViewHolder(@NonNull View view) {
-        super(view);
+    private final BaseViewHolder<T> childViewHolder;
+
+    public BaseViewHolder<T> getChildViewHolder() {
+        return childViewHolder;
+    }
+
+    public ParentViewHolder(BaseViewHolder<T> innerViewHolder) {
+        super(innerViewHolder.itemView);
+        this.childViewHolder = innerViewHolder;
     }
 
     @Override
-    public void initializeView(@NonNull LoadingItem item) {
-
+    public void initializeView(@NonNull T item) {
+        this.childViewHolder.initializeView(item);
     }
 }

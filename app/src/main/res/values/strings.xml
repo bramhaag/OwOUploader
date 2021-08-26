@@ -9,7 +9,8 @@
   <string name="history_item_content_description">File preview</string>
   <string name="history_item_title_placeholder">Title</string>
   <string name="history_item_description_placeholder">Description</string>
-  <string name="history_item_copy_content_description">Copy Button</string>
+  <string name="history_item_copy_content_description">Copy link</string>
   <string name="progress_item_cancel_content_description">Cancel button</string>
   <string name="progress_item_progress_placeholder">-1 / 0 MB</string>
+  <string name="history_item_associated_description">associated item</string>
 </resources>

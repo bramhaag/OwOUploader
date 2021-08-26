@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.adapter.viewholder;
 
+import android.content.Context;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,11 +29,15 @@ import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
  *
  * @param <T> The concrete type of the item
  */
-public abstract class HistoryViewHolder<T extends ViewHolderItem> extends RecyclerView.ViewHolder {
+public abstract class BaseViewHolder<T extends ViewHolderItem> extends RecyclerView.ViewHolder {
 
-    public HistoryViewHolder(@NonNull View itemView) {
+    public BaseViewHolder(@NonNull View itemView) {
         super(itemView);
     }
 
     public abstract void initializeView(@NonNull T item);
+
+    public Context getContext() {
+        return itemView.getContext();
+    }
 }

@@ -19,8 +19,9 @@
 package me.bramhaag.owouploader.db.entity;
 
 import java.time.Instant;
+import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 
-public interface HistoryItem extends Comparable<HistoryItem> {
+public interface HistoryItem extends ViewHolderItem, Comparable<HistoryItem> {
 
     String key();
 

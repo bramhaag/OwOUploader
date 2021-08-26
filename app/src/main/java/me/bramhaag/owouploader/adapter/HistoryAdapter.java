@@ -22,15 +22,19 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import io.reactivex.rxjava3.core.Single;
+import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_android_internal_builders_ViewComponentBuilder;
 import java.util.LinkedList;
 import java.util.List;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.viewholder.HistoryViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.AssociatedObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.LoadingViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.ObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.ParentViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.ProgressViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.ShortenViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.UploadViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.ShortenObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.UploadObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.item.AssociatedItem;
 import me.bramhaag.owouploader.adapter.viewholder.item.LoadingItem;
 import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
 import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
@@ -41,7 +45,14 @@ import me.bramhaag.owouploader.db.entity.UploadItem;
 /**
  * {@link RecyclerView.Adapter} for shorten history.
  */
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? extends ViewHolderItem>> {
+public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extends ViewHolderItem>> {
+
+    private static final int ID_UPLOAD = 0;
+    private static final int ID_SHORTEN = 1;
+    private static final int ID_PROGRESS = 2;
+    private static final int ID_LOADING = 3;
+
+    private static final int ID_ASSOCIATED = 1 << 2;
 
     private final LinkedList<ViewHolderItem> items;
 
@@ -49,8 +60,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
 
     /**
      * Create a new HistoryAdapter from a preexisting source.
-     *
-     * @param source the source
      */
     public HistoryAdapter() {
         this.items = new LinkedList<>();
@@ -59,39 +68,53 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
     @Override
     public int getItemViewType(int position) {
         var item = items.get(position);
-        if (item instanceof UploadItem) {
-            return 0;
-        } else if (item instanceof ShortenItem) {
-            return 1;
-        } else if (item instanceof ProgressItem) {
-            return 2;
-        } else if (item instanceof LoadingItem) {
-            return 3;
+        var associatedId = 0;
+        if (item instanceof AssociatedItem) {
+            associatedId = ID_ASSOCIATED;
+            item = ((AssociatedItem) item).getItem();
         }
 
-        throw new IllegalArgumentException("No type found for item " + item);
+        int typeId;
+        if (item instanceof UploadItem) {
+            typeId = ID_UPLOAD;
+        } else if (item instanceof ShortenItem) {
+            typeId = ID_SHORTEN;
+        } else if (item instanceof ProgressItem) {
+            typeId = ID_PROGRESS;
+        } else if (item instanceof LoadingItem) {
+            typeId = ID_LOADING;
+        } else {
+            throw new IllegalArgumentException("No type found for item " + item);
+        }
+
+        return associatedId | typeId;
     }
 
     @NonNull
     @Override
-    public HistoryViewHolder<? extends ViewHolderItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BaseViewHolder<? extends ViewHolderItem> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         var inflater = LayoutInflater.from(parent.getContext());
 
-        switch (viewType) {
+        var associated = (viewType & 0b100) == ID_ASSOCIATED;
+        var typeId = viewType & 0b011;
+
+        switch (typeId) {
             case 0: {
-                var view = inflater.inflate(R.layout.upload_history_item, parent, false);
-                return new UploadViewHolder(view);
+                var view = inflater.inflate(R.layout.history_item, parent, false);
+                var holder = new UploadObjectViewHolder(view);
+                return associated ? new AssociatedObjectViewHolder<>(holder) : new ObjectViewHolder<>(holder);
             }
             case 1: {
-                var view = inflater.inflate(R.layout.shorten_history_item, parent, false);
-                return new ShortenViewHolder(view);
+                var view = inflater.inflate(R.layout.history_item, parent, false);
+                var holder = new ShortenObjectViewHolder(view);
+                return associated ? new AssociatedObjectViewHolder<>(holder) : new ObjectViewHolder<>(holder);
             }
             case 2: {
                 var view = inflater.inflate(R.layout.progress_item, parent, false);
                 return new ProgressViewHolder(view);
             }
             case 3: {
-                var view = inflater.inflate(R.layout.loading_history_item, parent, false);
+                var view = inflater.inflate(R.layout.loading_item, parent, false);
                 return new LoadingViewHolder(view);
             }
             default:
@@ -103,8 +126,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder<? ext
     // because type checking is done in the getItemViewType(int) method.
     @SuppressWarnings("unchecked")
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        holder.initializeView(items.get(position));
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
+        var item = items.get(position);
+        if (holder instanceof AssociatedObjectViewHolder) {
+            item = ((AssociatedItem) item).getItem();
+        }
+
+        holder.initializeView(item);
     }
 
     @Override

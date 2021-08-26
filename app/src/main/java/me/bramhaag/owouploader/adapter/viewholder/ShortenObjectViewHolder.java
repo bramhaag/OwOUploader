@@ -18,11 +18,12 @@
 
 package me.bramhaag.owouploader.adapter.viewholder;
 
-
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -30,34 +31,38 @@ import java.time.format.DateTimeFormatter;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 
-/**
- * {@link RecyclerView.ViewHolder} for {@link ShortenItem}s.
- */
-public class ShortenViewHolder extends HistoryViewHolder<ShortenItem> {
-
+public class ShortenObjectViewHolder extends BaseViewHolder<ShortenItem> {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
             .ofPattern("dd-MM-yyyy HH:mm")
             .withZone(ZoneId.systemDefault());
 
     private final TextView title;
     private final TextView description;
+    private final ImageView image;
 
     /**
      * Instantiate a new ViewHolder.
      *
      * @param view the view
      */
-    public ShortenViewHolder(View view) {
+    public ShortenObjectViewHolder(View view) {
         super(view);
-        title = view.findViewById(R.id.shorten_item_title);
-        description = view.findViewById(R.id.shorten_item_description);
+        title = view.findViewById(R.id.upload_item_title);
+        description = view.findViewById(R.id.upload_item_description);
+        image = view.findViewById(R.id.upload_item_image);
     }
 
     @Override
     public void initializeView(@NonNull ShortenItem item) {
+        this.image.setVisibility(View.GONE);
+
         setTitle(item.originalUrl.toString());
         setDescription(item.resultUrl, item.createdAt);
 
+        itemView.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.resultUrl.toString()));
+            getContext().startActivity(browserIntent);
+        });
     }
 
     public void setTitle(String title) {

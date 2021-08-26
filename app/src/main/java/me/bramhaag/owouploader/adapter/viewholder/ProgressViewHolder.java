@@ -32,8 +32,7 @@ import me.bramhaag.owouploader.util.ByteUnit;
 /**
  * {@link RecyclerView.ViewHolder} for upload history.
  */
-
-public class ProgressViewHolder extends HistoryViewHolder<ProgressItem> {
+public class ProgressViewHolder extends BaseViewHolder<ProgressItem> {
 
     private final TextView title;
     private final ProgressBar progressBar;

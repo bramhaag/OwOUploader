@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewbinding.ViewBinding;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import me.bramhaag.owouploader.adapter.EndlessRecyclerViewScrollListener;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
+import me.bramhaag.owouploader.adapter.viewholder.item.AssociatedItem;
 import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.ObjectModel;
@@ -130,11 +130,12 @@ public abstract class HistoryFragment<T extends HistoryItem & ViewHolderItem> ex
                 }
 
                 // Map associated objects to UploadItem, and keep track of the oldest upload fetched
-                var items = new HashMap<String, T>();
+                var items = new HashMap<String, ViewHolderItem>();
                 var oldest = Instant.MAX;
 
                 for (var r : result) {
-                    var item = modelToItem(r);
+                    var item = new AssociatedItem(modelToItem(r));
+//                    var item = modelToItem(r);
                     items.put(item.key(), item);
 
                     if (oldest.isAfter(item.createdAt())) {
@@ -143,10 +144,16 @@ public abstract class HistoryFragment<T extends HistoryItem & ViewHolderItem> ex
                 }
 
                 // Add all items from the local history that were uploaded after the oldest date
-                // The associated uploads are overwritten with the local history
+                // The associated uploads are overwritten with the local history, because these contain more information
                 while (!localHistory.isEmpty() && localHistory.element().createdAt().isAfter(oldest)) {
                     var item = localHistory.pop();
-                    items.put(item.key(), item);
+                    var existingItem = items.get(item.key());
+
+                    if (existingItem != null) {
+                        ((AssociatedItem) existingItem).setItem(item);
+                    } else {
+                        items.put(item.key(), item);
+                    }
                 }
 
                 var sortedItems = new ArrayList<>(items.values());

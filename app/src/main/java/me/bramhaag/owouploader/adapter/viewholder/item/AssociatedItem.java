@@ -16,20 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.item;
 
-import android.view.View;
-import androidx.annotation.NonNull;
-import me.bramhaag.owouploader.adapter.viewholder.item.LoadingItem;
+import java.time.Instant;
+import me.bramhaag.owouploader.db.entity.HistoryItem;
 
-public class LoadingViewHolder extends BaseViewHolder<LoadingItem> {
+public class AssociatedItem implements HistoryItem {
 
-    public LoadingViewHolder(@NonNull View view) {
-        super(view);
+    private HistoryItem item;
+
+    public AssociatedItem(HistoryItem item) {
+        this.item = item;
+    }
+
+    public HistoryItem getItem() {
+        return item;
+    }
+
+    public void setItem(HistoryItem item) {
+        this.item = item;
     }
 
     @Override
-    public void initializeView(@NonNull LoadingItem item) {
+    public String key() {
+        return item.key();
+    }
 
+    @Override
+    public Instant createdAt() {
+        return item.createdAt();
     }
 }
