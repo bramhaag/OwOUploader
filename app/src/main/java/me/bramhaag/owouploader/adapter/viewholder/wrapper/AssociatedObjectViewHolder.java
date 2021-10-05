@@ -19,9 +19,13 @@
 package me.bramhaag.owouploader.adapter.viewholder.wrapper;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -35,6 +39,8 @@ import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.db.entity.HistoryItem;
+import me.bramhaag.owouploader.util.ActionUtil;
+import me.bramhaag.owouploader.util.MenuItemClickListenerWrapper;
 
 /**
  * Wrapper ViewHolder for associated history.
@@ -58,59 +64,52 @@ public class AssociatedObjectViewHolder<T extends HistoryItem> extends ParentVie
     public void initializeView(@NonNull T item) {
         super.initializeView(item);
 
-        var copyButton = itemView.findViewById(R.id.upload_item_copy);
-        var menu = new PopupMenu(getContext(), copyButton);
-        menu.getMenuInflater().inflate(R.menu.associated_history_menu, menu.getMenu());
+        var menuButton = itemView.findViewById(R.id.upload_item_menu);
+        var menu = new PopupMenu(getContext(), menuButton);
+        menu.getMenuInflater().inflate(R.menu.history_menu, menu.getMenu());
 
-        MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) menu.getMenu(), copyButton);
+        MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) menu.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
 
-        menu.setOnMenuItemClickListener(i -> {
-            int itemId = i.getItemId();
-            if (itemId == R.id.action_item_copy) {
-                var clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                var clip = ClipData.newPlainText(item.url(), item.url());
-                clipboard.setPrimaryClip(clip);
+        menu.setOnMenuItemClickListener(new MenuItemClickListenerWrapper()
+                .on(R.id.action_item_copy, () -> {
+                    ActionUtil.copy(getContext(), item.url());
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_copied), Toast.LENGTH_LONG)
+                            .show();
+                })
+                .on(R.id.action_item_share, () -> ActionUtil.share(getContext(), item.url()))
+                .on(R.id.action_item_delete, () -> {
+                    var callback = new ResultCallback<ObjectModel>() {
+                        @Override
+                        public void onStart() {
+                            // Do nothing
+                        }
 
-                Toast.makeText(getContext(), "URL copied to clipboard", Toast.LENGTH_LONG).show();
+                        @Override
+                        public void onError(@NonNull Throwable throwable) {
+                            Toast.makeText(getContext(), "Unable to remove item: " + throwable.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
 
-                return true;
-            } else if (itemId == R.id.action_item_share) {
-                var sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, item.url());
-                sendIntent.setType("text/plain");
+                        @Override
+                        public void onComplete(@NonNull ObjectModel result) {
+                            adapter.removeItem(getItem());
+                            Toast.makeText(getContext(), getContext().getString(R.string.toast_removed),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    };
 
-                var shareIntent = Intent.createChooser(sendIntent, null);
-                getContext().startActivity(shareIntent);
+                    new Builder(getContext())
+                            .setTitle(R.string.dialog_delete_associated_title)
+                            .setMessage(R.string.dialog_delete_associated_description)
+                            .setPositiveButton(android.R.string.ok, (dialog, which) ->
+                                    api.removeObject(item.key(), callback))
+                            .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {
+                                // Do nothing
+                            }))
+                            .show();
+                }));
 
-                return true;
-            } else if (itemId == R.id.action_item_delete) {
-                api.removeObject(item.key(), new ResultCallback<>() {
-                    @Override
-                    public void onStart() {
-                        // Ignore
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable throwable) {
-                        Toast.makeText(getContext(), "Unable to remove item: " + throwable.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onComplete(@NonNull ObjectModel result) {
-                        adapter.removeItem(getItem());
-                        Toast.makeText(getContext(), "Item removed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                return true;
-            }
-
-            //TODO sentry log here
-            return false;
-        });
-
-        copyButton.setOnClickListener(v -> menuHelper.show());
+        menuButton.setOnClickListener(v -> menuHelper.show());
     }
 }

@@ -27,7 +27,7 @@
     android:layout_height="wrap_content">
 
     <ImageButton
-      android:id="@+id/upload_item_copy"
+      android:id="@+id/upload_item_menu"
       android:layout_width="48dp"
       android:layout_height="48dp"
       android:background="@null"

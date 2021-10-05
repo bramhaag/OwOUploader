@@ -45,6 +45,7 @@ public class DatabaseModule {
     @Provides
     public static HistoryDatabase provideHistoryDatabase(@ApplicationContext Context context) {
         return Room.databaseBuilder(context, HistoryDatabase.class, HistoryDatabase.NAME)
+                .allowMainThreadQueries() //TODO disable
                 .build();
     }
 }

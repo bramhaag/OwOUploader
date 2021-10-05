@@ -26,6 +26,7 @@ import dagger.hilt.components.SingletonComponent;
 import javax.inject.Singleton;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
+import me.bramhaag.owouploader.db.HistoryDatabase;
 
 /**
  * Module that provides {@link HistoryAdapter}.
@@ -36,7 +37,7 @@ public class AdapterModule {
 
     @Singleton
     @Provides
-    public static HistoryAdapter provideAdapter(OwOAPI api) {
-        return new HistoryAdapter(api);
+    public static HistoryAdapter provideAdapter(OwOAPI api, HistoryDatabase database) {
+        return new HistoryAdapter(api, database);
     }
 }

@@ -38,6 +38,7 @@ import me.bramhaag.owouploader.adapter.viewholder.intermediate.ProgressViewHolde
 import me.bramhaag.owouploader.adapter.viewholder.wrapper.AssociatedObjectViewHolder;
 import me.bramhaag.owouploader.adapter.viewholder.wrapper.ObjectViewHolder;
 import me.bramhaag.owouploader.api.OwOAPI;
+import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.db.entity.UploadItem;
 
@@ -59,10 +60,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
     private boolean loading = false;
 
     private final OwOAPI api;
+    private final HistoryDatabase database;
 
     @Inject
-    public HistoryAdapter(OwOAPI api) {
+    public HistoryAdapter(OwOAPI api, HistoryDatabase database) {
         this.api = api;
+        this.database = database;
         this.items = new LinkedList<>();
     }
 
@@ -104,13 +107,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
                 var view = inflater.inflate(R.layout.history_item, parent, false);
                 var holder = new UploadObjectViewHolder(view);
                 return associated ? new AssociatedObjectViewHolder<>(holder, api, this)
-                        : new ObjectViewHolder<>(holder);
+                        : new ObjectViewHolder<>(holder, database, this);
             }
             case 1: {
                 var view = inflater.inflate(R.layout.history_item, parent, false);
                 var holder = new ShortenObjectViewHolder(view);
                 return associated ? new AssociatedObjectViewHolder<>(holder, api, this)
-                        : new ObjectViewHolder<>(holder);
+                        : new ObjectViewHolder<>(holder, database, this);
             }
             case 2: {
                 var view = inflater.inflate(R.layout.progress_item, parent, false);

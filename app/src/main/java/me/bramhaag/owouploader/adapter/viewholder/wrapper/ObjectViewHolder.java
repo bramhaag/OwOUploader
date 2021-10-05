@@ -19,14 +19,23 @@
 package me.bramhaag.owouploader.adapter.viewholder.wrapper;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog.Builder;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
+import io.reactivex.rxjava3.core.Completable;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
+import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.HistoryItem;
+import me.bramhaag.owouploader.db.entity.ShortenItem;
+import me.bramhaag.owouploader.db.entity.UploadItem;
+import me.bramhaag.owouploader.util.ActionUtil;
+import me.bramhaag.owouploader.util.MenuItemClickListenerWrapper;
 
 /**
  * Wrapper ViewHolder for regular history.
@@ -35,8 +44,13 @@ import me.bramhaag.owouploader.db.entity.HistoryItem;
  */
 public class ObjectViewHolder<T extends HistoryItem> extends ParentViewHolder<T> {
 
-    public ObjectViewHolder(BaseViewHolder<T> innerViewHolder) {
+    private final HistoryAdapter adapter;
+    private final HistoryDatabase database;
+
+    public ObjectViewHolder(BaseViewHolder<T> innerViewHolder, HistoryDatabase database, HistoryAdapter adapter) {
         super(innerViewHolder);
+        this.database = database;
+        this.adapter = adapter;
     }
 
     @Override
@@ -46,13 +60,43 @@ public class ObjectViewHolder<T extends HistoryItem> extends ParentViewHolder<T>
 
         ((TextView) itemView.findViewById(R.id.upload_item_title)).setCompoundDrawables(null, null, null, null);
 
-        var copyButton = itemView.findViewById(R.id.upload_item_copy);
-        var menu = new PopupMenu(getContext(), copyButton);
+        var menuButton = itemView.findViewById(R.id.upload_item_menu);
+        var menu = new PopupMenu(getContext(), menuButton);
         menu.getMenuInflater().inflate(R.menu.history_menu, menu.getMenu());
 
-        MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) menu.getMenu(), copyButton);
+        MenuPopupHelper menuHelper = new MenuPopupHelper(getContext(), (MenuBuilder) menu.getMenu(), menuButton);
         menuHelper.setForceShowIcon(true);
 
-        copyButton.setOnClickListener(v -> menuHelper.show());
+        menu.setOnMenuItemClickListener(new MenuItemClickListenerWrapper()
+                .on(R.id.action_item_copy, () -> {
+                    ActionUtil.copy(getContext(), item.url());
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_copied), Toast.LENGTH_LONG)
+                            .show();
+                })
+                .on(R.id.action_item_share, () -> ActionUtil.share(getContext(), item.url()))
+                .on(R.id.action_item_delete, () -> new Builder(getContext())
+                        .setTitle(R.string.dialog_delete_title)
+                        .setMessage(R.string.dialog_delete_description)
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            adapter.removeItem(getItem());
+
+                            // TODO don't do this on the main thread... works for now though
+                            if (item instanceof ShortenItem) {
+                                database.shortenItemDao().delete((ShortenItem) item).blockingAwait();
+                            } else if (item instanceof UploadItem) {
+                                database.uploadItemDao().delete((UploadItem) item).blockingAwait();
+                            } else {
+                                throw new IllegalStateException("Cannot delete item of type " + item.getClass());
+                            }
+
+                            Toast.makeText(getContext(), getContext().getString(R.string.toast_removed),
+                                            Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton(android.R.string.cancel, ((dialog, which) -> {
+                            // Do nothing
+                        }))
+                        .show()));
+
+        menuButton.setOnClickListener(v -> menuHelper.show());
     }
 }
