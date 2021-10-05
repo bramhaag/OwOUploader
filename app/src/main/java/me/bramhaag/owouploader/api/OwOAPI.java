@@ -127,6 +127,10 @@ public class OwOAPI {
         enqueueCall(service.getObjects(limit, offset, type, order), result);
     }
 
+    public void removeObject(@NonNull String key, @NonNull ResultCallback<ObjectModel> result) {
+        enqueueCall(service.deleteObject(key), result);
+    }
+
     /**
      * Enqueue a call with callbacks.
      *

@@ -21,7 +21,6 @@ package me.bramhaag.owouploader.adapter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.concurrent.Callable;
 
 // Adapted from https://gist.github.com/nesquena/d09dc68ff07e845cc622
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
@@ -33,14 +32,8 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // The current offset index of data you have loaded
     private int currentPage = 0;
 
-    // The total number of items in the dataset after the last load
-    private int previousTotalItemCount = 0;
-
     // True if we are still waiting for the last set of data to load.
     private boolean loading = false;
-
-    // Sets the starting page index
-    private final int startingPageIndex = 0;
 
     private final LinearLayoutManager layoutManager;
 
@@ -88,7 +81,6 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         // threshold should reflect how many total columns there are too
 
-
         if (!loading && (lastVisibleItemPosition + VISIBLE_THRESHOLD) > totalItemCount) {
             onLoadMore(this, currentPage, view);
             loading = true;
@@ -97,8 +89,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     // Call this method whenever performing new searches
     public void resetState() {
-        this.currentPage = this.startingPageIndex;
-        this.previousTotalItemCount = 0;
+        this.currentPage = 0;
         this.loading = false;
     }
 

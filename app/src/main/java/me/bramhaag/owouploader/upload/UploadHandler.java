@@ -30,7 +30,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.net.URI;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
-import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.item.ProgressItem;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
@@ -124,7 +124,6 @@ public class UploadHandler {
                     return;
                 }
 
-                System.out.println("Upload error: " + throwable.getMessage());
                 throwable.printStackTrace();
 
                 runOnUiThread(() -> {

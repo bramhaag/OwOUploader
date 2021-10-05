@@ -16,20 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.item;
 
-import android.view.View;
-import androidx.annotation.NonNull;
-import me.bramhaag.owouploader.adapter.viewholder.item.LoadingItem;
+/**
+ * Marker interface for items in view holders.
+ */
+public interface ViewHolderItem {
 
-public class LoadingViewHolder extends BaseViewHolder<LoadingItem> {
-
-    public LoadingViewHolder(@NonNull View view) {
-        super(view);
-    }
-
-    @Override
-    public void initializeView(@NonNull LoadingItem item) {
-
-    }
 }

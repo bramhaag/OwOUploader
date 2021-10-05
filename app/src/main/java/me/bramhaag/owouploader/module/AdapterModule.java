@@ -16,8 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder.item;
+package me.bramhaag.owouploader.module;
 
-public class LoadingItem implements ViewHolderItem {
 
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+import javax.inject.Singleton;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
+import me.bramhaag.owouploader.api.OwOAPI;
+
+/**
+ * Module that provides {@link HistoryAdapter}.
+ */
+@Module
+@InstallIn(SingletonComponent.class)
+public class AdapterModule {
+
+    @Singleton
+    @Provides
+    public static HistoryAdapter provideAdapter(OwOAPI api) {
+        return new HistoryAdapter(api);
+    }
 }

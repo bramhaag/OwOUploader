@@ -16,11 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.wrapper;
 
 import androidx.annotation.NonNull;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
 
+/**
+ * Wrapper for a ViewHolder.
+ *
+ * @param <T> the type
+ */
 public abstract class ParentViewHolder<T extends ViewHolderItem> extends BaseViewHolder<T> {
 
     private final BaseViewHolder<T> childViewHolder;
@@ -36,6 +42,7 @@ public abstract class ParentViewHolder<T extends ViewHolderItem> extends BaseVie
 
     @Override
     public void initializeView(@NonNull T item) {
+        super.initializeView(item);
         this.childViewHolder.initializeView(item);
     }
 }

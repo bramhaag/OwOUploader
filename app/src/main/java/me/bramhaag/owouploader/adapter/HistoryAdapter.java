@@ -22,22 +22,22 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_android_internal_builders_ViewComponentBuilder;
 import java.util.LinkedList;
 import java.util.List;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.viewholder.AssociatedObjectViewHolder;
+import me.bramhaag.owouploader.adapter.item.AssociatedItem;
+import me.bramhaag.owouploader.adapter.item.LoadingItem;
+import me.bramhaag.owouploader.adapter.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
 import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.LoadingViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.ObjectViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.ParentViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.ProgressViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.ShortenObjectViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.UploadObjectViewHolder;
-import me.bramhaag.owouploader.adapter.viewholder.item.AssociatedItem;
-import me.bramhaag.owouploader.adapter.viewholder.item.LoadingItem;
-import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.viewholder.history.ShortenObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.history.UploadObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.intermediate.LoadingViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.intermediate.ProgressViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.wrapper.AssociatedObjectViewHolder;
+import me.bramhaag.owouploader.adapter.viewholder.wrapper.ObjectViewHolder;
+import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.db.entity.UploadItem;
 
@@ -58,10 +58,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
 
     private boolean loading = false;
 
-    /**
-     * Create a new HistoryAdapter from a preexisting source.
-     */
-    public HistoryAdapter() {
+    private final OwOAPI api;
+
+    @Inject
+    public HistoryAdapter(OwOAPI api) {
+        this.api = api;
         this.items = new LinkedList<>();
     }
 
@@ -102,12 +103,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
             case 0: {
                 var view = inflater.inflate(R.layout.history_item, parent, false);
                 var holder = new UploadObjectViewHolder(view);
-                return associated ? new AssociatedObjectViewHolder<>(holder) : new ObjectViewHolder<>(holder);
+                return associated ? new AssociatedObjectViewHolder<>(holder, api, this)
+                        : new ObjectViewHolder<>(holder);
             }
             case 1: {
                 var view = inflater.inflate(R.layout.history_item, parent, false);
                 var holder = new ShortenObjectViewHolder(view);
-                return associated ? new AssociatedObjectViewHolder<>(holder) : new ObjectViewHolder<>(holder);
+                return associated ? new AssociatedObjectViewHolder<>(holder, api, this)
+                        : new ObjectViewHolder<>(holder);
             }
             case 2: {
                 var view = inflater.inflate(R.layout.progress_item, parent, false);
@@ -209,8 +212,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
     public synchronized void replaceItem(ViewHolderItem originalItem, ViewHolderItem newItem) {
         var index = indexOf(originalItem);
         items.set(index, newItem);
-//        itemsIndex.remove(originalItem);
-//        itemsIndex.put(newItem, index);
 
         notifyItemChanged(index);
     }
@@ -224,16 +225,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
         var index = indexOf(item);
 
         items.remove(index);
-//        itemsIndex.remove(item);
-
         notifyItemRemoved(index);
-
-//        for (int i = index; i < items.size(); i++) {
-//            var key = items.get(i);
-//            var value = indexOf(key);
-//
-//            itemsIndex.put(key, value - 1);
-//        }
     }
 
     public synchronized void clearHistory() {
@@ -265,6 +257,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
     }
 
     private int indexOf(ViewHolderItem item) {
-        return items.indexOf(item);
+        for (int i = 0; i < items.size(); i++) {
+            var current = items.get(i);
+            if (current instanceof AssociatedItem) {
+                current = ((AssociatedItem) current).getItem();
+            }
+
+            if (current.equals(item)) {
+                return i;
+            }
+        }
+
+        throw new IndexOutOfBoundsException(item + " not found");
     }
 }

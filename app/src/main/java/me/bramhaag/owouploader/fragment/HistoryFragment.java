@@ -41,10 +41,12 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.EndlessRecyclerViewScrollListener;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
-import me.bramhaag.owouploader.adapter.viewholder.item.AssociatedItem;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.AssociatedItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
+import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.ObjectModel;
 import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
@@ -53,7 +55,13 @@ import me.bramhaag.owouploader.db.entity.HistoryItem;
 /**
  * HistoryFragment.
  */
-public abstract class HistoryFragment<T extends HistoryItem & ViewHolderItem> extends Fragment {
+public abstract class HistoryFragment<T extends HistoryItem> extends Fragment {
+
+    @Inject
+    OwOAPI api;
+
+    @Inject
+    HistoryAdapter adapter;
 
     private Deque<T> localHistory;
 
@@ -74,7 +82,6 @@ public abstract class HistoryFragment<T extends HistoryItem & ViewHolderItem> ex
             @Nullable Bundle savedInstanceState) {
         final var binding = FragmentHistoryBinding.inflate(inflater);
 
-        final var adapter = new HistoryAdapter();
         final var layoutManager = new LinearLayoutManager(getContext());
         final var recyclerView = binding.recyclerView;
         final var refreshLayout = binding.refreshLayout;
@@ -135,7 +142,6 @@ public abstract class HistoryFragment<T extends HistoryItem & ViewHolderItem> ex
 
                 for (var r : result) {
                     var item = new AssociatedItem(modelToItem(r));
-//                    var item = modelToItem(r);
                     items.put(item.key(), item);
 
                     if (oldest.isAfter(item.createdAt())) {

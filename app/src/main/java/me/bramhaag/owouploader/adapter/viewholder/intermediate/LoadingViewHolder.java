@@ -16,36 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.intermediate;
 
-import android.content.Context;
 import android.view.View;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.LoadingItem;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
 
 /**
- * {@link RecyclerView.ViewHolder} for {@link ViewHolderItem}s.
- *
- * @param <T> The concrete type of the item
+ * ViewHolder for loading objects.
  */
-public abstract class BaseViewHolder<T extends ViewHolderItem> extends RecyclerView.ViewHolder {
+public class LoadingViewHolder extends BaseViewHolder<LoadingItem> {
 
-    private T item;
-
-    public BaseViewHolder(@NonNull View itemView) {
-        super(itemView);
-    }
-
-    public void initializeView(@NonNull T item) {
-        this.item = item;
-    }
-
-    public Context getContext() {
-        return itemView.getContext();
-    }
-
-    public T getItem() {
-        return item;
+    public LoadingViewHolder(@NonNull View view) {
+        super(view);
     }
 }

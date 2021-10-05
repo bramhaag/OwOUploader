@@ -18,7 +18,6 @@
 
 package me.bramhaag.owouploader.api.interceptor;
 
-import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import java.io.IOException;
 import okhttp3.Interceptor;
@@ -40,13 +39,7 @@ public class AuthenticationInterceptor implements Interceptor {
     @Override
     @NonNull
     public Response intercept(Chain chain) throws IOException {
-        var request = chain.request();
-
-        System.out.println("REQ INTERCEPT: " + request.url().url().toString());
-
-        SystemClock.sleep(1000);
-
-        return chain.proceed(request.newBuilder()
+        return chain.proceed(chain.request().newBuilder()
                 .header("User-Agent", userAgent)
                 .header("Authorization", key)
                 .build());

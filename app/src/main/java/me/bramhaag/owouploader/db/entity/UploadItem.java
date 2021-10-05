@@ -24,7 +24,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.net.URI;
 import java.time.Instant;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
 
 /**
  * Entity for upload history.
@@ -57,6 +57,11 @@ public class UploadItem implements ViewHolderItem, HistoryItem {
     @Override
     public String key() {
         return key;
+    }
+
+    @Override
+    public String url() {
+        return url.toString();
     }
 
     @Override

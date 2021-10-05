@@ -19,11 +19,13 @@
 package me.bramhaag.owouploader.db.entity;
 
 import java.time.Instant;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
 
 public interface HistoryItem extends ViewHolderItem, Comparable<HistoryItem> {
 
     String key();
+
+    String url();
 
     Instant createdAt();
 

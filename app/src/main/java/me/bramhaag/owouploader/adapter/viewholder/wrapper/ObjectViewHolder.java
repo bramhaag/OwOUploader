@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.wrapper;
 
 import android.annotation.SuppressLint;
 import android.widget.TextView;
@@ -25,9 +25,15 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
+import me.bramhaag.owouploader.db.entity.HistoryItem;
 
-public class ObjectViewHolder<T extends ViewHolderItem> extends ParentViewHolder<T> {
+/**
+ * Wrapper ViewHolder for regular history.
+ *
+ * @param <T> history item type
+ */
+public class ObjectViewHolder<T extends HistoryItem> extends ParentViewHolder<T> {
 
     public ObjectViewHolder(BaseViewHolder<T> innerViewHolder) {
         super(innerViewHolder);

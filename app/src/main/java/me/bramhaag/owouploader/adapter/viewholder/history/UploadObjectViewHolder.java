@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.history;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -24,14 +24,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+import com.bumptech.glide.Glide;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.db.entity.ShortenItem;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
+import me.bramhaag.owouploader.db.entity.UploadItem;
 
-public class ShortenObjectViewHolder extends BaseViewHolder<ShortenItem> {
+/**
+ * ViewHolder for uploaded objects.
+ */
+public class UploadObjectViewHolder extends BaseViewHolder<UploadItem> {
+
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
             .ofPattern("dd-MM-yyyy HH:mm")
             .withZone(ZoneId.systemDefault());
@@ -45,7 +53,7 @@ public class ShortenObjectViewHolder extends BaseViewHolder<ShortenItem> {
      *
      * @param view the view
      */
-    public ShortenObjectViewHolder(View view) {
+    public UploadObjectViewHolder(View view) {
         super(view);
         title = view.findViewById(R.id.upload_item_title);
         description = view.findViewById(R.id.upload_item_description);
@@ -53,14 +61,15 @@ public class ShortenObjectViewHolder extends BaseViewHolder<ShortenItem> {
     }
 
     @Override
-    public void initializeView(@NonNull ShortenItem item) {
-        this.image.setVisibility(View.GONE);
+    public void initializeView(@NonNull UploadItem item) {
+        super.initializeView(item);
 
-        setTitle(item.originalUrl.toString());
-        setDescription(item.resultUrl, item.createdAt);
+        setTitle(item.name);
+        setDescription(item.url.getHost(), item.createdAt);
+        loadImage(item.url);
 
         itemView.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.resultUrl.toString()));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url.toString()));
             getContext().startActivity(browserIntent);
         });
     }
@@ -69,7 +78,28 @@ public class ShortenObjectViewHolder extends BaseViewHolder<ShortenItem> {
         this.title.setText(title);
     }
 
-    public void setDescription(URI url, Instant date) {
-        this.description.setText(String.format("%s - %s", url.toString(), DATE_FORMAT.format(date)));
+    public void setDescription(String host, Instant date) {
+        this.description.setText(String.format("%s - %s", host, DATE_FORMAT.format(date)));
+    }
+
+    /**
+     * Load an image from a url.
+     *
+     * @param url the url
+     */
+    public void loadImage(URI url) {
+        var placeholder = new CircularProgressDrawable(itemView.getContext());
+        placeholder.setCenterRadius(32);
+        placeholder.setStrokeWidth(8);
+        //TODO hardcoded color
+        placeholder.setColorSchemeColors(ContextCompat.getColor(getContext(), R.color.teal_200));
+        placeholder.start();
+
+        Glide.with(itemView)
+                .load(Uri.parse(url.toString()))
+                .placeholder(placeholder)
+                .error(R.drawable.outline_photo_24)
+                .centerCrop()
+                .into(image);
     }
 }

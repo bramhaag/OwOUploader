@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
+package me.bramhaag.owouploader.adapter.viewholder.intermediate;
 
 
 import android.view.View;
@@ -26,7 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.Locale;
 import me.bramhaag.owouploader.R;
-import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.viewholder.BaseViewHolder;
 import me.bramhaag.owouploader.util.ByteUnit;
 
 /**
@@ -52,6 +53,8 @@ public class ProgressViewHolder extends BaseViewHolder<ProgressItem> {
 
     @Override
     public void initializeView(@NonNull ProgressItem item) {
+        super.initializeView(item);
+
         setTitle(item.getName());
         setProgress(item.getUploaded(), item.getSize());
 

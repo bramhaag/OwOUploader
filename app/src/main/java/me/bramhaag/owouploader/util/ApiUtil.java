@@ -29,7 +29,7 @@ public class ApiUtil {
      * @return the normalized key
      */
     public static String normalizeKey(String key) {
-        return key.split("\\.")[0].replace("/", "");
+        return key.replace("/", "");
     }
 
     public static String getKey(URI url) {

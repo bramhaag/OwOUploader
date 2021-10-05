@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder.item;
+package me.bramhaag.owouploader.adapter.item;
 
 /**
  * Data class for shorten history items.

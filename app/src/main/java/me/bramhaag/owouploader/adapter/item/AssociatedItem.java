@@ -16,11 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder.item;
+package me.bramhaag.owouploader.adapter.item;
 
-/**
- * Marker interface for items in view holders.
- */
-public interface ViewHolderItem {
+import java.time.Instant;
+import me.bramhaag.owouploader.db.entity.HistoryItem;
 
+public class AssociatedItem implements HistoryItem {
+
+    private HistoryItem item;
+
+    public AssociatedItem(HistoryItem item) {
+        this.item = item;
+    }
+
+    public HistoryItem getItem() {
+        return item;
+    }
+
+    public void setItem(HistoryItem item) {
+        this.item = item;
+    }
+
+    @Override
+    public String key() {
+        return item.key();
+    }
+
+    @Override
+    public String url() {
+        return item.url();
+    }
+
+    @Override
+    public Instant createdAt() {
+        return item.createdAt();
+    }
 }
