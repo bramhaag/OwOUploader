@@ -82,13 +82,11 @@ dependencies {
     // Components
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.activity:activity:1.3.0-rc01'
-    implementation 'androidx.fragment:fragment:1.3.5'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.activity:activity:1.4.0-beta01'
+    implementation 'androidx.fragment:fragment:1.3.6'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.activity:activity:1.3.0-rc02'
-    implementation 'androidx.fragment:fragment:1.3.6'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
 
