@@ -80,7 +80,7 @@ public class ScreenCaptureService extends Service {
         mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
 
         if (mediaProjection == null) {
-            return;
+            throw new RuntimeException("Cannot instantiate MediaProjection");
         }
 
         var metrics = getResources().getDisplayMetrics();

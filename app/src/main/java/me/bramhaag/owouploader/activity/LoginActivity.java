@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         Toast.makeText(
                                 getApplicationContext(),
-                                "Something went wrong while encrypting your key!",
+                                "Something went wrong while encrypting your key: " + e.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
                     }
