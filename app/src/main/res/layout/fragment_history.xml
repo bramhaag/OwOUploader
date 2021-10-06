@@ -16,11 +16,12 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".fragment.UploadHistoryFragment">
+  tools:context=".fragment.UploadHistoryFragment"
+  android:id="@+id/refresh_layout">
 
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recycler_view"
@@ -32,4 +33,4 @@
     android:clipToPadding="false"
     android:focusable="true" />
 
-</FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

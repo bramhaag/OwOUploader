@@ -85,6 +85,10 @@ public class OwOAPI {
         setApiKey(key);
     }
 
+    public OwOService getService() {
+        return service;
+    }
+
     /**
      * Upload a file asynchronously.
      *
@@ -117,6 +121,14 @@ public class OwOAPI {
 
     public void getUser(@NonNull ResultCallback<UserModel> result) {
         enqueueCall(service.getUser(), result);
+    }
+
+    public void getObjects(@Nullable Integer limit, int offset, @Nullable String type, @Nullable String order, @NonNull ResultCallback<ObjectModel[]> result) {
+        enqueueCall(service.getObjects(limit, offset, type, order), result);
+    }
+
+    public void removeObject(@NonNull String key, @NonNull ResultCallback<ObjectModel> result) {
+        enqueueCall(service.deleteObject(key), result);
     }
 
     /**

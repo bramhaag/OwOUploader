@@ -16,23 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder;
-
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+package me.bramhaag.owouploader.adapter.item;
 
 /**
- * {@link RecyclerView.ViewHolder} for {@link ViewHolderItem}s.
- *
- * @param <T> The concrete type of the item
+ * Marker interface for items in view holders.
  */
-public abstract class HistoryViewHolder<T extends ViewHolderItem> extends RecyclerView.ViewHolder {
+public interface ViewHolderItem {
 
-    public HistoryViewHolder(@NonNull View itemView) {
-        super(itemView);
-    }
-
-    public abstract void initializeView(@NonNull T item);
 }

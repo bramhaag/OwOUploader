@@ -16,11 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader.adapter.viewholder.item;
+package me.bramhaag.owouploader.adapter.item;
 
-/**
- * Marker interface for items in view holders.
- */
-public interface ViewHolderItem {
+public class LoadingItem implements ViewHolderItem {
 
 }

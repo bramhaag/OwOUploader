@@ -30,13 +30,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.net.URI;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
-import me.bramhaag.owouploader.adapter.viewholder.item.ProgressItem;
+import me.bramhaag.owouploader.adapter.item.ProgressItem;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ProgressResultCallback;
 import me.bramhaag.owouploader.api.model.UploadModel;
 import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.UploadItem;
 import me.bramhaag.owouploader.file.ContentProvider;
+import me.bramhaag.owouploader.util.ApiUtil;
 import me.bramhaag.owouploader.util.Runnables;
 
 /**
@@ -102,9 +103,9 @@ public class UploadHandler {
 
                 item.setName(content.getName());
                 item.setSize(content.getSize());
-                adapter.addItem(item);
+                adapter.addItemFirst(item);
 
-                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                recyclerView.smoothScrollToPosition(0);
             }
 
             @Override
@@ -123,7 +124,6 @@ public class UploadHandler {
                     return;
                 }
 
-                System.out.println("Upload error: " + throwable.getMessage());
                 throwable.printStackTrace();
 
                 runOnUiThread(() -> {
@@ -136,15 +136,14 @@ public class UploadHandler {
 
             @Override
             public void onComplete(@NonNull UploadModel result) {
-                var newItem = UploadItem
-                        .create(content.getName(), URI.create("https://owo.whats-th.is/" + result.getUrl()));
+                var newItem = new UploadItem(ApiUtil.normalizeKey(result.getUrl()), content.getName(), URI.create("https://owo.whats-th.is/" + result.getUrl()));
 
                 runOnUiThread(() -> {
                     if (!item.isCanceled()) {
                         adapter.replaceItem(item, newItem);
                     } else {
                         // If the upload is cancelled but still succeeded, the progress item is already removed
-                        adapter.addItem(newItem);
+                        adapter.addItemFirst(newItem);
                     }
 
                     Toast.makeText(context, "Upload completed", Toast.LENGTH_SHORT).show();

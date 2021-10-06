@@ -39,8 +39,7 @@ public class AuthenticationInterceptor implements Interceptor {
     @Override
     @NonNull
     public Response intercept(Chain chain) throws IOException {
-        var request = chain.request();
-        return chain.proceed(request.newBuilder()
+        return chain.proceed(chain.request().newBuilder()
                 .header("User-Agent", userAgent)
                 .header("Authorization", key)
                 .build());

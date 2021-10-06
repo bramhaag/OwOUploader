@@ -91,7 +91,8 @@ public interface OwOService {
      */
     @GET("objects")
     @NonNull
-    Call<ObjectModel[]> getObjects(@Query("limit") int limit, @Query("offset") int offset);
+    Call<ObjectModel[]> getObjects(@Query("limit") Integer limit, @Query("offset") int offset,
+            @Query("type") String type, @Query("order") String order);
 
     /**
      * Get an object.

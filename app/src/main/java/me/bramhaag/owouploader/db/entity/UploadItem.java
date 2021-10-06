@@ -18,20 +18,23 @@
 
 package me.bramhaag.owouploader.db.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.net.URI;
 import java.time.Instant;
-import me.bramhaag.owouploader.adapter.viewholder.item.ViewHolderItem;
+import me.bramhaag.owouploader.adapter.item.ViewHolderItem;
 
 /**
  * Entity for upload history.
  */
 @Entity
-public class UploadItem implements ViewHolderItem {
+public class UploadItem implements ViewHolderItem, HistoryItem {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @PrimaryKey
+    @NonNull
+    public String key;
 
     public String name;
 
@@ -39,19 +42,30 @@ public class UploadItem implements ViewHolderItem {
 
     public Instant createdAt;
 
-    /**
-     * Create a new UploadItem.
-     *
-     * @param name the name
-     * @param url  the url
-     * @return a new UploadItem
-     */
-    public static UploadItem create(String name, URI url) {
-        var item = new UploadItem();
-        item.name = name;
-        item.url = url;
-        item.createdAt = Instant.now();
+    @Ignore
+    public UploadItem(@NonNull String key, String name, URI url) {
+        this(key, name, url, Instant.now());
+    }
 
-        return item;
+    public UploadItem(@NonNull String key, String name, URI url, Instant createdAt) {
+        this.key = key;
+        this.name = name;
+        this.url = url;
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public String key() {
+        return key;
+    }
+
+    @Override
+    public String url() {
+        return url.toString();
+    }
+
+    @Override
+    public Instant createdAt() {
+        return createdAt;
     }
 }
