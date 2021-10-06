@@ -10,9 +10,9 @@ ext {
     androidxTestVersion = '1.4.0'
     junitTestVersion = '1.2.2'
     retrofitVersion = '2.9.0'
-    mockitoVersion = '3.9.0'
+    mockitoVersion = '3.11.2'
     roomVersion = '2.3.0'
-    hiltVersion = '2.37'
+    hiltVersion = '2.38.1'
 }
 
 android {
@@ -28,7 +28,6 @@ android {
 
         // JUnit 5 Instrumentation runner
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        signingConfig signingConfigs.debug
         testInstrumentationRunnerArgument 'runnerBuilder', 'de.mannodermaus.junit5.AndroidJUnit5Builder'
     }
 
