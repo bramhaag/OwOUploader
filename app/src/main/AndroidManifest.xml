@@ -20,14 +20,18 @@
       </intent-filter>
     </activity>
 
+    <meta-data
+      android:name="io.sentry.auto-init"
+      android:value="false" />
+
     <service
       android:foregroundServiceType="mediaProjection"
       android:name=".service.ScreenCaptureService" />
   </application>
 
-  <uses-permission android:name="android.permission.INTERNET" />
-
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+  <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

@@ -81,11 +81,11 @@ public class CryptographyHelper {
 
     @NonNull
     private static SecretKey getSecretKey()
-            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, UnrecoverableEntryException, KeyStoreException {
         try {
             var secretKeyEntry = (SecretKeyEntry) keyStore.getEntry(KEY_ALIAS, null);
             return secretKeyEntry.getSecretKey();
-        } catch (NullPointerException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+        } catch (NullPointerException e) {
             // non-existent, generate
             return generateKey();
         }
@@ -133,8 +133,7 @@ public class CryptographyHelper {
         var iv = cipher.getIV();
         var encrypted = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
 
-        return Base64.encodeToString(iv, Base64.NO_WRAP) + DELIMITER
-                + Base64.encodeToString(encrypted, Base64.NO_WRAP);
+        return Base64.encodeToString(iv, Base64.NO_WRAP) + DELIMITER + Base64.encodeToString(encrypted, Base64.NO_WRAP);
     }
 
     /**

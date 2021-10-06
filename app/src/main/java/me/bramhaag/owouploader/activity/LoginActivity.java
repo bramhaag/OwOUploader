@@ -25,17 +25,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import dagger.hilt.android.AndroidEntryPoint;
+import io.sentry.Sentry;
 import java.security.InvalidKeyException;
 import java.util.Objects;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.inject.Inject;
+import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.UserModel;
 import me.bramhaag.owouploader.databinding.ActivityLoginBinding;
 import me.bramhaag.owouploader.util.CryptographyHelper;
+import me.bramhaag.owouploader.util.SentryUtil;
 
 /**
  * Login Activity.
@@ -53,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        var infoDialog = new MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.telemetry_info_balloon)
+                .setPositiveButton(R.string.understood, null);
 
         binding.loginButton.setOnClickListener(view -> {
             var input = binding.loginTokenInput;
@@ -72,22 +80,29 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onComplete(@NonNull UserModel result) {
+                    SentryUtil.enableSentry(LoginActivity.this, binding.telemetryCheckbox.isEnabled());
+
                     try {
                         PreferenceManager.getDefaultSharedPreferences(LoginActivity.this)
                                 .edit()
                                 .putString(CryptographyHelper.KEY_ALIAS, CryptographyHelper.encrypt(inputKey))
+                                .putBoolean(SentryUtil.SENTRY_ENABLED_KEY, binding.telemetryCheckbox.isEnabled())
                                 .apply();
+
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+                        Sentry.captureException(e);
+
                         Toast.makeText(
                                 getApplicationContext(),
-                                "Something went wrong while encrypting your key!",
+                                "Something went wrong while encrypting your key: " + e.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
                     }
                 }
             });
         });
+        binding.telemetryButton.setOnClickListener(view -> infoDialog.show());
     }
 }

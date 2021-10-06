@@ -27,6 +27,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayout.Tab;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.sentry.Sentry;
 import java.net.URI;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
@@ -123,8 +124,6 @@ public class UploadHandler {
                 if (item.isCanceled()) {
                     return;
                 }
-
-                throwable.printStackTrace();
 
                 runOnUiThread(() -> {
                     adapter.removeItem(item);

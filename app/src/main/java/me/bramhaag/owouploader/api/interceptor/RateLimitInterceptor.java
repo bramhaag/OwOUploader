@@ -19,6 +19,7 @@
 package me.bramhaag.owouploader.api.interceptor;
 
 import androidx.annotation.NonNull;
+import io.sentry.Sentry;
 import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Response;
@@ -55,6 +56,7 @@ public class RateLimitInterceptor implements Interceptor {
             try {
                 Thread.sleep(wait);
             } catch (InterruptedException e) {
+                Sentry.captureException(e);
                 return response;
             }
         }

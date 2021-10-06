@@ -12,6 +12,10 @@
   <string name="history_item_copy_content_description">Copy link</string>
   <string name="progress_item_cancel_content_description">Cancel button</string>
   <string name="progress_item_progress_placeholder">-1 / 0 MB</string>
+  <string name="telemetry_info_balloon">Crash reports are anonymous, i.e contain no personal information. Your token is never included in these crash reports.\n\nCrash reports contain essential information that we use to fix bugs and errors. Without opting in we may not be able to help you with crashes you encounter.</string>
+  <string name="understood">Understood</string>
+  <string name="show_more_info">Show more info</string>
+  <string name="crash_report_checkbox">Send anonymous crash reports</string>
   <string name="history_item_associated_description">associated item</string>
   <string name="history_menu_copy">Copy</string>
   <string name="history_menu_share">Share</string>
