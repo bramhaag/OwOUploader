@@ -39,7 +39,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_gravity="start" />
+        android:layout_gravity="start"
+        app:defaultQueryHint="@string/history_search"
+        app:queryHint="@string/history_search"
+        app:iconifiedByDefault="false"/>
       <ImageButton
         android:id="@+id/history_filter"
         android:layout_width="wrap_content"
@@ -47,7 +50,8 @@
         android:layout_marginEnd="10dp"
         android:layout_gravity="end"
         android:background="@null"
-        android:src="@drawable/outline_filter_alt_24" />
+        android:src="@drawable/outline_filter_alt_24"
+        android:contentDescription="@string/history_filter" />
       <ImageButton
         android:id="@+id/history_sort"
         android:layout_width="wrap_content"
@@ -55,7 +59,8 @@
         android:layout_marginEnd="10dp"
         android:layout_gravity="end"
         android:background="@null"
-        android:src="@drawable/outline_sort_24" />
+        android:src="@drawable/outline_sort_24"
+        android:contentDescription="@string/history_order" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

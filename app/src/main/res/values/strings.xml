@@ -26,4 +26,7 @@
   <string name="dialog_delete_associated_description">This action removes the item from both your local and associated history. This action is irreversible.</string>
   <string name="toast_copied">Copied to clipboard</string>
   <string name="toast_removed">Item removed</string>
+  <string name="history_order">Order history</string>
+  <string name="history_filter">Filter history</string>
+  <string name="history_search">Search</string>
 </resources>
