@@ -17,60 +17,19 @@
   -->
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/refresh_layout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   tools:context=".fragment.UploadHistoryFragment">
-  <LinearLayout
+
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:background="@drawable/search_background"
-      android:layout_marginStart="5dp"
-      android:layout_marginEnd="5dp">
-      <androidx.appcompat.widget.SearchView
-        android:id="@+id/history_search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="start"
-        app:defaultQueryHint="@string/history_search"
-        app:queryHint="@string/history_search"
-        app:iconifiedByDefault="false"/>
-      <ImageButton
-        android:id="@+id/history_filter"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="10dp"
-        android:layout_gravity="end"
-        android:background="@null"
-        android:src="@drawable/outline_filter_alt_24"
-        android:contentDescription="@string/history_filter" />
-      <ImageButton
-        android:id="@+id/history_sort"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="10dp"
-        android:layout_gravity="end"
-        android:background="@null"
-        android:src="@drawable/outline_sort_24"
-        android:contentDescription="@string/history_order" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/recycler_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:paddingTop="10dp"
-      android:background="?android:attr/selectableItemBackground"
-      android:clickable="true"
-      android:clipToPadding="false"
-      android:focusable="true" />
-  </LinearLayout>
+    android:paddingTop="10dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:clipToPadding="false"
+    android:focusable="true" />
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

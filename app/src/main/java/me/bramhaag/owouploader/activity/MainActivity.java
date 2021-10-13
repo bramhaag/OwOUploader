@@ -32,6 +32,8 @@ import android.view.MotionEvent;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -41,6 +43,7 @@ import io.sentry.Sentry;
 import java.security.GeneralSecurityException;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
 import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
@@ -66,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     OwOAPI api;
+
+    @Inject
+    HistoryAdapter historyAdapter;
 
     private ScreenCaptureService screenCaptureService;
 
@@ -139,6 +145,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        var searchItem = menu.findItem(R.id.action_search);
+        var searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                historyAdapter.setConstraint(newText);
+                return true;
+            }
+        });
         return true;
     }
 
