@@ -22,10 +22,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
+import me.bramhaag.owouploader.HistoryList;
 import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.adapter.filter.SearchFilter;
 import me.bramhaag.owouploader.adapter.item.AssociatedItem;
 import me.bramhaag.owouploader.adapter.item.LoadingItem;
 import me.bramhaag.owouploader.adapter.item.ProgressItem;
@@ -41,6 +42,7 @@ import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.db.entity.UploadItem;
+import me.bramhaag.owouploader.adapter.filter.Filter;
 
 
 /**
@@ -55,9 +57,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
 
     private static final int ID_ASSOCIATED = 1 << 2;
 
-    private final LinkedList<ViewHolderItem> items;
+    private static final Filter<ViewHolderItem, String> FILTER = new SearchFilter();
+
+    private final HistoryList<ViewHolderItem, String> items;
 
     private boolean loading = false;
+    private String constraint;
 
     private final OwOAPI api;
     private final HistoryDatabase database;
@@ -66,7 +71,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
     public HistoryAdapter(OwOAPI api, HistoryDatabase database) {
         this.api = api;
         this.database = database;
-        this.items = new LinkedList<>();
+        this.items = new HistoryList<>(FILTER, this);
     }
 
     @Override
@@ -146,6 +151,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
         return items.size();
     }
 
+    public void setConstraint(String constraint) {
+        items.setConstraint(constraint);
+    }
+
     /**
      * Add a new item to the view.
      *
@@ -153,22 +162,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
      */
     public synchronized void addItemFirst(@NonNull ViewHolderItem item) {
         items.addFirst(item);
-
-        notifyItemInserted(0);
     }
 
     public synchronized void addItemLast(@NonNull ViewHolderItem item) {
         if (this.loading) {
             items.removeLast();
-            items.addLast(item);
             this.loading = false;
-
-            notifyItemChanged(items.size() - 1);
-            return;
         }
 
         items.addLast(item);
-        notifyItemInserted(items.size() - 1);
     }
 
     /**
@@ -181,19 +183,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
         if (this.loading) {
             this.items.removeLast();
             this.loading = false;
-
-            var index = items.size();
-            notifyItemChanged(index);
-
-            this.items.addAll(items);
-            notifyItemRangeChanged(index + 1, items.size());
-
-            return;
         }
 
-        var index = items.size();
         this.items.addAll(items);
-        notifyItemRangeInserted(index, items.size());
     }
 
     /**
@@ -215,8 +207,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
     public synchronized void replaceItem(ViewHolderItem originalItem, ViewHolderItem newItem) {
         var index = indexOf(originalItem);
         items.set(index, newItem);
-
-        notifyItemChanged(index);
     }
 
     /**
@@ -226,9 +216,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<BaseViewHolder<? extend
      */
     public synchronized void removeItem(ViewHolderItem item) {
         var index = indexOf(item);
-
         items.remove(index);
-        notifyItemRemoved(index);
     }
 
     public synchronized void clearHistory() {

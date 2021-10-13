@@ -39,7 +39,9 @@ android {
         }
 
         debug {
-            buildConfigField "String", "SENTRY_DSN", "\"\""
+            //buildConfigField "String", "SENTRY_DSN", "\"\""
+            buildConfigField "String", "SENTRY_DSN", "\"https://6e1c2049e4eb4fc7a867d59c51df6a90@o935366.ingest.sentry.io/5885112\""
+
         }
     }
 
