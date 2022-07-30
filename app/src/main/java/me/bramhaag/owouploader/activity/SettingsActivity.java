@@ -1,6 +1,6 @@
 /*
  * OwO Uploader
- * Copyright (C) 2021
+ * Copyright (C) 2022
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,25 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.bramhaag.owouploader;
+package me.bramhaag.owouploader.activity;
 
-import android.app.Application;
-import androidx.preference.PreferenceManager;
-import dagger.hilt.android.HiltAndroidApp;
-import me.bramhaag.owouploader.util.SentryUtil;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import me.bramhaag.owouploader.R;
+import me.bramhaag.owouploader.fragment.SettingsFragment;
 
-/**
- * Application.
- */
-@HiltAndroidApp
-public class OwOApplication extends Application {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
-        var enableTelemetry = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(SentryUtil.SENTRY_ENABLED_KEY, false);
-        SentryUtil.enableSentry(this, enableTelemetry);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.settings_container, new SettingsFragment())
+                .commit();
     }
 }

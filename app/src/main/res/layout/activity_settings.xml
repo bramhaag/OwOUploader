@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ OwO Uploader
-  ~ Copyright (C) 2021
+  ~ Copyright (C) 2022
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -16,15 +17,11 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto">
-<!--  <item-->
-<!--    android:id="@+id/action_add"-->
-<!--    android:icon="@drawable/outline_search_24"-->
-<!--    android:title="Add"-->
-<!--    app:showAsAction="ifRoom" />-->
-  <item
-    android:id="@+id/settings_item"
-    android:title="@string/settings"
-    app:showAsAction="never" />
-</menu>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context=".activity.SettingsActivity"
+  android:id="@+id/settings_container">
+
+</androidx.constraintlayout.widget.ConstraintLayout>
