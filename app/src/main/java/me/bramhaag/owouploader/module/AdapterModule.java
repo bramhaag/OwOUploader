@@ -34,8 +34,6 @@ import me.bramhaag.owouploader.db.HistoryDatabase;
 @Module
 @InstallIn(SingletonComponent.class)
 public class AdapterModule {
-
-    @Singleton
     @Provides
     public static HistoryAdapter provideAdapter(OwOAPI api, HistoryDatabase database) {
         return new HistoryAdapter(api, database);
