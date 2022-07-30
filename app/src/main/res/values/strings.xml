@@ -28,4 +28,8 @@
   <string name="toast_removed">Item removed</string>
   <string name="unchanged">(unchanged)</string>
   <string name="settings">Settings</string>
+  <string name="about">About</string>
+  <string name="about_app">OwO Android v%version%\nhttps://github.com/bramhaag/owouploader</string>
+  <string name="report">Report an issue</string>
+  <string name="ok">Ok</string>
 </resources>
