@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.fragment;
 
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.core.Single;
@@ -29,7 +30,6 @@ import me.bramhaag.owouploader.adapter.HistoryAdapter;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.api.callback.ResultCallback;
 import me.bramhaag.owouploader.api.model.ObjectModel;
-import me.bramhaag.owouploader.databinding.FragmentHistoryBinding;
 import me.bramhaag.owouploader.db.HistoryDatabase;
 import me.bramhaag.owouploader.db.entity.ShortenItem;
 import me.bramhaag.owouploader.util.ApiUtil;
@@ -63,10 +63,11 @@ public class ShortenHistoryFragment extends HistoryFragment<ShortenItem> {
 
     @Override
     protected ShortenItem modelToItem(ObjectModel model) {
+        var preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         var key = ApiUtil.normalizeKey(model.getKey());
-        // TODO insert other url here
         var destUrl = URI.create(model.getDestUrl());
-        var url = URI.create("https://owo.whats-th.is/" + model.getKey());
+        var url = URI.create(preferences.getString("shorten_url", "") + model.getKey());
         return new ShortenItem(key, destUrl, url, model.getCreatedAt().toInstant());
 
     }

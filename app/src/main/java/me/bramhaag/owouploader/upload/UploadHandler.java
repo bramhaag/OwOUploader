@@ -22,12 +22,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayout.Tab;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.sentry.Sentry;
 import java.net.URI;
 import javax.inject.Inject;
 import me.bramhaag.owouploader.adapter.HistoryAdapter;
@@ -96,6 +96,8 @@ public class UploadHandler {
      */
     public void upload(ContentProvider content, Runnable onFinish) {
         var item = new ProgressItem();
+
+        var preferences = PreferenceManager.getDefaultSharedPreferences(context);
         var call = api.uploadFile(content, new ProgressResultCallback<>() {
 
             @Override
@@ -135,7 +137,10 @@ public class UploadHandler {
 
             @Override
             public void onComplete(@NonNull UploadModel result) {
-                var newItem = new UploadItem(ApiUtil.normalizeKey(result.getUrl()), content.getName(), URI.create("https://owo.whats-th.is/" + result.getUrl()));
+                var newItem = new UploadItem(
+                        ApiUtil.normalizeKey(result.getUrl()),
+                        content.getName(),
+                        URI.create(preferences.getString("upload_url", "") + result.getUrl()));
 
                 runOnUiThread(() -> {
                     if (!item.isCanceled()) {
@@ -154,7 +159,7 @@ public class UploadHandler {
 
                 onFinish.run();
             }
-        }, false);
+        }, preferences.getBoolean("associated_upload", false));
 
         item.setOnCancel(() -> {
             call.cancel();

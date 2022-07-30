@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 import com.google.android.material.tabs.TabLayout;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -88,6 +89,8 @@ public class ShortenDialogFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
 
+        var preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         var dialog = (AlertDialog) requireDialog();
 
         var shortenButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
@@ -95,39 +98,43 @@ public class ShortenDialogFragment extends DialogFragment {
 
         shortenButton.setEnabled(false);
         shortenButton.setOnClickListener(view -> {
-            var call = api.shortenUrl(binding.shortenDialogInput.getText().toString(), null, new ResultCallback<>() {
-                @Override
-                public void onStart() {
-                    tab.select();
-                    binding.shortenDialogInput.setEnabled(false);
-                    binding.shortenProgressBar.setVisibility(View.VISIBLE);
-                    binding.shortenProgressText.setVisibility(View.VISIBLE);
-                    shortenButton.setEnabled(false);
-                }
+            var call = api.shortenUrl(
+                    binding.shortenDialogInput.getText().toString(),
+                    preferences.getString("shorten_url", ""),
+                    new ResultCallback<>() {
+                        @Override
+                        public void onStart() {
+                            tab.select();
+                            binding.shortenDialogInput.setEnabled(false);
+                            binding.shortenProgressBar.setVisibility(View.VISIBLE);
+                            binding.shortenProgressText.setVisibility(View.VISIBLE);
+                            shortenButton.setEnabled(false);
+                        }
 
-                @Override
-                public void onError(@NonNull Throwable throwable) {
-                    dialog.dismiss();
-                    Toast.makeText(getContext(), "Shorten error: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                        @Override
+                        public void onError(@NonNull Throwable throwable) {
+                            dialog.dismiss();
+                            Toast.makeText(getContext(), "Shorten error: " + throwable.getMessage(), Toast.LENGTH_LONG)
+                                    .show();
+                        }
 
-                @Override
-                public void onComplete(@NonNull String result) {
-                    dialog.dismiss();
-                    Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+                        @Override
+                        public void onComplete(@NonNull String result) {
+                            dialog.dismiss();
+                            Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
 
-                    var destUrl = URI.create(binding.shortenDialogInput.getText().toString());
-                    var newUrl = URI.create(result);
+                            var destUrl = URI.create(binding.shortenDialogInput.getText().toString());
+                            var newUrl = URI.create(result);
 
-                    var newItem = new ShortenItem(ApiUtil.getKey(newUrl), destUrl, newUrl);
+                            var newItem = new ShortenItem(ApiUtil.getKey(newUrl), destUrl, newUrl);
 
-                    adapter.addItemFirst(newItem);
-                    database.shortenItemDao()
-                            .insert(newItem)
-                            .subscribeOn(Schedulers.io())
-                            .subscribe();
-                }
-            }, false);
+                            adapter.addItemFirst(newItem);
+                            database.shortenItemDao()
+                                    .insert(newItem)
+                                    .subscribeOn(Schedulers.io())
+                                    .subscribe();
+                        }
+                    }, false);
 
             cancelButton.setOnClickListener(v -> {
                 call.cancel();

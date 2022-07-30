@@ -18,6 +18,7 @@
 
 package me.bramhaag.owouploader.fragment;
 
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.core.Single;
@@ -56,9 +57,11 @@ public class UploadHistoryFragment extends HistoryFragment<UploadItem> {
 
     @Override
     protected UploadItem modelToItem(ObjectModel model) {
+        var preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
         var key = ApiUtil.normalizeKey(model.getKey());
         // TODO insert other url here
-        var url = URI.create("https://owo.whats-th.is/" + model.getKey());
+        var url = URI.create(preferences.getString("shorten_url", "") + model.getKey());
         return new UploadItem(key, key, url, model.getCreatedAt().toInstant());
     }
 

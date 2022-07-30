@@ -20,11 +20,11 @@ package me.bramhaag.owouploader.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.sentry.Sentry;
@@ -88,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                                 .putString(CryptographyHelper.KEY_ALIAS, CryptographyHelper.encrypt(inputKey))
                                 .putBoolean(SentryUtil.SENTRY_ENABLED_KEY, binding.telemetryCheckbox.isEnabled())
                                 .apply();
-
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
