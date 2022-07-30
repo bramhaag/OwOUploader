@@ -16,19 +16,19 @@ ext {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         applicationId "me.bramhaag.owouploader"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
         // JUnit 5 Instrumentation runner
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        testInstrumentationRunnerArgument 'runnerBuilder', 'de.mannodermaus.junit5.AndroidJUnit5Builder'
     }
 
     buildTypes {
@@ -52,12 +52,18 @@ android {
     buildFeatures {
         viewBinding true
     }
+    packagingOptions {
+        jniLibs {
+            excludes += ['META-INF/LICENSE*']
+        }
+        resources {
+            excludes += ['META-INF/LICENSE*']
+        }
+    }
 
     // Exclude conflicting files in test APK. See
     // https://github.com/mannodermaus/android-junit5/wiki/Instrumentation-Tests-Setup#4-setup-packaging
-    packagingOptions {
-        exclude "META-INF/LICENSE*"
-    }
+    namespace 'me.bramhaag.owouploader'
 }
 
 dependencies {
