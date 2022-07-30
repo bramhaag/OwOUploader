@@ -22,8 +22,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
@@ -36,11 +38,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayoutMediator;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.sentry.Sentry;
 import java.security.GeneralSecurityException;
 import javax.inject.Inject;
+import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
@@ -150,6 +154,20 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.settings_item:
                 startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.about_item:
+                var message = getResources().getString(R.string.about_app)
+                        .replace("%version%", BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE);
+
+                new MaterialAlertDialogBuilder(this)
+                        .setMessage(message)
+                        .setPositiveButton(R.string.ok, null)
+                        .show();
+                return true;
+            case R.id.report_item:
+                var browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/bramhaag/owouploader/issues"));
+                startActivity(browserIntent);
                 return true;
         }
 
