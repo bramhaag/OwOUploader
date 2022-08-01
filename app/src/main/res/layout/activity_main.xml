@@ -90,17 +90,5 @@
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium" />
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-    <com.google.android.material.tabs.TabLayout
-      android:id="@+id/tab_layout"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/backgroundColorPrimary"
-      app:tabBackground="?attr/backgroundColorPrimary"
-      app:tabGravity="fill"
-      app:tabIndicatorColor="?attr/tabColorSelected"
-      app:tabMode="fixed"
-      app:tabSelectedTextColor="?attr/tabColorSelected"
-      app:tabTextColor="?attr/tabColor" />
-
   </com.google.android.material.appbar.AppBarLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

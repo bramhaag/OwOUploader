@@ -48,6 +48,7 @@ import me.bramhaag.owouploader.BuildConfig;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.api.OwOAPI;
 import me.bramhaag.owouploader.databinding.ActivityMainBinding;
+import me.bramhaag.owouploader.fragment.FilterDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenDialogFragment;
 import me.bramhaag.owouploader.fragment.ShortenHistoryFragment;
 import me.bramhaag.owouploader.fragment.UploadHistoryFragment;
@@ -68,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     ShortenDialogFragment shortenDialog;
+
+    @Inject
+    FilterDialogFragment filterDialog;
 
     @Inject
     OwOAPI api;
@@ -109,23 +113,23 @@ public class MainActivity extends AppCompatActivity {
         var tabLayoutPageAdapter = new TabLayoutPageAdapter(this);
         binding.viewPager.setAdapter(tabLayoutPageAdapter);
 
-        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
-                (tab, position) -> tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
-
-        uploadHandler.setTab(binding.tabLayout.getTabAt(0));
-        var documentActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
-
-        binding.actionUpload.setOnClickListener(view -> {
-            documentActivityLauncher.launch(new String[]{"*/*"});
-            binding.fabMenu.collapse();
-        });
-
-        shortenDialog.setTab(binding.tabLayout.getTabAt(1));
-        binding.actionShorten.setOnClickListener(view -> {
-            shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
-            binding.fabMenu.collapse();
-        });
+//        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
+//                (tab, position) -> tab.setText(tabLayoutPageAdapter.getTitle(position))).attach();
+//
+//        uploadHandler.setTab(binding.tabLayout.getTabAt(0));
+//        var documentActivityLauncher = registerForActivityResult(
+//                new ActivityResultContracts.OpenDocument(), new UploadResultCallback(this, uploadHandler));
+//
+//        binding.actionUpload.setOnClickListener(view -> {
+//            documentActivityLauncher.launch(new String[]{"*/*"});
+//            binding.fabMenu.collapse();
+//        });
+//
+//        shortenDialog.setTab(binding.tabLayout.getTabAt(1));
+//        binding.actionShorten.setOnClickListener(view -> {
+//            shortenDialog.show(getSupportFragmentManager(), "shorten_dialog");
+//            binding.fabMenu.collapse();
+//        });
 
         var mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         var screenRecordLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -152,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_filter:
+                filterDialog.show(getSupportFragmentManager(), "filter_dialog");
+                return true;
             case R.id.settings_item:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;

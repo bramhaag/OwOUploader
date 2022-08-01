@@ -32,4 +32,8 @@
   <string name="about_app">OwO Android v%version%\nhttps://github.com/bramhaag/owouploader</string>
   <string name="report">Report an issue</string>
   <string name="ok">Ok</string>
+  <string name="search">Search</string>
+  <string name="filter">Filter</string>
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
