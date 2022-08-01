@@ -19,17 +19,21 @@
 package me.bramhaag.owouploader.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
+import androidx.preference.SwitchPreferenceCompat;
 import io.sentry.Sentry;
 import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import me.bramhaag.owouploader.R;
 import me.bramhaag.owouploader.util.CryptographyHelper;
+import me.bramhaag.owouploader.util.SentryUtil;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -58,17 +62,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return false;
         });
 
-        EditTextPreference uploadUrlPreference = getPreference("upload_url", EditTextPreference.class);
+        var uploadUrlPreference = getPreference("upload_url", EditTextPreference.class);
         uploadUrlPreference.setOnPreferenceChangeListener((preference, newValue) -> {
             savePreference("upload_url", fixUrl((String) newValue));
             return false;
         });
 
-        EditTextPreference shortenUrlPreference = getPreference("shorten_url", EditTextPreference.class);
+        var shortenUrlPreference = getPreference("shorten_url", EditTextPreference.class);
         shortenUrlPreference.setOnPreferenceChangeListener((preference, newValue) -> {
             savePreference("shorten_url", fixUrl((String) newValue));
             return false;
         });
+
+        var sentryPreference = getPreference("sentry_enabled", SwitchPreference.class);
+        sentryPreference.setOnPreferenceChangeListener(((preference, enabled) -> {
+            SentryUtil.enableSentry(getContext(), (boolean) enabled);
+            return true;
+        }));
     }
 
     <T extends Preference> T getPreference(String key, Class<T> clazz) {
