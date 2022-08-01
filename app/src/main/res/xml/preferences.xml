@@ -23,7 +23,7 @@
     app:title="OwO Token"
     />
 
-  <SwitchPreferenceCompat
+  <SwitchPreference
     app:key="associated_upload"
     app:title="Associated uploads"
     app:defaultValue="false"
@@ -39,6 +39,11 @@
     app:key="shorten_url"
     app:title="Shorten domain"
     app:defaultValue="https://awau.moe/"
+    />
+
+  <SwitchPreference
+    app:key="sentry_enabled"
+    app:title="Share diagnostic information"
     />
 
 </androidx.preference.PreferenceScreen>
